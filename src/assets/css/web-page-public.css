@@ -1,0 +1,374 @@
+.home-page .police-today {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  width: 18rem;
+  background-color: #fafcfe;
+  z-index: 99;
+}
+.home-page .police-today .police-today-box > p {
+  padding: 0.6rem 0;
+  text-align: center;
+  font-size: 1.4rem;
+  background-color: #fafcfe;
+}
+.home-page .police-today .police-today-box .bottom-box {
+  padding: 1rem 1.4rem;
+  background-color: #fff;
+}
+.home-page .police-today .police-today-box .bottom-box .num-font {
+  font-size: 0;
+  text-align: center;
+}
+.home-page .police-today .police-today-box .bottom-box .num-font span {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  margin-left: 1rem;
+  border: 1px solid #01a0e9;
+  color: #01a0e9;
+  font-size: 2.4rem;
+  font-weight: bold;
+}
+.home-page .police-today .police-today-box .bottom-box .num-font span:first-child {
+  margin-left: 0;
+}
+.home-page .police-today .police-today-box .bottom-box .bottom {
+  position: relative;
+  margin-top: 0.6rem;
+}
+.home-page .police-today .police-today-box .bottom-box .bottom span {
+  font-size: 1.4rem;
+  color: #f8990d;
+}
+.home-page .police-today .police-today-box .bottom-box .bottom a {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  font-size: 0.7rem;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+.home-page .police-today .police-today-box .bottom-box .bottom a .iconfont {
+  font-size: 0.6rem;
+}
+.home-page .police-today .police-last-week {
+  position: absolute;
+  right: 22rem;
+  bottom: 0;
+  width: 16rem;
+  height: 100%;
+  border-radius: 4px;
+  background-color: #fff;
+  transition: opacity 0.25s ease-in-out;
+  opacity: 0;
+}
+.home-page .police-today .police-last-week > p {
+  margin: 0 auto;
+  padding: 0.4rem;
+  width: 96%;
+  font-size: 1.2rem;
+  border-bottom: 1px solid rgba(112, 255, 247);
+  box-sizing: border-box;
+}
+.home-page .police-today .police-last-week ul {
+  position: absolute;
+  top: 2.6rem;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+}
+.home-page .police-today .police-last-week ul li {
+  display: inline-block;
+  width: 33%;
+  text-align: center;
+}
+.home-page .police-today .police-last-week ul li a {
+  margin: 0.6rem 0;
+  display: inline-block;
+  width: 2.4rem;
+  height: 2.4rem;
+  line-height: 2.4rem;
+  text-align: center;
+  border-radius: 50%;
+  border: 1px solid rgba(112, 255, 247);
+}
+.home-page .police-today .police-last-week ul li a i {
+  font-size: 1.5rem;
+}
+.home-page .police-today .police-last-week ul li a i.icon-chujing {
+  color: rgba(248, 153, 13);
+}
+.home-page .police-today .police-last-week ul li a i.icon-huojing {
+  color: rgba(233, 88, 87);
+}
+.home-page .police-today .police-last-week ul li a i.icon-qita {
+  color: rgba(73, 109, 255);
+}
+.home-page .police-today .police-last-week ul li p {
+  margin: 0.4rem 0;
+  font-size: 0.8rem;
+}
+.home-page .police-today .police-last-week ul li p span {
+  font-size: 1.6rem;
+  color: #E95857;
+}
+.home-page .police-today .police-last-week ul li:nth-child(1) {
+  position: absolute;
+  left: 0;
+}
+.home-page .police-today .police-last-week ul li:nth-child(1) p span {
+  color: #F8990D;
+}
+.home-page .police-today .police-last-week ul li:nth-child(3) {
+  position: absolute;
+  right: 0;
+}
+.home-page .police-today .police-last-week ul li:nth-child(3) p span {
+  color: #496DFF;
+}
+.home-page .police-today .police-last-week:after {
+  position: absolute;
+  content: '';
+  left: -1rem;
+  bottom: 1rem;
+  border: 8px solid transparent;
+  border-right: 8px solid #fff;
+}
+.home-page .police-today .police-last-week.active {
+  opacity: 1;
+  right: -17rem;
+}
+.home-page .vehicle-list {
+  position: absolute;
+  top: 13rem;
+  left: 1rem;
+  width: 18rem;
+  height: calc(70% - 13rem);
+  background-color: #fff;
+  z-index: 99;
+}
+.home-page .vehicle-list > p {
+  padding: 0.6rem;
+  font-size: 1.4rem;
+  background-color: #fafcfe;
+}
+.home-page .vehicle-list .vehicle-list-box {
+  margin: 0;
+  width: 100%;
+  height: calc(100% - 3.6rem);
+  background-color: #fff;
+  overflow-y: auto;
+}
+.home-page .vehicle-list .vehicle-list-box .el-collapse-item__header {
+  padding-left: 1rem;
+  height: 34px;
+  line-height: 34px;
+  font-size: 1.1rem;
+  background-color: rgba(73, 109, 255, 0.8);
+  color: #fff;
+}
+.home-page .vehicle-list .vehicle-list-box .el-collapse-item__content {
+  padding-bottom: 0;
+}
+.home-page .vehicle-list .vehicle-list-box .each-msg {
+  font-size: 0;
+}
+.home-page .vehicle-list .vehicle-list-box .each-msg span {
+  display: inline-block;
+  width: 50%;
+  font-size: 1rem;
+  text-align: center;
+}
+.home-page .bottom-echart {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding: 1rem;
+  width: 100%;
+  height: 30%;
+  box-sizing: border-box;
+  z-index: 99;
+}
+.home-page .bottom-echart .police-handling {
+  width: calc(50% - 1rem);
+  height: 100%;
+  background-color: #fff;
+}
+.home-page .bottom-echart .police-handling .head-title {
+  position: relative;
+  padding: 0 1rem;
+  height: 3.4rem;
+  line-height: 3.4rem;
+  background-color: #fafcfe;
+}
+.home-page .bottom-echart .police-handling .head-title > span {
+  font-size: 1.4rem;
+}
+.home-page .bottom-echart .police-handling .head-title p {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+}
+.home-page .bottom-echart .police-handling .my-chart1 {
+  width: 100%;
+  height: calc(100% - 3.4rem);
+}
+.home-page .bottom-echart .fire-equipment {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: calc(50% - 1rem);
+  height: calc(100% - 2rem);
+  background-color: #fff;
+}
+.home-page .bottom-echart .fire-equipment .head-title {
+  position: relative;
+  padding: 0 1rem;
+  height: 3.4rem;
+  line-height: 3.4rem;
+  background-color: #fafcfe;
+  font-size: 1.4rem;
+}
+.home-page .bottom-echart .fire-equipment .my-chart2 {
+  width: 100%;
+  height: calc(100% - 3.4rem);
+}
+.duty-squadron {
+  position: relative;
+}
+.duty-squadron .war-statistics {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  width: 24rem;
+  background-color: #fff;
+}
+.duty-squadron .war-statistics > p {
+  background-color: #fafcfe;
+  padding: 0.6rem;
+  font-size: 1.1rem;
+}
+.duty-squadron .war-statistics > p .score {
+  padding: 0 0.6rem;
+  font-size: 1.6rem;
+  color: #f7b500;
+}
+.duty-squadron .war-statistics > p i {
+  color: #00b2ff;
+  cursor: pointer;
+}
+.duty-squadron .war-statistics ul {
+  display: table;
+  width: 100%;
+  text-align: center;
+  border-top: 1px solid rgba(221, 221, 221, 0.6);
+}
+.duty-squadron .war-statistics ul li {
+  position: relative;
+  display: table-cell;
+  padding: 0.8rem 0;
+  font-size: 1rem;
+}
+.duty-squadron .war-statistics ul li p {
+  margin-top: 0.4rem;
+}
+.duty-squadron .war-statistics ul li p b {
+  font-size: 3rem;
+  font-weight: normal;
+}
+.duty-squadron .war-statistics ul li p:after {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  height: 80%;
+  transform: translateY(-50%);
+  content: '';
+  border-right: 1px solid rgba(221, 221, 221, 0.4);
+}
+.duty-squadron .war-statistics ul li:nth-child(1) p {
+  color: #1258ec;
+}
+.duty-squadron .war-statistics ul li:nth-child(2) p {
+  color: #4dcb73;
+}
+.duty-squadron .war-statistics ul li:nth-child(3) p {
+  color: #faa637;
+}
+.duty-squadron .war-statistics ul li:nth-child(3) p:after {
+  display: none;
+}
+.duty-squadron .radar-map {
+  position: absolute;
+  left: 1rem;
+  top: 12rem;
+  width: 24rem;
+  height: calc((100% - 15rem) / 2);
+}
+.duty-squadron .radar-map > p {
+  padding: 0.6rem;
+  font-size: 1.1rem;
+  background-color: #fafcfe;
+}
+.duty-squadron .radar-map .my-chart3 {
+  width: 100%;
+  height: calc(100% - 1.6rem);
+}
+.duty-squadron .police-type-analyse {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  width: 24rem;
+  background-color: #4dcb73;
+  height: calc((100% - 15rem) / 2);
+}
+.duty-squadron .police-type-analyse .head-title {
+  position: relative;
+  padding: 0 1rem;
+  height: 3.4rem;
+  line-height: 3.4rem;
+  background-color: #fafcfe;
+}
+.duty-squadron .police-type-analyse .head-title > span {
+  font-size: 1.1rem;
+}
+.duty-squadron .police-type-analyse .head-title p {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+}
+.duty-squadron .police-type-analyse .my-chart4 {
+  width: 100%;
+  height: calc(100% - 1.6rem);
+}
+.duty-squadron .right-box {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  width: 24rem;
+  background-color: #fff;
+}
+.duty-squadron .right-box .average-time {
+  width: 100%;
+}
+.duty-squadron .right-box .average-time > p {
+  padding: 0.6rem;
+  font-size: 1.1rem;
+  background-color: #fafcfe;
+}
+.duty-squadron .right-box .average-time .my-chart5 {
+  width: 100%;
+  height: 9rem;
+}
+.duty-squadron .right-box .warning-statistics > p {
+  padding: 0.6rem;
+  font-size: 1.1rem;
+  background-color: #fafcfe;
+  border-top: 1px dotted #666;
+}
+.duty-squadron .right-box .warning-statistics .my-chart6 {
+  width: 100%;
+  height: 15rem;
+}
+/*# sourceMappingURL=web-page-public.css.map */

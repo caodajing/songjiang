@@ -1,0 +1,86 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "637481",
+      "name": "复选框",
+      "font_class": "fuxuankuang",
+      "unicode": "e69b",
+      "unicode_decimal": 59035
+    },
+    {
+      "icon_id": "669644",
+      "name": "del",
+      "font_class": "del",
+      "unicode": "e6f5",
+      "unicode_decimal": 59125
+    },
+    {
+      "icon_id": "1053850",
+      "name": "复选框-未选中",
+      "font_class": "webicon202",
+      "unicode": "e680",
+      "unicode_decimal": 59008
+    },
+    {
+      "icon_id": "3006355",
+      "name": "小房子",
+      "font_class": "shouye-copy",
+      "unicode": "e503",
+      "unicode_decimal": 58627
+    },
+    {
+      "icon_id": "8060325",
+      "name": "头像",
+      "font_class": "touxiang",
+      "unicode": "e6ab",
+      "unicode_decimal": 59051
+    },
+    {
+      "icon_id": "8617536",
+      "name": "del",
+      "font_class": "del1",
+      "unicode": "e681",
+      "unicode_decimal": 59009
+    },
+    {
+      "icon_id": "9149474",
+      "name": "复选框",
+      "font_class": "fuxuankuang1",
+      "unicode": "e71e",
+      "unicode_decimal": 59166
+    },
+    {
+      "icon_id": "11277533",
+      "name": "下三角",
+      "font_class": "lower-triangle",
+      "unicode": "e504",
+      "unicode_decimal": 58628
+    },
+    {
+      "icon_id": "12224236",
+      "name": "返 回",
+      "font_class": "fanhui",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    },
+    {
+      "icon_id": "12283450",
+      "name": "下三角",
+      "font_class": "lower-triangle1",
+      "unicode": "e508",
+      "unicode_decimal": 58632
+    },
+    {
+      "icon_id": "13129181",
+      "name": "编 辑",
+      "font_class": "bianji",
+      "unicode": "e50e",
+      "unicode_decimal": 58638
+    }
+  ]
+}
