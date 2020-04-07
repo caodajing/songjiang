@@ -7,37 +7,40 @@
 	    			<i class="iconfont icon-fanhui"></i>
 	    			<span>返回</span>
 	    		</div>
-	    		<div class="top-fixed-box">
-		    		<div class="user-info-box">
-		    			<div class="head-img">
-		    				<img :src=" $dataSetUrl + '/' + detailbaseInfo.photo" alt="" class="icon-touxiang iconfont" v-if="detailbaseInfo.photo">
-		    				<img src="" alt="" class="icon-touxiang iconfont" v-else>
-                            <input type="file" accept="image/*" @change="picUpload">
-		    			</div>
-		    			<div class="info-box">
-		    				<div class="name-box clearfix" >
-		    					<span class="name" >{{detailbaseInfo.realName}}</span>
-		    					<div class="info">
-		    						<span class="sex" >{{detailbaseInfo.sex == 0 ? '男' : '女'}}</span>
-		    						<i></i>
-		    						<span class="age" >{{detailUserInfo.age}}岁</span>
-		    						<i></i>
-		    						<span class="state" >{{detailbaseInfo.type == 1 ? '基层干部' : detailbaseInfo.type == 2 ? '政府专职消防员' : '现役消防士'}}</span>
-		    						<i></i>
-		    					</div>
-		    				</div>
-		    				<p class="belong" >所属中队  {{detailbaseInfo.groupName}}</p>
-		    				<div class="speciality-tag flex">
-		    					<span>+</span>	
-		    					特长标签
-		    				</div>
-		    			</div>
-		    		</div>
-		    		<div class="nav-list clearfix flex" id="nav-list">
-		    			<a href="javascript:;" :class="[item.act ? 'act' : '']" v-for="item,index in navList" @click="navSwitch(index,item.id)">{{item.name}}</a>
-		    		</div>
-		    		<div class="line"></div>
-		    	</div>
+	    		<div class="top-fixed-box-wrap">
+	    			<div class="top-fixed-box">
+			    		<div class="user-info-box">
+			    			<div class="head-img">
+			    				<img :src=" $dataSetUrl + '/' + detailbaseInfo.photo" alt="" class="icon-touxiang iconfont" v-if="detailbaseInfo.photo">
+			    				<img src="" alt="" class="icon-touxiang iconfont" v-else>
+	                            <input type="file" accept="image/*" @change="picUpload">
+			    			</div>
+			    			<div class="info-box">
+			    				<div class="name-box clearfix" >
+			    					<span class="name" >{{detailbaseInfo.realName}}</span>
+			    					<div class="info">
+			    						<span class="sex" >{{detailbaseInfo.sex == 0 ? '男' : '女'}}</span>
+			    						<i></i>
+			    						<span class="age" >{{detailUserInfo.age}}岁</span>
+			    						<i></i>
+			    						<span class="state" >{{detailbaseInfo.type == 1 ? '基层干部' : detailbaseInfo.type == 2 ? '政府专职消防员' : '现役消防士'}}</span>
+			    						<i></i>
+			    					</div>
+			    				</div>
+			    				<p class="belong" >所属中队  {{detailbaseInfo.groupName}}</p>
+			    				<div class="speciality-tag flex">
+			    					<span>+</span>	
+			    					特长标签
+			    				</div>
+			    			</div>
+			    		</div>
+			    		<div class="nav-list clearfix flex" id="nav-list">
+			    			<a href="javascript:;" :class="[item.act ? 'act' : '']" v-for="item,index in navList" @click="navSwitch(index,item.id)">{{item.name}}</a>
+			    		</div>
+			    		<div class="line"></div>
+			    	</div>
+	    		</div>
+	    		
 		    	<!--  基本信息 -->
 		    	<div class="base-info-box common-box" id="baseInfo">
 		    		<div class="title-common">
@@ -378,7 +381,7 @@
 		    				</thead>
 		    				<tbody>
 		    					<tr v-for="item in detailTrainRecord">
-		    						<td>{{item.createdTime}}</td>
+		    						<td>{{item.trainTime}}</td>
 		    						<td>{{item.projectName}}</td>
 		    						<td>{{item.achievement}}</td>
 		    					</tr>
@@ -399,11 +402,12 @@
 		    					<th>处警表现</th>
 		    				</thead>
 		    				<tbody>
-		    					<tr v-for="item in detailTrainRecord">
-		    						<td>{{item.createdTime}}</td>
-		    						<td>{{item.projectName}}</td>
-		    						<td>{{item.achievement}}</td>
-		    						<td>{{item.achievement}}</td>
+		    					<tr v-for="item in detailPoliceRecord">
+		    						<td>{{item.issueTime}}</td>
+		    						<td>{{item.alarmModeVal}}</td>
+		    						<td>{{item.addressOfFireUnit}}</td>
+		    						<td>{{item.carName}}</td>
+		    						<td>{{item.other}}</td>
 		    					</tr>
 		    				</tbody>
 		    			</table>
@@ -449,7 +453,7 @@
 	                    act:false
 	                },
 	                {
-	                    name:'出警记录',
+	                    name:'处警记录',
 	                    id: 'policeRecord',
 	                    act:false
 	                },
@@ -579,6 +583,7 @@
     			detailUserInfo:{}, // 详情信息----个人信息
     			detailTrainRecord:{}, // 详情信息----训练记录
     			detailPXRecord:[], // 详情信息----培训记录
+    			detailPoliceRecord:[], // 详情信息----处警记录
     			detailPXEditData:{ // 培训记录编辑
     				trainingDate:"",
     				place:"",
@@ -602,6 +607,24 @@
         	this.userId = this.$route.query.userId;
         	this.getDetailBaseInfo();
         	
+        	window.scrollTo(0, 0); 
+	        $(window).scroll(function() {
+	            //为了保证兼容性，这里取两个值，哪个有值取哪一个
+	            
+	            var eleNav = $(".top-fixed-box-wrap");
+	            var eleContent = $("#content");
+	            var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+	            console.log("滚动距离" + scrollTop);
+	            if(scrollTop > 0){
+	                eleNav.css({"position": "fixed","top": '0',"zIndex": '99',"left": '0',"width": '100%'})
+	                $('#baseInfo').css({"marginTop":"230px"})
+	            }else{
+	                eleNav.css({"position": "fixed","top": '100px',"zIndex": '99',"left": '0',"width": '100%'})
+	                $('#baseInfo').css({"marginTop":"327px"})
+	            }
+	            
+	            
+	        })
         	
         },
         methods:{
@@ -859,6 +882,7 @@
         				this.getDetailBodyData();
         				this.getDetailTrainRecord();
         				this.getDetailPXRecord();
+        				this.getDetailPoliceRecord();
 			        	let vm = this;
 			        	this.$nextTick(() => {
 			        		vm.paged(document.getElementById("PX-box"),vm.PXPage,function(){
@@ -904,14 +928,14 @@
 			    })
         	},
         	getDetailTrainRecord(){  // 获取详情----训练记录
-        		this.$ajax.get(this.$dataSetUrlY + '/songjiangxn/taskProject/getProjectUserByUserSortByScore',{
+        		this.$ajax.get(this.$dataSetUrlQ + '/xf-unit/user/getTrainRecord',{
                     params: {
                         userId: this.detailbaseInfo.id
                     }
                 }).then((res) => {
         			let data = res.data;
         			console.log(data);
-        			if(data.status == 200){
+        			if(data.code == 200){
         				this.detailTrainRecord = data.data;
         			}else{
         				this.detailTrainRecord = [];
@@ -930,6 +954,35 @@
         			if(data.code == 200){
         				this.detailPXRecord = this.detailPXRecord.concat(data.data[0].dataList);
         				this.PXTotalPage = data.data[0].totalPages;
+        			}
+			    }).catch(function (error) {
+			        console.log(error);
+			    })
+        	},
+        	getDetailPoliceRecord(){  // 获取详情----处警记录
+        		this.$ajax.get(this.$dataSetUrlQ + '/xf-unit/user/getPoliceRecord',{
+        			params:{
+        				userId: this.detailbaseInfo.id
+        			}
+        		},{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then((res) => {
+        			let data = res.data;
+        			if(data.code == 200){
+        				this.detailPoliceRecord = data.data;
+        				this.detailPoliceRecord.map((val,i) => {
+        					if(val.alarmMode == 1){
+        						val.alarmModeVal = '火警扑救';
+        					}else if(val.alarmMode == 2){
+        						val.alarmModeVal = '社会救助';
+        					}else if(val.alarmMode == 3){
+        						val.alarmModeVal = '抢险救援';
+        					}else if(val.alarmMode == 4){
+        						val.alarmModeVal = '反恐排爆';
+        					}else{
+        						val.alarmModeVal = '其他';
+        					}
+        				})
+        			}else{
+        				this.detailPoliceRecord = [];
         			}
 			    }).catch(function (error) {
 			        console.log(error);
@@ -1007,8 +1060,21 @@
 	            this.currentTime = date + ' ' + hour + ':' + minute + ':' + second; 
 	        },
         	navSwitch(index,_id){
-	            let id = '#' + _id;
-	            document.querySelector(id).scrollIntoView(true);
+	            // let id = '#' + _id;
+	            // document.querySelector(id).scrollIntoView(true);
+	            if(index == 0){
+	            	window.scrollTo(0,0); 
+	            }else if(index == 1){
+	            	window.scrollTo(0,400); 
+	            }else if(index == 2){
+	            	window.scrollTo(0,700);
+	            }else if(index == 3){
+	            	window.scrollTo(0,1377);
+	            }else if(index == 4){
+	            	window.scrollTo(0,2103);
+	            }else if(index == 5){
+	            	window.scrollTo(0,1743);
+	            }
 	            this.navList.map((val,i) => {
 	                if(i == index){
 	                    val.act = true;

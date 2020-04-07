@@ -28,7 +28,7 @@ Vue.prototype.$URLSpare='';//德哥接口
 
 Vue.prototype.$dataSetUrl='http://shcloud2.wmtechzone.club:50001';// 数据设置接口---ader
 Vue.prototype.$dataSetUrlY='http://183.131.85.218:12007';// 数据设置接口---严
-
+Vue.prototype.$dataSetUrlQ='http://x3xspf.natappfree.cc';// 数据设置接口---瞿健
 
 // 静安
 var apiPath = {  

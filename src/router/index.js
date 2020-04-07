@@ -233,10 +233,6 @@ const router= new Router({
             name: 'fireDetail',
             component: fireDetail,
         },
-
-
-
-
         {
           path: '/bigScreenMode',
           name: 'bigScreenMode',

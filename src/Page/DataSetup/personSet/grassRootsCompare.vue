@@ -10,7 +10,8 @@
 	    		<div class="top-fixed-box">
 		    		<div class="user-info-box">
 		    			<div class="head-img">
-		    				<img src="" alt="" class="icon-touxiang iconfont">
+		    				<img :src="$dataSetUrl + '/' + getData[0].sysUser.photo" alt="" class="icon-touxiang iconfont" v-if="getData[0].sysUser.photo">
+		    				<img src="" alt="" class="icon-touxiang iconfont" v-else>
 		    			</div>
 		    			<div class="info-box">
 		    				<div class="name-box clearfix">
@@ -34,7 +35,8 @@
 		    		<div class="line"></div>
 		    		<div class="user-info-box">
 		    			<div class="head-img">
-		    				<img src="" alt="" class="icon-touxiang iconfont">
+		    				<img :src="$dataSetUrl + '/' + getData[1].sysUser.photo" alt="" class="icon-touxiang iconfont" v-if="getData[1].sysUser.photo">
+		    				<img src="" alt="" class="icon-touxiang iconfont" v-else>
 		    			</div>
 		    			<div class="info-box">
 		    				<div class="name-box clearfix">

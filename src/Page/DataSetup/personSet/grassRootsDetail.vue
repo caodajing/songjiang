@@ -7,37 +7,39 @@
 	    			<i class="iconfont icon-fanhui"></i>
 	    			<span>返回</span>
 	    		</div>
-	    		<div class="top-fixed-box">
-		    		<div class="user-info-box">
-		    			<div class="head-img">
-		    				<img :src=" $dataSetUrl + '/' + detailbaseInfo.photo" alt="" class="icon-touxiang iconfont" v-if="detailbaseInfo.photo">
-		    				<img src="" alt="" class="icon-touxiang iconfont" v-else>
-                            <input type="file" accept="image/*" @change="picUpload">
-		    			</div>
-		    			<div class="info-box">
-		    				<div class="name-box clearfix" >
-		    					<span class="name" >{{detailbaseInfo.realName}}</span>
-		    					<div class="info">
-		    						<span class="sex" >{{detailbaseInfo.sex == 0 ? '男' : '女'}}</span>
-		    						<i></i>
-		    						<span class="age" >{{detailUserInfo.age}}岁</span>
-		    						<i></i>
-		    						<span class="state" >{{detailbaseInfo.type == 1 ? '基层干部' : detailbaseInfo.type == 2 ? '政府专职消防员' : '现役消防士'}}</span>
-		    						<i></i>
-		    					</div>
-		    				</div>
-		    				<p class="belong" >所属中队  {{detailbaseInfo.groupName}}</p>
-		    				<div class="speciality-tag flex">
-		    					<span>+</span>	
-		    					特长标签
-		    				</div>
-		    			</div>
-		    		</div>
-		    		<div class="nav-list clearfix flex" id="nav-list">
-		    			<a href="javascript:;" :class="[item.act ? 'act' : '']" v-for="item,index in navList" @click="navSwitch(index,item.id)">{{item.name}}</a>
-		    		</div>
-		    		<div class="line"></div>
-		    	</div>
+	    		<div class="top-fixed-box-wrap">
+	    			<div class="top-fixed-box">
+			    		<div class="user-info-box">
+			    			<div class="head-img">
+			    				<img :src=" $dataSetUrl + '/' + detailbaseInfo.photo" alt="" class="icon-touxiang iconfont" v-if="detailbaseInfo.photo">
+			    				<img src="" alt="" class="icon-touxiang iconfont" v-else>
+	                            <input type="file" accept="image/*" @change="picUpload">
+			    			</div>
+			    			<div class="info-box">
+			    				<div class="name-box clearfix" >
+			    					<span class="name" >{{detailbaseInfo.realName}}</span>
+			    					<div class="info">
+			    						<span class="sex" >{{detailbaseInfo.sex == 0 ? '男' : '女'}}</span>
+			    						<i></i>
+			    						<span class="age" >{{detailUserInfo.age}}岁</span>
+			    						<i></i>
+			    						<span class="state" >{{detailbaseInfo.type == 1 ? '基层干部' : detailbaseInfo.type == 2 ? '政府专职消防员' : '现役消防士'}}</span>
+			    						<i></i>
+			    					</div>
+			    				</div>
+			    				<p class="belong" >所属中队  {{detailbaseInfo.groupName}}</p>
+			    				<div class="speciality-tag flex">
+			    					<span>+</span>	
+			    					特长标签
+			    				</div>
+			    			</div>
+			    		</div>
+			    		<div class="nav-list clearfix flex" id="nav-list">
+			    			<a href="javascript:;" :class="[item.act ? 'act' : '']" v-for="item,index in navList" @click="navSwitch(index,item.id)">{{item.name}}</a>
+			    		</div>
+			    		<div class="line"></div>
+			    	</div>
+	    		</div>
 		    	<!--  基本信息 -->
 		    	<div class="base-info-box common-box" id="baseInfo" >
 		    		<div class="title-common">
@@ -642,6 +644,26 @@
         	this.userInfo = JSON.parse(getCookie("userInfo"));
         	this.userId = this.$route.query.userId;
         	this.getDetailBaseInfo();
+
+        	window.scrollTo(0, 0); 
+	        $(window).scroll(function() {
+	            //为了保证兼容性，这里取两个值，哪个有值取哪一个
+	            
+	            var eleNav = $(".top-fixed-box-wrap");
+	            var eleContent = $("#content");
+	            var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+	            console.log("滚动距离" + scrollTop);
+	            if(scrollTop > 0){
+	                eleNav.css({"position": "fixed","top": '0',"zIndex": '99',"left": '0',"width": '100%'})
+	                $('#baseInfo').css({"marginTop":"230px"})
+	            }else{
+	                eleNav.css({"position": "fixed","top": '100px',"zIndex": '99',"left": '0',"width": '100%'})
+	                $('#baseInfo').css({"marginTop":"327px"})
+	            }
+	            
+	            
+	        })
+
         },
         methods:{ 
         	updatePositionHistorySave(){ // 修改任职记录
@@ -991,8 +1013,17 @@
 			    })
 	        }, 
         	navSwitch(index,_id){
-	            let id = '#' + _id;
-	            document.querySelector(id).scrollIntoView(true);
+	            // let id = '#' + _id;
+	            // document.querySelector(id).scrollIntoView(true);
+	            if(index == 0){
+	            	window.scrollTo(0,0); 
+	            }else if(index == 1){
+	            	window.scrollTo(0,400); 
+	            }else if(index == 2){
+	            	window.scrollTo(0,700);
+	            }else if(index == 3){
+	            	window.scrollTo(0,1500);
+	            }
 	            this.navList.map((val,i) => {
 	                if(i == index){
 	                    val.act = true;

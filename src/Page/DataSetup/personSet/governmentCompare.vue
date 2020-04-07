@@ -10,7 +10,8 @@
 	    		<div class="top-fixed-box">
 		    		<div class="user-info-box">
 		    			<div class="head-img">
-		    				<img src="" alt="" class="icon-touxiang iconfont">
+		    				<img :src="$dataSetUrl + '/' + getData[0].sysUser.photo" alt="" class="icon-touxiang iconfont" v-if="getData[0].sysUser.photo">
+		    				<img src="" alt="" class="icon-touxiang iconfont" v-else>
 		    			</div>
 		    			<div class="info-box">
 		    				<div class="name-box clearfix">
@@ -34,7 +35,8 @@
 		    		<div class="line"></div>
 		    		<div class="user-info-box">
 		    			<div class="head-img">
-		    				<img src="" alt="" class="icon-touxiang iconfont">
+		    				<img :src="$dataSetUrl + '/' + getData[1].sysUser.photo" alt="" class="icon-touxiang iconfont" v-if="getData[1].sysUser.photo">
+		    				<img src="" alt="" class="icon-touxiang iconfont" v-else>
 		    			</div>
 		    			<div class="info-box">
 		    				<div class="name-box clearfix">
@@ -128,12 +130,12 @@
 		    					<th style="width:221px;">最好成绩</th>
 		    				</thead>
 		    				<tbody>
-		    					<tr v-for="item in 10">
-		    						<td style="width:221px;">内容</td>
-		    						<td style="width:221px;">身高</td>
-		    						<td style="width:244px;">内容</td>
-		    						<td style="width:221px;">内容</td>
-		    						<td style="width:221px;">内容</td>
+		    					<tr v-for="item in projectVoList">
+		    						<td style="width:221px;">{{item.count}}</td>
+		    						<td style="width:221px;">{{item.achievement}}</td>
+		    						<td style="width:244px;">{{item.projectName}}</td>
+		    						<td style="width:221px;">{{item.count1}}</td>
+		    						<td style="width:221px;">{{item.achievement1}}</td>
 		    					</tr>
 		    				</tbody>
 		    			</table>
@@ -154,12 +156,12 @@
 		    					<th style="width:221px;">培训结果</th>
 		    				</thead>
 		    				<tbody>
-		    					<tr v-for="item in 10">
-		    						<td style="width:221px;">内容</td>
-		    						<td style="width:221px;">身高</td>
-		    						<td style="width:244px;">内容</td>
-		    						<td style="width:221px;">内容</td>
-		    						<td style="width:221px;">内容</td>
+		    					<tr v-for="each in trainingVoList">
+		    						<td style="width:221px;">{{each.oneUserTraining ? each.oneUserTraining.trainingDate : ''}}</td>
+		    						<td style="width:221px;">{{each.oneUserTraining ?  each.oneUserTraining.grade : ''}}</td>
+		    						<td style="width:244px;">{{each.item}}</td>
+		    						<td style="width:221px;">{{each.twoUserTraining ? each.twoUserTraining.trainingDate : ''}}</td>
+		    						<td style="width:221px;">{{each.twoUserTraining ? each.twoUserTraining.grade : ''}}</td>
 		    					</tr>
 		    				</tbody>
 		    			</table>
@@ -176,12 +178,12 @@
         data(){
         	return{
         		alrCheckedList:[],
-        		test:{
-
-        		},
+        		projectVoList:[], // 训练数据 
+        		trainingVoList:[], // 培训数据
         		getData:[
         			{
         				sysUser:{},  // 基本信息
+        				projectVoList:[], // 训练数据
 	        			sysUserPhysicalData:{
 	        				height:"",
 	        				headCircumference:"",
@@ -196,6 +198,7 @@
         			},
         			{
         				sysUser:{},  // 基本信息
+        				projectVoList:[], // 训练数据
 	        			sysUserPhysicalData:{
 	        				height:"",
 	        				headCircumference:"",
@@ -241,6 +244,36 @@
         				if(!this.getData[1].sysUserInfo){
         					this.getData[1].sysUserInfo = {};
         				}
+
+        				// 训练数据
+
+        				if(!this.getData[0].projectVoList){
+        					this.getData[0].projectVoList = [];
+        				}
+        				if(!this.getData[1].projectVoList){
+        					this.getData[1].projectVoList = [];
+        				}
+        				this.getData[0].projectVoList.map((val,i) => {
+        					this.getData[1].projectVoList.map((val1,i1) => {
+        						if(val.projectName == val1.projectName){
+        							let each = {};
+        							each.projectName = val.projectName;
+        							each.count = val.projectUser.count;
+        							each.count1 = val1.projectUser.count;
+        							each.achievement  = val.projectUser.achievement ;
+        							each.achievement1 = val1.projectUser.achievement;
+        							this.projectVoList.push(each);
+        						}
+        					})
+        				})   
+
+        				// 培训数据
+        				if(!this.getData[0].trainingVoList){
+        					this.trainingVoList = [];
+        				}else{
+        					this.trainingVoList = this.getData[0].trainingVoList;
+        				}
+
         			}
 			    }).catch(function (error) {
 			        console.log(error);
