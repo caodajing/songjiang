@@ -45,7 +45,7 @@
                     },
                     {name: '辅助决策', icon: '', path: '/assistMakePolicy'},
                     {name: '执勤动态', icon: '', path: '/dutyDynamics'},
-                    {name: '战备工作', icon: '', path: '/combatReadiness'},
+                    {name: '战备工作', icon: '', path: '/training/index'},
                     {name: '战评总结', icon: '', path: '/summingUp'},
                     {name: '数据设置', icon: '', path: '/personSet/index'},
                     {name: '大屏模式', icon: '', path: '/bigScreenMode'},
