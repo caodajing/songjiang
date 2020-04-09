@@ -65,6 +65,6 @@ export default {
 
 <style scoped>
 .form_item_short {
-  width: 50px;
+  width: 70px;
 }
 </style>

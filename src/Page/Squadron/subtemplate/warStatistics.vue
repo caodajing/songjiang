@@ -25,30 +25,37 @@
         name: "warStatistics",
         data() {
             return {
-                deptData: {},
-                listData: {name: '松一中队', score: '8.9', one: '22', two: '2', three: '29'}
+                groupId: '',
+                listData: {name: '泗泾中队', score: '0', one: '0', two: '0', three: '0'}
             }
         },
         props: ['myProp'],
         watch: {
             myProp(newVal) {
-                console.log(newVal)
+                this.listData.name = JSON.parse(newVal).groupName;
+                this.groupId = JSON.parse(newVal).groupId;
+                // this.listData.name=newVal.name;
+                this.deptWarStatistics();
             },
         },
-        created() {
-            this.deptWarStatistics();
-        },
+        // created() {
+        //     this.deptWarStatistics();
+        // },
         methods: {
-            deptWarStatistics() {
-                this.$ajax.get(this.$URL + '/dutySquadron/combatStatistics', {
+            deptWarStatistics(data) {//data.code
+                this.$ajax.get(this.$URL + '/xf-unit/dutySquadron/combatStatistics', {
                     params: {
-                        groupId: '177094360841860269'
+                        groupId: this.groupId
                     }
                 }).then((res) => {
                     if (res.data.code == 200) {
-                        console.log(res.data.data, 1234526);
+                        this.listData.score = res.data.data.combatScore;
+                        this.listData.one = res.data.data.policePressure;
+                        this.listData.two = res.data.data.standbyVehicles;
+                        this.listData.three = res.data.data.standbyForce;
+                        // console.log(res.data.data, 1234526);
                     } else {
-                        this.$Message.error(res.data.message)
+                        this.$message.error(res.data.message)
                     }
                 }).catch(function (error) {
                     console.log(error);

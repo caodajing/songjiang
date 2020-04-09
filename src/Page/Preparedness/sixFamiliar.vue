@@ -29,7 +29,6 @@
         <el-table
           style="margin-top:10px"
           border
-          stripe
           height="calc(100vh - 320px)"
           v-loading="loading"
           :data="list"
@@ -471,12 +470,7 @@ export default {
   }
 };
 </script>
-<style>
-.el-table__header th {
-  background: #f8f8f9;
-  color: #333333;
-}
-</style>
+
 <style scoped>
 .form_item {
   width: 300px;

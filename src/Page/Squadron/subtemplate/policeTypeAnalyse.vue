@@ -3,18 +3,16 @@
   <div class="police-type-analyse">
     <div class="head-title">
       <span>出警类型分析</span>
-<!--      <p>时间范围-->
-<!--        <el-date-picker-->
-<!--          v-model="timeLine"-->
-<!--          type="daterange"-->
-<!--          align="right"-->
-<!--          unlink-panels-->
-<!--          range-separator="至"-->
-<!--          start-placeholder="开始日期"-->
-<!--          end-placeholder="结束日期"-->
-<!--          :picker-options="pickerOptions2">-->
-<!--        </el-date-picker>-->
-<!--      </p>-->
+      <p>时间范围
+        <el-select v-model="timeLine" placeholder="" @change="getAlarmTypeData">
+          <el-option
+            v-for="item in timeList"
+            :key="item.code"
+            :label="item.name"
+            :value="item.code">
+          </el-option>
+        </el-select>
+      </p>
     </div>
 
     <div id="myChart4" class="my-chart4"></div>
@@ -36,62 +34,86 @@
         name: "policeTypeAnalyse",
         data() {
             return {
-                timeLine: '',
-                pickerOptions2: {
-                    shortcuts: [{
-                        text: '最近一周',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }, {
-                        text: '最近一个月',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }, {
-                        text: '最近三个月',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }]
-                },
+                groupId: '',
+                timeLine: '1',
+                timeList: [{name: '本周', code: '1'}, {name: '上周', code: '2'}],
+
+                maxNumY: 0,
+                dataY: [
+                    {value: 0, name: '体育技能'},
+                    {value: 0, name: '体育行为'},
+                    {value: 0, name: '体质健康'},
+                    {value: 0, name: '体育意识'},
+                    {value: 0, name: '体育知识'}],
+
+                fontColor1: 'rgba(211, 211, 211, 1)',
+                fontColor2: 'rgba(85, 85, 85, 1)',
+                fontColor3: 'rgba(26, 180, 184, 1)',
+                fontColor4: 'rgba(250,250,250,0.5)',
             }
         },
+        props: ['myProp'],
+        watch: {
+            myProp(newVal) {
+                this.groupId = JSON.parse(newVal).groupId;
+                this.getAlarmTypeData();
+            },
+        },
         mounted(){
+            if (this.$route.path.indexOf('bigScreen') != -1) {
+                this.fontColor1 = 'rgba(255,255,255,1)';
+                this.fontColor2 = 'rgba(255,255,255,0.9)';
+                // this.fontColor3 = 'rgba(255, 255, 255, 1)';
+                // this.fontColor4 = 'rgba(255,255,255,1)';
+            }
             this.drawingFn();
         },
-        methods:{
-            drawingFn(){
+        methods: {
+            getAlarmTypeData() {//data.code
+                this.$ajax.get(this.$URL + '/xf-unit/dutySquadron/analysisOfPoliceType', {
+                    params: {
+                        groupId: this.groupId,
+                        type: this.timeLine,
+                    }
+                }).then((res) => {
+                    if (res.data.code == 200) {
+                        this.maxNumY = 0;
+                        this.dataY=[];
+                        res.data.data.map((e) => {
+                            this.dataY.push({value: e.finishCount,name:e.alarmType});
+                            this.maxNumY += (e.finishCount - 0);
+                        });
+                        // console.log(this.maxNumY,this.dataY, '出警类型分析');
+                    } else {
+                        this.$message.error(res.data.message)
+                    }
+                    this.drawingFn();
+                }).catch(function (error) {
+                    console.log(error);
+                })
+            },
+            drawingFn() {
 
-                let  colorList=['#afa3f5', '#00d488', '#3feed4', '#3bafff', '#f1bb4c', "rgba(250,250,250,0.5)"];
-                let sportsIcon = {
-                    'a':'https://gallery.echartsjs.com/asset/get/s/data-1559121268278-ozjd-lXoz.png',
-                    'b':'https://gallery.echartsjs.com/asset/get/s/data-1559121263841-UC5w7mTJ9.png',
-                    'c':'https://gallery.echartsjs.com/asset/get/s/data-1559121259198-sxyPSimU9.png',
-                    'd':'https://gallery.echartsjs.com/asset/get/s/data-1559121254241-xj5JAIBzC.png',
-                    'e':'https://gallery.echartsjs.com/asset/get/s/data-1559121249274-QxHDAdQGy.png',
-                };
+                let colorList = ['#afa3f5', '#00d488', '#3feed4', '#3bafff', '#f1bb4c', "rgba(250,250,250,0.5)"];
+                // let sportsIcon = {
+                //     'a':'https://gallery.echartsjs.com/asset/get/s/data-1559121268278-ozjd-lXoz.png',
+                //     'b':'https://gallery.echartsjs.com/asset/get/s/data-1559121263841-UC5w7mTJ9.png',
+                //     'c':'https://gallery.echartsjs.com/asset/get/s/data-1559121259198-sxyPSimU9.png',
+                //     'd':'https://gallery.echartsjs.com/asset/get/s/data-1559121254241-xj5JAIBzC.png',
+                //     'e':'https://gallery.echartsjs.com/asset/get/s/data-1559121249274-QxHDAdQGy.png',
+                // };
 
                 let myChart = echarts.init(document.getElementById('myChart4'));
                 myChart.setOption(
                     {
                         title: {
-                            text: '80',
-                            subtext: '总平均值(分)',
+                            text: '',
+                            subtext: '',
                             x: 'center',
                             y: 'center',
                             textStyle: {
-                                fontSize:30,
-                                fontWeight:'normal',
+                                fontSize: 30,
+                                fontWeight: 'normal',
                                 color: ['#333']
                             },
                             subtextStyle: {
@@ -105,7 +127,7 @@
                             right: '10%'
                         },
                         legend: {
-                            show:false,
+                            show: false,
                             orient: 'vertical',
                             top: "middle",
                             right: "5%",
@@ -119,12 +141,12 @@
                         series: [
                             // 主要展示层的
                             {
-                                radius: ['25%', '51%'],
+                                radius: ['27%', '47%'],
                                 center: ['50%', '50%'],
                                 type: 'pie',
                                 itemStyle: {
                                     normal: {
-                                        color: function(params) {
+                                        color: function (params) {
                                             return colorList[params.dataIndex]
                                         }
                                     }
@@ -135,7 +157,7 @@
                                         length: 15,
                                         length2: 120,
                                         lineStyle: {
-                                            color: '#d3d3d3'
+                                            color: this.fontColor1
                                         },
                                         align: 'right'
                                     },
@@ -144,93 +166,67 @@
                                         show: true
                                     }
                                 },
-                                label:{
-                                    normal:{
-                                        formatter: function(params){
-                                            var str = '';
-                                            switch(params.name){
-                                                case '体育技能':str = '{a|}\n{nameStyle|体育技能 }'+'{rate|'+params.value+'%}';break;
-                                                case '体育行为':str = '{b|}\n{nameStyle|体育行为 }'+'{rate|'+params.value+'%}';break;
-                                                case '体质健康':str = '{c|}\n{nameStyle|体质健康 }'+'{rate|'+params.value+'%}';break;
-                                                case '体育意识':str = '{d|}\n{nameStyle|体育意识 }'+'{rate|'+params.value+'%}';break;
-                                                case '体育知识':str = '{e|}\n{nameStyle|体育知识 }'+'{rate|'+params.value+'%}';break;
-                                            }
+                                label: {
+                                    normal: {
+                                        formatter:  (params)=> {
+                                            let temp=this.maxNumY==0?'0':(params.value*100/this.maxNumY).toFixed(1);
+                                            let str = '{a|}\n{nameStyle|' + params.name + ' }' + '{rate|' + temp + '%}';
                                             return str
                                         },
-                                        padding: [0, -110],
-                                        height: 165,
+                                        padding: [0, -140],
+                                        // height: 165,
                                         rich: {
                                             a: {
-                                                width:38,
-                                                height:38,
+                                                width: 38,
+                                                height: 38,
                                                 lineHeight: 50,
-                                                backgroundColor: {
-                                                    image: sportsIcon.e
-                                                },
                                                 align: 'left'
                                             },
                                             b: {
-                                                width:29,
-                                                height:45,
+                                                width: 29,
+                                                height: 45,
                                                 lineHeight: 50,
-                                                backgroundColor: {
-                                                    image: sportsIcon.d
-                                                },
                                                 align: 'left'
                                             },
                                             c: {
-                                                width:34,
-                                                height:33,
+                                                width: 34,
+                                                height: 33,
                                                 lineHeight: 50,
-                                                backgroundColor: {
-                                                    image: sportsIcon.c
-                                                },
                                                 align: 'left'
                                             },
                                             d: {
-                                                width:34,
-                                                height:44,
+                                                width: 34,
+                                                height: 44,
                                                 lineHeight: 50,
-                                                backgroundColor: {
-                                                    image: sportsIcon.b
-                                                },
                                                 align: 'left'
                                             },
                                             e: {
-                                                width:38,
-                                                height:30,
+                                                width: 38,
+                                                height: 30,
                                                 lineHeight: 50,
-                                                backgroundColor: {
-                                                    image: sportsIcon.a
-                                                },
+                                                // backgroundColor: {
+                                                //     image: sportsIcon.a
+                                                // },
                                                 align: 'left'
                                             },
                                             nameStyle: {
                                                 fontSize: 16,
-                                                color: "#555",
+                                                color: this.fontColor2,
                                                 align: 'left'
                                             },
                                             rate: {
                                                 fontSize: 20,
-                                                color: "#1ab4b8",
+                                                color: this.fontColor3,
                                                 align: 'left'
                                             }
                                         }
                                     }
                                 },
-                                data: [
-                                    {
-                                        value:17,
-                                        name:'体育技能',
-                                    },
-                                    {value:23, name:'体育行为'},
-                                    {value:27, name:'体质健康'},
-                                    {value:33, name:'体育意识'},
-                                    {value:9, name:'体育知识'}],
+                                data: this.dataY
                             },
                             // 边框的设置
                             {
-                                radius: ['47%', '51%'],
+                                radius: ['42%', '47%'],
                                 center: ['50%', '50%'],
                                 type: 'pie',
                                 label: {
@@ -255,7 +251,7 @@
                                 },
                                 itemStyle: {
                                     normal: {
-                                        color:'rgba(250,250,250,0.5)'
+                                        color: this.fontColor4
                                     }
                                 },
                                 data: [{

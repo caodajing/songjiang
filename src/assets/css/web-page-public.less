@@ -28,10 +28,11 @@
             display: inline-block;
             padding: 0.3rem 0.6rem;
             margin-left: 1rem;
-            border: 1px solid #01a0e9;
             color: #01a0e9;
+            border: 1px solid rgba(106, 240, 235, 0.9);
             font-size: 2.4rem;
             font-weight: bold;
+            box-shadow: 0px 0px 5px 3px rgba(106, 240, 235, 0.9) inset;
 
             &:first-child {
               margin-left: 0;
@@ -73,6 +74,7 @@
       border-radius: 4px;
       background-color: #fff;
       transition: opacity 0.25s ease-in-out;
+      box-shadow: 0px 0px 5px 3px rgba(106, 240, 235, 0.9) inset;
       opacity: 0;
 
 
@@ -160,7 +162,7 @@
         left: -1rem;
         bottom: 1rem;
         border: 8px solid transparent;
-        border-right: 8px solid #fff;
+        border-right: 8px solid rgba(106, 240, 235, 0.9);
       }
 
       &.active {
@@ -251,6 +253,13 @@
           top: 50%;
           right: 1rem;
           transform: translateY(-50%);
+
+          .el-input__inner {
+            margin-left: 0.6rem;
+            width: 5rem;
+            height: 2rem;
+            line-height: 2rem;
+          }
         }
       }
 
@@ -285,9 +294,91 @@
       }
     }
   }
+
+  .weather-box {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 20rem;
+    z-index: 100;
+    background-color: #fff;
+    border-radius: 4px;
+
+    ul {
+      padding: 1rem;
+      min-height: 12rem;
+
+      li {
+        padding: 0.3rem 0;
+
+        div {
+          padding: 0.3rem 0;
+        }
+
+        &:first-child {
+          border-bottom: 1px solid #3f7fa6;
+        }
+      }
+    }
+
+    .weather-img {
+      position: absolute;
+      top: 6rem;
+      right: 1rem;
+      width: 125px;
+      height: 94px;
+      background-image: url("../images/water-date.png");
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+    .weather-img-box{
+      position: absolute;
+      top: 6rem;
+      right: 1rem;
+      width: 125px;
+      height: 94px;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+  }
+
+  .map-sign-box {
+    position: absolute;
+    top: 1rem;
+    right: 23rem;
+    z-index: 103;
+
+    li {
+      position: relative;
+      padding: 0.8rem 0;
+
+      b {
+        position: absolute;
+        top: 50%;
+        left: -40px;
+        width: 30px;
+        height: 30px;
+        transform: translateY(-50%);
+        background-repeat: no-repeat;
+        background-size: cover;
+
+        &.one {
+          background-image: url("../../assets/images/mapIcon1.png");
+        }
+
+        &.two {
+          background-image: url("../../assets/images/mapIcon2.png");
+        }
+
+        &.three {
+          background-image: url("../../assets/images/mapIcon3.png");
+        }
+      }
+    }
+  }
 }
 
-@SameWidth2: 24rem;
+@SameWidth2: calc((100vh - 14rem) / 2);
 .duty-squadron {
   position: relative;
 
@@ -297,6 +388,7 @@
     left: 1rem;
     width: @SameWidth2;
     background-color: #fff;
+    z-index: 100;
 
     > p {
       background-color: #fafcfe;
@@ -370,7 +462,9 @@
     left: 1rem;
     top: 12rem;
     width: @SameWidth2;
-    height: calc((100% - 15rem) / 2);
+    height: calc((100% - 14rem) / 2);
+    background-color: #fff;
+    z-index: 100;
 
     > p {
       padding: 0.6rem;
@@ -382,15 +476,26 @@
       width: 100%;
       height: calc(100% - 1.6rem);
     }
+
+    &:after {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      content: '';
+      background-color: transparent;
+    }
   }
 
-  .police-type-analyse{
+  .police-type-analyse {
     position: absolute;
     left: 1rem;
     bottom: 1rem;
     width: @SameWidth2;
-    background-color: #4dcb73;
-    height: calc((100% - 15rem) / 2);
+    background-color: #fff;
+    height: calc((100% -  14rem) / 2);
+    z-index: 100;
 
     .head-title {
       position: relative;
@@ -408,6 +513,13 @@
         top: 50%;
         right: 1rem;
         transform: translateY(-50%);
+
+        .el-input__inner {
+          margin-left: 0.6rem;
+          width: 5rem;
+          height: 2rem;
+          line-height: 2rem;
+        }
       }
     }
 
@@ -416,13 +528,16 @@
       height: calc(100% - 1.6rem);
     }
   }
-  .right-box{
+
+  .right-box {
     position: absolute;
     right: 1rem;
     top: 1rem;
     width: @SameWidth2;
     background-color: #fff;
-    .average-time{
+    z-index: 100;
+
+    .average-time {
       width: 100%;
       //height: 10rem;
 
@@ -432,21 +547,405 @@
         background-color: #fafcfe;
       }
 
-      .my-chart5{
+      .my-chart5 {
         width: 100%;
         height: 9rem;
       }
     }
-    .warning-statistics{
+
+    .warning-statistics {
       > p {
         padding: 0.6rem;
         font-size: 1.1rem;
         background-color: #fafcfe;
         border-top: 1px dotted #666;
       }
-      .my-chart6{
+
+      .my-chart6 {
         width: 100%;
         height: 15rem;
+      }
+    }
+  }
+
+  .map-sign-box {
+    position: absolute;
+    top: 1rem;
+    right: calc((100vh - 6rem) / 2);
+    z-index: 103;
+
+    li {
+      position: relative;
+      padding: 0.8rem 0;
+
+      b {
+        position: absolute;
+        top: 50%;
+        left: -40px;
+        width: 30px;
+        height: 30px;
+        transform: translateY(-50%);
+        background-repeat: no-repeat;
+        background-size: cover;
+
+        &.one {
+          background-image: url("../../assets/images/mapIcon1.png");
+        }
+
+        &.two {
+          background-image: url("../../assets/images/mapIcon2.png");
+        }
+
+        &.three {
+          background-image: url("../../assets/images/mapIcon3.png");
+        }
+      }
+    }
+  }
+}
+
+.assist-makePolicy {
+  position: relative;
+  padding: 10px;
+  box-sizing: border-box;
+
+  .layout-box {
+    width: 100%;
+    height: 100%;
+    font-size: 0;
+
+    > li {
+      position: relative;
+      display: inline-block;
+      width: calc((100% - 20px) / 3);
+      height: 100%;
+      margin-left: 10px;
+      vertical-align: top;
+      font-size: 1rem;
+
+      .police-statistics, .police-pressure, .fire-analysis {
+        margin-top: 10px;
+        height: calc((100% - 20px) / 3);
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box;
+      }
+
+      .police-statistics {
+        margin-top: 0;
+
+        > p {
+          height: 3rem;
+          line-height: 3rem;
+          padding: 0 1rem;
+          font-size: 1.4rem;
+          background-color: #fafcfe;
+        }
+
+        .my-chart7 {
+          width: 100%;
+          height: calc(100% - 3.2rem);
+        }
+      }
+
+      .police-pressure {
+        margin-top: 10px;
+
+        .head-title {
+          position: relative;
+          padding: 0 1rem;
+          height: 3rem;
+          line-height: 3rem;
+          background-color: #fafcfe;
+
+          > span {
+            font-size: 1.4rem;
+          }
+
+          p {
+            position: absolute;
+            top: 50%;
+            right: 1rem;
+            font-size: 1.1rem;
+            transform: translateY(-50%);
+
+            .el-input__inner {
+              margin-left: 0.6rem;
+              width: 5rem;
+              height: 2rem;
+              line-height: 2rem;
+            }
+          }
+        }
+
+        .my-chart8 {
+          width: 100%;
+          height: calc(100% - 3.2rem);
+        }
+      }
+
+      .fire-analysis {
+        p {
+          position: relative;
+          padding: 0 1rem;
+          height: 3rem;
+          line-height: 3rem;
+          font-size: 1.4rem;
+          background-color: #fafcfe;
+        }
+
+        .double-graphs {
+          height: calc(100% - 3.2rem);
+
+          .my-chart9 {
+            display: inline-block;
+            width: calc(50% - 6px);
+            height: 100%;
+          }
+
+          .my-chart10 {
+            display: inline-block;
+            width: calc(50% - 6px);
+            height: 100%;
+          }
+        }
+      }
+
+      .average-arrival {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: calc((100% - 20px) / 3);
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box;
+
+        .head-title {
+          position: relative;
+          height: 3rem;
+          line-height: 3rem;
+          padding: 0 1rem;
+          font-size: 1.4rem;
+          background-color: #fafcfe;
+
+          ul {
+            position: absolute;
+            right: 0.6rem;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
+            font-size: 0.8rem;
+            box-sizing: border-box;
+
+            li {
+              display: inline-block;
+              padding: 0.25rem 0.45rem;
+              margin-left: 0.4rem;
+              line-height: normal;
+              color: rgba(153, 153, 153, 0.5);
+              border: 1px solid rgba(153, 153, 153, 0.5);
+              cursor: pointer;
+
+              &.active {
+                color: #fff;
+                border-color: rgba(73, 109, 255, 1);
+                background-color: rgba(73, 109, 255, 1);
+                border-radius: 3px;
+              }
+            }
+          }
+        }
+
+        .my-chart11 {
+          width: 100%;
+          height: calc(100% - 3.4rem);
+        }
+      }
+
+      .map-area {
+        width: 100%;
+        height: calc((100% * 2 / 3) - 3px);
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box;
+      }
+
+      .aging-distribution {
+        height: calc((100% - 20px) / 3);
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box;
+
+        > p {
+          height: 3rem;
+          line-height: 3rem;
+          padding: 0 1rem;
+          font-size: 1.4rem;
+          background-color: #fafcfe;
+        }
+
+        .content-box {
+          position: relative;
+          width: 100%;
+          height: calc(100% - 3rem);
+          background-image: url("../../assets/images/heat-map1.png");
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: center;
+
+          .operate-btn {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+
+            .el-button {
+              margin-bottom: 0.6rem;
+              font-size: 1rem;
+
+              &.active {
+                color: #444;
+                background-color: #fff;
+                border-color: #ddd;
+              }
+            }
+          }
+
+          ul {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+
+            li {
+              position: relative;
+              padding: 0.2rem 0;
+              font-size: 0.8rem;
+              color: #888;
+
+              &:after {
+                position: absolute;
+                top: 50%;
+                left: -1rem;
+                content: '';
+                border: 6px solid rgba(28, 206, 230, 1);
+                border-radius: 50%;
+                transform: translateY(-50%);
+              }
+
+              &:nth-child(2):after {
+                border-color: rgba(177, 239, 94, 1);
+              }
+
+              &:nth-child(3):after {
+                border-color: rgba(252, 233, 21, 1);
+              }
+            }
+          }
+
+          &.active {
+            background-image: url("../../assets/images/heat-map.png");
+          }
+
+        }
+      }
+
+      .alarm-trend{
+        margin-top: 10px;
+        height: calc((100% - 20px) / 3);
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box;
+
+        > p {
+          height: 3rem;
+          line-height: 3rem;
+          padding: 0 1rem;
+          font-size: 1.4rem;
+          background-color: #fafcfe;
+        }
+
+        .my-chart12 {
+          width: 100%;
+          height: calc(100% - 3.4rem);
+        }
+      }
+
+      .training-statistics {
+        margin-top: 10px;
+        height: calc((100% - 20px) / 3);
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box;
+
+        .head-title {
+          position: relative;
+          padding: 0 1rem;
+          height: 3rem;
+          line-height: 3rem;
+          background-color: #fafcfe;
+
+          > span {
+            font-size: 1.1rem;
+          }
+
+          p {
+            position: absolute;
+            top: 50%;
+            right: 1rem;
+            transform: translateY(-50%);
+
+            .el-input__inner {
+              margin-left: 0.6rem;
+              width: 8rem;
+              height: 2rem;
+              line-height: 2rem;
+            }
+          }
+        }
+
+        .my-chart13 {
+          width: 100%;
+          height: calc(100% - 3rem);
+        }
+      }
+
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+  }
+
+  .map-sign-box {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 103;
+
+    li {
+      position: relative;
+      padding: 0.8rem 0;
+
+      b {
+        position: absolute;
+        top: 50%;
+        left: -40px;
+        width: 30px;
+        height: 30px;
+        transform: translateY(-50%);
+        background-repeat: no-repeat;
+        background-size: cover;
+
+        &.one {
+          background-image: url("../../assets/images/mapIcon1.png");
+        }
+
+        &.two {
+          background-image: url("../../assets/images/mapIcon2.png");
+        }
+
+        &.three {
+          background-image: url("../../assets/images/mapIcon3.png");
+        }
       }
     }
   }

@@ -40,14 +40,14 @@
             return {
                 policeToday: {one: '0', two: '0', three: '0', four: '0'},
                 totalAlarm: '0',
-                policeLastWeek: {one: '20', two: '8', three: '12'},
+                policeLastWeek: {one: '0', two: '0', three: '0'},
                 lastWeekSwitch: false
             }
         },
         props: ['myProp'],
         watch: {
             myProp(newVal) {
-                console.log(newVal)
+                // console.log(newVal,'今日处警')
             },
         },
         created() {
@@ -56,7 +56,7 @@
         },
         methods: {
             getPoliceToday() {
-                this.$ajax.get(this.$URL + '/homePage/selectTodayHandlingCount').then((res) => {
+                this.$ajax.get(this.$URL + '/xf-unit/homePage/selectTodayHandlingCount').then((res) => {
                     if (res.data.code == 200) {
                         let temp = res.data.data.todayHandlingCount.toString();
                         this.policeToday.one = temp.length > 3 ? temp.split('')[temp.length - 4] : '0';
@@ -65,14 +65,14 @@
                         this.policeToday.four = temp.length > 0 ? temp.split('')[temp.length - 1] : '0';
                         this.totalAlarm = res.data.data.thisWeekHandlingCount;
                     } else {
-                        // this.$Message.error(res.data.message)
+                        // this.$message.error(res.data.message)
                     }
                 }).catch(function (error) {
                     console.log(error);
                 })
             },
             policeLastWeekFn() {
-                this.$ajax.get(this.$URL + '/homePage/selectLastWeekHandlingCount').then((res) => {
+                this.$ajax.get(this.$URL + '/xf-unit/homePage/selectLastWeekHandlingCount').then((res) => {
                     if (res.data.code == 200) {
                         this.policeLastWeek.one = res.data.data.policeOfficer;
                         this.policeLastWeek.two = res.data.data.fireAlarm;
@@ -82,7 +82,7 @@
                         this.policeLastWeek.one = '0';
                         this.policeLastWeek.one = '0';
                         this.policeLastWeek.one = '0';
-                        this.$Message.error(res.data.message)
+                        this.$message.error(res.data.message)
                     }
                 }).catch(function (error) {
                     console.log(error);
