@@ -481,6 +481,7 @@ export default {
 .form_item {
   width: 300px;
 }
+
 .form_item /deep/ .el-input__inner {
   text-align: left;
 }
