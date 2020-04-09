@@ -38,6 +38,7 @@
 
         <el-table
           style="margin-top:10px"
+          stripe
           height="calc(100vh - 250px)"
           v-loading="loading"
           border
@@ -64,8 +65,13 @@
           </el-table-column>
           <el-table-column align="center" label="操作" fixed="right" width="140">
             <template v-slot="scope">
-              <el-button type="text" :loading="scope.row.loadingEdit" @click="edit(scope.row)">编辑</el-button>
-              <el-button type="text" @click="del(scope.row)">删除</el-button>
+              <el-button
+                type="text"
+                style="color:#496dff"
+                :loading="scope.row.loadingEdit"
+                @click="edit(scope.row)"
+              >编辑</el-button>
+              <el-button type="text" style="color:#496dff" @click="del(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -688,7 +694,7 @@
                     :on-remove="handleRemove"
                     :file-list="fileList"
                   >
-                    <el-button size="small" type="primary">添加附件</el-button>
+                    <el-button style="background:#496dff;border-color:#496dff" size="small" type="primary">添加附件</el-button>
                   </el-upload>
                 </el-form-item>
               </el-col>
@@ -697,8 +703,14 @@
         </div>
 
         <div class="footer">
-          <el-button>取消</el-button>
-          <el-button type="primary" :loading="lodingSave" @click="submit">保存</el-button>
+          <el-button size="small" @click="closeFullscreen" style="padding-left: 25px;padding-right:25px">取消</el-button>
+          <el-button
+            size="small"
+            style="background:#496dff;border-color:#496dff;padding-left: 25px;padding-right:25px"
+            type="primary"
+            :loading="lodingSave"
+            @click="submit"
+          >保存</el-button>
         </div>
       </div>
     </div>
@@ -1357,6 +1369,13 @@ export default {
 .el-form-item {
   height: 40px;
 }
+.el-table {
+  color: #333333;
+}
+.el-table__header th {
+  background: #f8f8f9;
+  color: #333333;
+}
 </style>
 <style scoped>
 .form_item {
@@ -1411,5 +1430,10 @@ export default {
 .cars_title {
   text-align: center;
   margin-bottom: 10px;
+}
+
+.footer {
+  text-align: center;
+  margin: 15px 0;
 }
 </style>
