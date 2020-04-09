@@ -1,6 +1,6 @@
 <!--战评总结-->
 <template>
-  <div class="container-wrap">
+  <div class="container-wrap summing_up">
     <leftNav />
     <div class="personSetIndex-wrap">
       <div class="head-box">
@@ -685,7 +685,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="附件" prop="attachement">
+                <el-form-item class="spe_form_item" label="附件" prop="attachement">
                   <el-upload
                     action="http://shcloud2.wmtechzone.club:50001/apis/summaryoffacts/uploadattachment"
                     multiple
@@ -694,7 +694,11 @@
                     :on-remove="handleRemove"
                     :file-list="fileList"
                   >
-                    <el-button style="background:#496dff;border-color:#496dff" size="small" type="primary">添加附件</el-button>
+                    <el-button
+                      style="background:#496dff;border-color:#496dff"
+                      size="small"
+                      type="primary"
+                    >添加附件</el-button>
                   </el-upload>
                 </el-form-item>
               </el-col>
@@ -703,7 +707,11 @@
         </div>
 
         <div class="footer">
-          <el-button size="small" @click="closeFullscreen" style="padding-left: 25px;padding-right:25px">取消</el-button>
+          <el-button
+            size="small"
+            @click="closeFullscreen"
+            style="padding-left: 25px;padding-right:25px"
+          >取消</el-button>
           <el-button
             size="small"
             style="background:#496dff;border-color:#496dff;padding-left: 25px;padding-right:25px"
@@ -1366,13 +1374,13 @@ export default {
 };
 </script>
 <style >
-.el-form-item {
+.summing_up .el-form-item {
   height: 40px;
 }
-.el-table {
+.summing_up .el-table {
   color: #333333;
 }
-.el-table__header th {
+.summing_up .el-table__header th {
   background: #f8f8f9;
   color: #333333;
 }
@@ -1435,5 +1443,9 @@ export default {
 .footer {
   text-align: center;
   margin: 15px 0;
+}
+
+.spe_form_item {
+  height: auto !important;
 }
 </style>
