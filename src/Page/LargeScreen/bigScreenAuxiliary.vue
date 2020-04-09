@@ -1,6 +1,7 @@
-<!--辅助决策-->
+<!--大屏辅助决策-->
 <template>
-    <div class="assist-makePolicy">
+    <div class="big-screen-auxiliary big-screenMode">
+        <BigHeader/>
         <ul class="layout-box">
             <li>
                 <policeStatistics/>
@@ -8,12 +9,12 @@
                 <fireAnalysis/>
             </li>
             <li>
+                <div class="map-area" :id="mapId"></div>
                 <ul class="map-sign-box">
                     <li><b class="one"></b>静安消防支队</li>
                     <li><b class="two"></b>消防中队</li>
                     <li><b class="three"></b>消防水源</li>
                 </ul>
-                <div class="map-area" :id="mapId"></div>
                 <averageArrival/>
             </li>
             <li>
@@ -27,24 +28,26 @@
 
 <script>
     import loadBMap from '../../assets/js/loadBMap.js'
+    import BigHeader from "./bigScreenHead";
 
-    import policeStatistics from './subtemplate/policeStatistics'
-    import policePressure from './subtemplate/policePressure'
-    import fireAnalysis from './subtemplate/fireAnalysis'
+    import policeStatistics from '../Auxiliary/subtemplate/policeStatistics'
+    import policePressure from '../Auxiliary/subtemplate/policePressure'
+    import fireAnalysis from '../Auxiliary/subtemplate/fireAnalysis'
 
-    import averageArrival from './subtemplate/averageArrival'
+    import averageArrival from '../Auxiliary/subtemplate/averageArrival'
 
-    import agingDistribution from './subtemplate/agingDistribution'
-    import alarmTrend from './subtemplate/alarmTrend'
-    import trainingStatistics from './subtemplate/trainingStatistics'
+    import agingDistribution from '../Auxiliary/subtemplate/agingDistribution'
+    import alarmTrend from '../Auxiliary/subtemplate/alarmTrend'
+    import trainingStatistics from '../Auxiliary/subtemplate/trainingStatistics'
 
     import mapIcon1 from '../../assets/images/mapIcon1.png'
     import mapIcon2 from '../../assets/images/mapIcon2.png'
     import mapIcon3 from '../../assets/images/mapIcon3.png'
 
     export default {
-        name: "assistMakePolicy",
+        name: "bigScreenAuxiliary",
         components: {
+            BigHeader,
             policeStatistics,
             policePressure,
             fireAnalysis,
@@ -59,10 +62,6 @@
                 myMap: null,
 
                 publicData: '',//公共参数，改变子组件下的方法重新调用
-
-                fireWaterSource: '',
-                fireSquadron: '',
-                fireDetachment: ''
             }
         },
         mounted() {
@@ -70,6 +69,26 @@
             this.getMapCoordinate();
         },
         methods: {
+            initMap() {
+                loadBMap('isZkHarwgZspmmnDOBpTGgGDpoMKRBAx').then(() => {
+                    this.myMap = new BMap.Map(this.mapId) // 创建Map实例
+                    this.myMap.centerAndZoom(new BMap.Point(121.469026, 31.229388), 13); // 初始化地图,设置中心点坐标和地图级别
+                    //添加地图类型控件
+                    this.myMap.addControl(
+                        new BMap.MapTypeControl({
+                            mapTypes: [BMAP_NORMAL_MAP, BMAP_HYBRID_MAP]
+                        })
+                    );
+                    this.myMap.setCurrentCity('上海') // 设置地图显示的城市 此项是必须设置的
+                    this.myMap.enableScrollWheelZoom(true) //开启鼠标滚轮缩放
+                    this.myMap.setMapStyleV2({
+                        styleJson: this.$MapStyleBig
+                    });
+                })
+                    .catch(err => {
+                        console.log('地图加载失败')
+                    })
+            },
             getMapCoordinate() {
                 this.$ajax.get(this.$URL + '/xf-unit/homePage/selectGroupLocation', {
                     params: {
@@ -92,27 +111,6 @@
                 }).catch(function (error) {
                     console.log(error);
                 })
-            },
-            initMap() {
-                loadBMap('isZkHarwgZspmmnDOBpTGgGDpoMKRBAx').then(() => {
-                    // 百度地图API功能
-                    this.myMap = new BMap.Map(this.mapId) // 创建Map实例
-                    this.myMap.centerAndZoom(new BMap.Point(121.469026, 31.229388), 13); // 初始化地图,设置中心点坐标和地图级别
-                    //添加地图类型控件
-                    this.myMap.addControl(
-                        new BMap.MapTypeControl({
-                            mapTypes: [BMAP_NORMAL_MAP, BMAP_HYBRID_MAP]
-                        })
-                    );
-                    this.myMap.setCurrentCity('上海') // 设置地图显示的城市 此项是必须设置的
-                    this.myMap.enableScrollWheelZoom(true) //开启鼠标滚轮缩放
-                    this.myMap.setMapStyleV2({
-                        styleJson: this.$MapStyle
-                    });
-                })
-                    .catch(err => {
-                        console.log('地图加载失败')
-                    })
             },
             mapRendering() {
                 this.myMap.clearOverlays();
@@ -150,14 +148,18 @@
 </script>
 
 <style scoped lang="less">
-    .assist-makePolicy {
-        width: 100%;
-        height: 100%;
+    .big-screenMode {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #2a2a54;
+        z-index: 1005;
 
-        /*.map-area {*/
-        /*  width: 100%;*/
-        /*  height: 100%;*/
-        /*}*/
-
+        .map-area {
+            width: 100%;
+            height: 100%;
+        }
     }
 </style>

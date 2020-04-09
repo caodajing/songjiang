@@ -1,11 +1,10 @@
-<script src="../../../test-html/luyinggongneng/代码移交/港城录音系统开发文件/港城录音系统开发文件/gcvoice/js/index.js"></script>
 <template>
   <div id="app">
     <router-view/>
   </div>
 </template>
 <style lang="css" scoped>
-    @import "./assets/css/dataSet.css"
+    @import "./assets/css/dataSet.css";
 </style>
 <script>
     export default {

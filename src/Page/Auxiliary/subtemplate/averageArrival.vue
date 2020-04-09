@@ -1,8 +1,15 @@
-<!--消防装备统计-->
+<!--平均到场时效-->
 <template>
-  <div class="fire-equipment">
-    <p class="head-title">消防装备统计</p>
-    <div id="myChart2" class="my-chart2"></div>
+  <div class="average-arrival">
+    <div class="head-title">
+      <span>平均到场时效</span>
+      <ul>
+        <li @click="type=1,presentTimeliness()" :class="{active:type==1}">周</li>
+        <li @click="type=2,presentTimeliness()" :class="{active:type==2}">月</li>
+        <li @click="type=3,presentTimeliness()" :class="{active:type==3}">年</li>
+      </ul>
+    </div>
+    <div id="myChart11" class="my-chart11"></div>
   </div>
 </template>
 
@@ -17,38 +24,45 @@
     require('echarts/lib/component/title');
     require('echarts/lib/component/dataZoom');
     export default {
-        name: "fireEquipment",
+        name: "averageArrival",
         data() {
             return {
-                dataX: ["个人防护", "抢险救援器材", "灭火器材装备", "灭火药剂", "其他类消防装备", "特种消防装备", "消防车，船(艇)，飞行器", "消防通讯指挥装备", "训练器材", "低压消防泵", "未分类", "救生", "排爆", "空勤类"],
+                type: '1',//周 1   月 2   年3
+
+                dataX: ["泗泾中队", "叶榭中队", "仓桥中队", "岳阳中队", "佘山中队", "大港中队", "新浜中队", "松一中队", "九亭中队", "车墩中队", "新桥中队", "泖港中队", "松江中队"],
                 dataY: [],
 
                 fontColor1: 'rgba(102,102,102,1)',
-                fontColor2: 'rgba(221,221,221,0.8)',
-                fontColor3: 'rgba(221,221,221,0.8)',
+                fontColor2: 'rgba(221,221,221,0.9)',
+                fontColor3: 'rgba(221,221,221,0.5)',
             }
         },
         mounted() {
+            this.presentTimeliness();
+            this.drawingFn();
             if (this.$route.path.indexOf('bigScreen') != -1) {
                 this.fontColor1 = 'rgba(255,255,255,1)';
-                this.fontColor2 = 'rgba(255,255,255,1)';
-                this.fontColor2 = 'rgba(255,255,255,0.4)';
+                this.fontColor2 = 'rgba(255,255,255,0.2)';
+                this.fontColor3 = 'rgba(255,255,255,0.4)';
             }
-            this.drawingFn();
-            this.fireEquipment();
         },
         methods: {
-            fireEquipment() {
-                this.$ajax.get(this.$URL + '/xf-unit/homePage/fireEquipmentStatistics').then((res) => {
+            presentTimeliness() {
+                this.$ajax.get(this.$URL + '/xf-unit/decisionSupport/averageArrivalTime', {
+                    params: {
+                        type: this.type
+                    }
+                }).then((res) => {
                     if (res.data.code == 200) {
                         this.dataX = [];
                         this.dataY = [];
                         res.data.data.map((e) => {
-                            this.dataX.push(e.equipmentTypeName);
-                            this.dataY.push(e.count);
+                            this.dataX.push(e.name);
+                            this.dataY.push(e.minute);
                         });
+                        // console.log(this.dataX)
                     } else {
-                        this.$message.error(res.data.message)
+                        // this.$message.error(res.data.message)
                     }
                     this.drawingFn();
                 }).catch(function (error) {
@@ -56,27 +70,30 @@
                 })
             },
             drawingFn() {
-                let myChart = echarts.init(document.getElementById('myChart2'));
+                let myChart = echarts.init(document.getElementById('myChart11'));
                 myChart.setOption(
                     {
-                        grid: {
-                            left: '20px',
-                            right: '20px',
-                            bottom: '24px',
-                            containLabel: true
-                        },
                         tooltip: {
                             trigger: 'axis',
                             axisPointer: {            // 坐标轴指示器，坐标轴触发有效
                                 type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
                             }
                         },
+                        grid: {
+                            left: '20px',
+                            right: '20px',
+                            bottom: '24px',
+                            containLabel: true
+                        },
                         xAxis: {
                             data: this.dataX,
                             axisLine: {
                                 lineStyle: {
-                                    color: this.fontColor3
+                                    color: this.fontColor2,
                                 }
+                            },
+                            axisTick: {//坐标轴刻度相关设置。
+                                show: false,
                             },
                             axisLabel: {
                                 color: this.fontColor1,
@@ -85,7 +102,7 @@
                             }
                         },
                         yAxis: {
-                            name: "（人）",
+                            name: "",
                             nameTextStyle: {
                                 color: this.fontColor1,
                                 fontSize: 14
@@ -93,17 +110,21 @@
                             axisLine: {
                                 show: false,
                                 lineStyle: {
-                                    color: this.fontColor3
+                                    color: this.fontColor2,
                                 }
                             },
                             axisLabel: {
                                 color: this.fontColor1,
                                 fontSize: 14
                             },
+                            axisTick: {
+                                show: false
+                            },
                             splitLine: {
                                 show: true,
                                 lineStyle: {
-                                    color: this.fontColor3
+                                    color: this.fontColor3,
+                                    // type: 'dashed'
                                 }
                             },
                             minInterval: 1,
@@ -118,7 +139,7 @@
                             ],
                             bottom: 2,
                             start: 0,
-                            end: 30,
+                            end: 22,
                             handleSize: '100%',
                             handleStyle: {
                                 color: "#e55967",

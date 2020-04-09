@@ -1,10 +1,10 @@
-<!--警情处理模板-->
+<!--处警压力-->
 <template>
-  <div class="police-handling">
+  <div class="police-pressure">
     <div class="head-title">
-      <span>警情处理</span>
-      <p>时间范围
-        <el-select v-model="timeLine" placeholder="" @change="getPoliceHandling">
+      <span>处警压力</span>
+      <p>时间范围：
+        <el-select v-model="timeLine" placeholder="" @change="getPolicePressure">
           <el-option
             v-for="item in timeList"
             :key="item.code"
@@ -14,7 +14,7 @@
         </el-select>
       </p>
     </div>
-    <div id="myChart1" class="my-chart1"></div>
+    <div id="myChart8" class="my-chart8"></div>
   </div>
 </template>
 
@@ -30,67 +30,98 @@
     require('echarts/lib/component/dataZoom');
 
     export default {
-        name: "policeHandling",
+        name: "policePressure",
         data() {
             return {
                 timeLine: '1',
-                dataX: [],
+                dataX: ["泗泾中队", "叶榭中队", "仓桥中队", "上海总队", "岳阳中队", "佘山中队", "大港中队", "新浜中队", "松一中队", "九亭中队", "车墩中队", "新桥中队", "泖港中队", "松江支队", "松江中队"],
                 dataY1: [],
                 dataY2: [],
                 dataY3: [],
                 dataY4: [],
                 dataY5: [],
-                fontColor1:'rgba(221,221,221,0.8)',
-                fontColor2:'rgba(51,51,51,0.8)',
-                fontColor3:'rgba(158,167,196,0.8)',
 
                 timeList: [{name: '本周', code: '1'}, {name: '上周', code: '2'}],
-                pickerOptions2: {
-                    shortcuts: [{
-                        text: '最近一周',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }, {
-                        text: '最近一个月',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }, {
-                        text: '最近三个月',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    }]
-                },
+
+                fontColor1: 'rgba(221,221,221,0.8)',
+                fontColor2: 'rgba(51,51,51,0.8)',
+                fontColor3: 'rgba(102,102,102,0.2)',
             }
         },
-        watch: {
-            myProp(newVal) {
-                console.log(newVal)
-            },
+        created() {
+            this.getPolicePressure();
         },
         mounted() {
-            if(this.$route.path.indexOf('bigScreen')!=-1){
-                this.fontColor1='rgba(255,255,255,0.4)';
-                this.fontColor2='rgba(255,255,255,1)';
-                this.fontColor3='rgba(255,255,255,1)';
+            if (this.$route.path.indexOf('bigScreen') != -1) {
+                this.fontColor1 = 'rgba(255,255,255,1)';
+                this.fontColor2 = 'rgba(255,255,255,0.9)';
+                // this.fontColor3 = 'rgba(255, 255, 255, 1)';
+                // this.fontColor4 = 'rgba(255,255,255,1)';
             }
             this.drawingFn();
-            this.getPoliceHandling();
         },
         methods: {
+            getPolicePressure() {
+                this.$ajax.get(this.$URL + '/xf-unit/homePage/alertHandling', {
+                    params: {
+                        type: this.timeLine
+                    }
+                }).then((res) => {
+                    if (res.data.code == 200) {
+                        this.dataX = []
+                        this.dataY1 = [];
+                        this.dataY2 = [];
+                        this.dataY3 = [];
+                        this.dataY4 = [];
+                        this.dataY5 = [];
+                        res.data.data.map((e) => {
+                            if (e.efWarTimeExpressNewsList.length > 0) {
+                                let temp1 = 0;
+                                let temp2 = 0;
+                                let temp3 = 0;
+                                let temp4 = 0;
+                                let temp5 = 0;
+                                e.efWarTimeExpressNewsList.map((m) => {
+                                    if (m.handlingType == '火警扑救') {
+                                        temp1 = m.count;
+                                    }
+                                    if (m.handlingType == '社会救助') {
+                                        temp2 = m.count;
+                                    }
+                                    if (m.handlingType == '抢险救援') {
+                                        temp3 = m.count;
+                                    }
+                                    if (m.handlingType == '反恐排爆') {
+                                        temp4 = m.count;
+                                    }
+                                    if (m.handlingType == '其他') {
+                                        temp5 = m.count;
+                                    }
+                                });
+                                this.dataY1.push(temp1);
+                                this.dataY2.push(temp2);
+                                this.dataY3.push(temp3);
+                                this.dataY4.push(temp4);
+                                this.dataY5.push(temp5);
+                            } else {
+                                this.dataY1.push(0);
+                                this.dataY2.push(0);
+                                this.dataY3.push(0);
+                                this.dataY4.push(0);
+                                this.dataY5.push(0);
+                            }
+                            this.dataX.push(e.name);
+                        });
+                    } else {
+                        // this.$message.error(res.data.message)
+                    }
+                    this.drawingFn();
+                }).catch(function (error) {
+                    console.log(error);
+                })
+            },
             drawingFn() {
-                let myChart = echarts.init(document.getElementById('myChart1'));
+                let myChart = echarts.init(document.getElementById('myChart8'));
                 myChart.setOption(
                     {
                         // backgroundColor: '#001120',
@@ -110,8 +141,8 @@
                             }
                         },
                         grid: {
-                            left: '40px',
-                            right: '30px',
+                            left: '30px',
+                            right: '20px',
                             bottom: '24px',
                             containLabel: true
                         },
@@ -124,21 +155,27 @@
                                 },
                                 axisLine: {
                                     lineStyle: {
-                                        color: this.fontColor1
+                                        color: this.fontColor1,
+                                        opacity: 0.2
                                     }
                                 },
+                                axisTick: {//坐标轴刻度相关设置。
+                                    show: false,
+                                },
                                 axisLabel: {
-                                    color: this.fontColor2,
-                                    fontSize: 14,
                                     interval: 0,
+                                    textStyle: {
+                                        color: this.fontColor2,
+                                        fontSize: 14,
+                                    }
                                 }
                             }
                         ],
                         yAxis: [
                             {
-                                name: '数量(次)',
+                                name: '单位(件)',
                                 nameTextStyle: {
-                                    color: this.fontColor3,
+                                    color: this.fontColor2,
                                     padding: [0, 0, 0, -20]    // 四个数字分别为上右下左与原位置距离
                                 },
                                 type: 'value',
@@ -147,16 +184,17 @@
                                 axisLine: {
                                     show: false,
                                     lineStyle: {
-                                        color: this.fontColor1
+                                        color: this.fontColor3,
                                     }
                                 },
                                 splitLine: {
                                     show: true,
                                     lineStyle: {
-                                        color: this.fontColor1
+                                        color: this.fontColor3,
+                                        // opacity: 0.1
                                     }
                                 },
-                                axisLabel: {textStyle: {color: this.fontColor3, fontSize: 14}},
+                                axisLabel: {textStyle: {color: this.fontColor2, fontSize: 14}},
                             }
                         ],
                         dataZoom: [{
@@ -305,65 +343,6 @@
                     }
                 );
             },
-            getPoliceHandling() {
-                this.$ajax.get(this.$URL + '/xf-unit/homePage/alertHandling',{
-                    params: {
-                        type : this.timeLine
-                    }
-                }).then((res) => {
-                    if (res.data.code == 200) {
-                        this.dataX = []
-                        this.dataY1 = [];
-                        this.dataY2 = [];
-                        this.dataY3 = [];
-                        this.dataY4 = [];
-                        this.dataY5 = [];
-                        res.data.data.map((e) => {
-                            if (e.efWarTimeExpressNewsList.length > 0) {
-                                let temp1 = 0;
-                                let temp2 = 0;
-                                let temp3 = 0;
-                                let temp4 = 0;
-                                let temp5 = 0;
-                                e.efWarTimeExpressNewsList.map((m) => {
-                                    if (m.handlingType == '火警扑救') {
-                                        temp1 = m.count;
-                                    }
-                                    if (m.handlingType == '社会救助') {
-                                        temp2 = m.count;
-                                    }
-                                    if (m.handlingType == '抢险救援') {
-                                        temp3 = m.count;
-                                    }
-                                    if (m.handlingType == '反恐排爆') {
-                                        temp4 = m.count;
-                                    }
-                                    if (m.handlingType == '其他') {
-                                        temp5 = m.count;
-                                    }
-                                });
-                                this.dataY1.push(temp1);
-                                this.dataY2.push(temp2);
-                                this.dataY3.push(temp3);
-                                this.dataY4.push(temp4);
-                                this.dataY5.push(temp5);
-                            } else {
-                                this.dataY1.push(0);
-                                this.dataY2.push(0);
-                                this.dataY3.push(0);
-                                this.dataY4.push(0);
-                                this.dataY5.push(0);
-                            }
-                            this.dataX.push(e.name);
-                        });
-                    } else {
-                        this.$message.error(res.data.message)
-                    }
-                    this.drawingFn();
-                }).catch(function (error) {
-                    console.log(error);
-                })
-            }
         }
     }
 </script>

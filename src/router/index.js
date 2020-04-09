@@ -60,7 +60,9 @@ import fireDetail from '@/Page/DataSetup/fire/detail'
 
 
 
-
+import bigScreenHome from '@/Page/LargeScreen/bigScreenHome'
+import bigScreenSquadron from '@/Page/LargeScreen/bigScreenSquadron'
+import bigScreenAuxiliary from '@/Page/LargeScreen/bigScreenAuxiliary'
 import bigScreenMode from '@/Page/LargeScreen/bigScreenMode'
 
 import versionIteration from '@/components/versionIteration'
@@ -72,7 +74,7 @@ Vue.use(Router);
 
 const router = new Router({
   mode: 'hash',
-  base: '/interactiveplatform/',
+  base: '/xf_efficiency_evaluation/',
   routes: [
     {
       path: '/home',
@@ -82,6 +84,70 @@ const router = new Router({
       },
       component: Home,
       children: [
+        {
+          path: '/homePage',
+          name: 'homePage',
+          meta: {
+            requireAuth: true,
+          },
+          component: homePage,
+        },
+        {
+          path: '/dutySquadron',
+          name: 'dutySquadron',
+          meta: {
+            requireAuth: true,
+          },
+          component: dutySquadron,
+        },
+        {
+          path: '/assistMakePolicy',
+          name: 'assistMakePolicy',
+          meta: {
+            requireAuth: true,
+          },
+          component: assistMakePolicy,
+        },
+        {
+          path: '/dutyDynamics',
+          name: 'dutyDynamics',
+          meta: {
+            requireAuth: true,
+          },
+          component: dutyDynamics,
+        },
+        {
+          path: '/summingUp',
+          name: 'summingUp',
+          meta: {
+            requireAuth: true,
+          },
+          component: summingUp,
+        },
+        {
+          path: '/bigScreenHome',
+          name: 'bigScreenHome',
+          meta: {
+            requireAuth: true,
+          },
+          component: bigScreenHome,
+        },
+        {
+          path: '/bigScreenSquadron',
+          name: 'bigScreenSquadron',
+          meta: {
+            requireAuth: true,
+          },
+          component: bigScreenSquadron,
+        },
+        {
+          path: '/bigScreenAuxiliary',
+          name: 'bigScreenAuxiliary',
+          meta: {
+            requireAuth: true,
+          },
+          component: bigScreenAuxiliary,
+        },
         {
           path: '/homePage',
           name: 'homePage',

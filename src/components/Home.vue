@@ -18,9 +18,8 @@
 
 <style scoped lang="less">
   .content {
-    padding-top: 80px;
+    padding-top: 60px;
     width: 100%;
-    height: calc(100% - 80px);
-    // overflow: hidden;
+    height: 100%;
   }
 </style>

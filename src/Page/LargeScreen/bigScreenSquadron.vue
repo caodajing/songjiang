@@ -1,79 +1,95 @@
-<!--辅助决策-->
+<!--大屏执勤中队-->
 <template>
-    <div class="assist-makePolicy">
-        <ul class="layout-box">
-            <li>
-                <policeStatistics/>
-                <policePressure/>
-                <fireAnalysis/>
-            </li>
-            <li>
-                <ul class="map-sign-box">
-                    <li><b class="one"></b>静安消防支队</li>
-                    <li><b class="two"></b>消防中队</li>
-                    <li><b class="three"></b>消防水源</li>
-                </ul>
-                <div class="map-area" :id="mapId"></div>
-                <averageArrival/>
-            </li>
-            <li>
-                <agingDistribution/>
-                <alarmTrend/>
-                <trainingStatistics/>
-            </li>
+    <div class="big-screen-squadron big-screenMode">
+        <BigHeader/>
+        <warStatistics :myProp="publicData"/>
+        <radarMap :myProp="publicData"/>
+        <policeTypeAnalyse :myProp="publicData"/>
+        <div class="right-box">
+            <averageTime :myProp="publicData"/>
+            <warningStatistics :myProp="publicData"/>
+        </div>
+        <ul class="map-sign-box">
+            <li><b class="one"></b>静安消防支队</li>
+            <li><b class="two"></b>消防中队</li>
+            <li><b class="three"></b>消防水源</li>
         </ul>
+        <div class="map-area" :id="mapId"></div>
     </div>
 </template>
 
 <script>
+
     import loadBMap from '../../assets/js/loadBMap.js'
 
-    import policeStatistics from './subtemplate/policeStatistics'
-    import policePressure from './subtemplate/policePressure'
-    import fireAnalysis from './subtemplate/fireAnalysis'
-
-    import averageArrival from './subtemplate/averageArrival'
-
-    import agingDistribution from './subtemplate/agingDistribution'
-    import alarmTrend from './subtemplate/alarmTrend'
-    import trainingStatistics from './subtemplate/trainingStatistics'
+    import BigHeader from "./bigScreenHead";
+    import warStatistics from '../Squadron/subtemplate/warStatistics'
+    import radarMap from '../Squadron/subtemplate/radarMap'
+    import policeTypeAnalyse from '../Squadron/subtemplate/policeTypeAnalyse'
+    import averageTime from '../Squadron/subtemplate/averageTime'
+    import warningStatistics from '../Squadron/subtemplate/warningStatistics'
 
     import mapIcon1 from '../../assets/images/mapIcon1.png'
     import mapIcon2 from '../../assets/images/mapIcon2.png'
     import mapIcon3 from '../../assets/images/mapIcon3.png'
 
+
     export default {
-        name: "assistMakePolicy",
+        name: "bigScreenSquadron",
         components: {
-            policeStatistics,
-            policePressure,
-            fireAnalysis,
-            averageArrival,
-            agingDistribution,
-            alarmTrend,
-            trainingStatistics
+            BigHeader,
+            warStatistics,
+            radarMap,
+            policeTypeAnalyse,
+            averageTime,
+            warningStatistics
         },
         data() {
             return {
                 mapId: 'BMap-' + parseInt(Date.now() + Math.random()),
                 myMap: null,
 
-                publicData: '',//公共参数，改变子组件下的方法重新调用
+                publicData: 1,//公共参数，改变子组件下的方法重新调用
 
-                fireWaterSource: '',
-                fireSquadron: '',
-                fireDetachment: ''
+                groupIdTemp: '',
+
             }
         },
-        mounted() {
+        created() {
+            window.$bigPublicFn = this.headSwitch;
             this.initMap();
-            this.getMapCoordinate();
+        },
+        mounted() {
+            // window.$bigPublicFn = this.headSwitch;
+            this.initMap();
+            // this.getMapCoordinate();
         },
         methods: {
+            initMap() {
+                loadBMap('isZkHarwgZspmmnDOBpTGgGDpoMKRBAx').then(() => {
+                    this.myMap = new BMap.Map(this.mapId) // 创建Map实例
+                    this.myMap.centerAndZoom(new BMap.Point(121.469026, 31.229388), 13); // 初始化地图,设置中心点坐标和地图级别
+                    //添加地图类型控件
+                    this.myMap.addControl(
+                        new BMap.MapTypeControl({
+                            mapTypes: [BMAP_NORMAL_MAP, BMAP_HYBRID_MAP]
+                        })
+                    );
+                    this.myMap.setCurrentCity('上海') // 设置地图显示的城市 此项是必须设置的
+                    this.myMap.enableScrollWheelZoom(true) //开启鼠标滚轮缩放
+                    // this.myMap.setMapStyle({style: 'midnight'});
+                    this.myMap.setMapStyleV2({
+                        styleJson: this.$MapStyleBig
+                    });
+                })
+                    .catch(err => {
+                        console.log('地图加载失败')
+                    })
+            },
             getMapCoordinate() {
                 this.$ajax.get(this.$URL + '/xf-unit/homePage/selectGroupLocation', {
                     params: {
-                        groupId: ''
+                        groupId: this.groupIdTemp
                     }
                 }).then((res) => {
                     if (res.data.code == 200) {
@@ -92,27 +108,6 @@
                 }).catch(function (error) {
                     console.log(error);
                 })
-            },
-            initMap() {
-                loadBMap('isZkHarwgZspmmnDOBpTGgGDpoMKRBAx').then(() => {
-                    // 百度地图API功能
-                    this.myMap = new BMap.Map(this.mapId) // 创建Map实例
-                    this.myMap.centerAndZoom(new BMap.Point(121.469026, 31.229388), 13); // 初始化地图,设置中心点坐标和地图级别
-                    //添加地图类型控件
-                    this.myMap.addControl(
-                        new BMap.MapTypeControl({
-                            mapTypes: [BMAP_NORMAL_MAP, BMAP_HYBRID_MAP]
-                        })
-                    );
-                    this.myMap.setCurrentCity('上海') // 设置地图显示的城市 此项是必须设置的
-                    this.myMap.enableScrollWheelZoom(true) //开启鼠标滚轮缩放
-                    this.myMap.setMapStyleV2({
-                        styleJson: this.$MapStyle
-                    });
-                })
-                    .catch(err => {
-                        console.log('地图加载失败')
-                    })
             },
             mapRendering() {
                 this.myMap.clearOverlays();
@@ -145,19 +140,28 @@
                     this.myMap.addOverlay(marker);
                 }
             },
+            headSwitch(data) {
+                this.groupIdTemp = data.groupId;
+                this.publicData = JSON.stringify(data);
+                this.getMapCoordinate()
+            },
         }
     }
 </script>
 
 <style scoped lang="less">
-    .assist-makePolicy {
-        width: 100%;
-        height: 100%;
+    .big-screenMode {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #0e27aa;
+        z-index: 1005;
 
-        /*.map-area {*/
-        /*  width: 100%;*/
-        /*  height: 100%;*/
-        /*}*/
-
+        .map-area {
+            width: 100%;
+            height: 100%;
+        }
     }
 </style>
