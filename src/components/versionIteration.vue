@@ -1,9 +1,9 @@
 <template>
   <div class="wrapper">
     <div class="text-box">
-      <p>版本号：1.0.0</p>
+      <p>版本号：1.0.1</p>
       <p>项目名：松江消防救援总队</p>
-      <p>发布时间：2020/03/17</p>
+      <p>发布时间：2020/04/09</p>
       <p></p>
     </div>
 

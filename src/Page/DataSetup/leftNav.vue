@@ -6,7 +6,7 @@
 			<i class="iconfont icon-icon-test"></i>
 		</div>
 		<ul class="list">
-			<router-link :to="item.path" tag="li"  v-for="item in navList" :class="[item.act ? 'act' : '']">{{item.name}}</router-link>	
+			<router-link :to="item.path" tag="li"  v-for="item in navList" :key="item.path" :class="[item.act ? 'act' : '']">{{item.name}}</router-link>
 		</ul>
 	</div>
 </template>
