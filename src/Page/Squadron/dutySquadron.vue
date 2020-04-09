@@ -1,20 +1,20 @@
 <!--执勤中队-->
 <template>
-  <div class="duty-squadron">
-    <warStatistics :myProp="publicData"/>
-    <radarMap :myProp="publicData"/>
-    <policeTypeAnalyse :myProp="publicData"/>
-    <div class="right-box">
-      <averageTime :myProp="publicData"/>
-      <warningStatistics :myProp="publicData"/>
+    <div class="duty-squadron">
+        <warStatistics :myProp="publicData"/>
+        <radarMap :myProp="publicData"/>
+        <policeTypeAnalyse :myProp="publicData"/>
+        <div class="right-box">
+            <averageTime :myProp="publicData"/>
+            <warningStatistics :myProp="publicData"/>
+        </div>
+        <ul class="map-sign-box">
+            <li><b class="one"></b>静安消防支队</li>
+            <li><b class="two"></b>消防中队</li>
+            <li><b class="three"></b>消防水源</li>
+        </ul>
+        <div class="map-area" :id="mapId"></div>
     </div>
-    <ul class="map-sign-box">
-      <li><b class="one"></b>静安消防支队</li>
-      <li><b class="two"></b>消防中队</li>
-      <li><b class="three"></b>消防水源</li>
-    </ul>
-    <div class="map-area" :id="mapId"></div>
-  </div>
 </template>
 
 <script>
@@ -98,6 +98,9 @@
                     this.myMap.setMapStyleV2({
                         styleJson: this.$MapStyle
                     });
+                    setTimeout(() => {
+                        this.getBoundary();
+                    }, 1000)
                 })
                     .catch(err => {
                         console.log('地图加载失败')
@@ -118,21 +121,46 @@
                 // console.log(this.fireWaterSource,'33333')
                 for (let i = 0; i < this.fireWaterSource.length; i++) {
                     let point = new BMap.Point(this.fireWaterSource[i].lng, this.fireWaterSource[i].lat);
-                    let marker = new BMap.Marker(point, { icon: tempMapIcon3 }); // 创建标注
+                    let marker = new BMap.Marker(point, {icon: tempMapIcon3}); // 创建标注
                     this.myMap.addOverlay(marker);
                 }
                 // console.log(this.fireDetachment,'22222')
                 for (let i = 0; i < this.fireDetachment.length; i++) {
                     let point = new BMap.Point(this.fireDetachment[i].lng, this.fireDetachment[i].lat);
-                    let marker = new BMap.Marker(point, { icon: tempMapIcon1 }); // 创建标注
+                    let marker = new BMap.Marker(point, {icon: tempMapIcon1}); // 创建标注
                     this.myMap.addOverlay(marker);
                 }
                 // console.log(this.fireSquadron,'11111')
                 for (let i = 0; i < this.fireSquadron.length; i++) {
                     let point = new BMap.Point(this.fireSquadron[i].lng, this.fireSquadron[i].lat);
-                    let marker = new BMap.Marker(point, { icon: tempMapIcon2 }); // 创建标注
+                    let marker = new BMap.Marker(point, {icon: tempMapIcon2}); // 创建标注
                     this.myMap.addOverlay(marker);
                 }
+            },
+            getBoundary() {
+                let bdary = new BMap.Boundary();
+                bdary.get("上海市松江区", (rs) => {       //获取行政区域
+                    this.myMap.clearOverlays();        //清除地图覆盖物
+                    var count = rs.boundaries.length; //行政区域的点有多少个
+                    if (count === 0) {
+                        alert('未能获取当前输入行政区域');
+                        return;
+                    }
+                    var pointArray = [];
+                    for (var i = 0; i < count; i++) {
+                        var ply = new BMap.Polygon(rs.boundaries[i], {
+                            strokeWeight: 2,
+                            StrokeStyle: "solid",
+                            strokeColor: "#0164ff",
+                            fillColor: "#0164ff",
+                            fillOpacity: 0.1
+                        }); //建立多边形覆盖物
+                        this.myMap.addOverlay(ply);  //添加覆盖物
+                        pointArray = pointArray.concat(ply.getPath());
+                    }
+                    this.myMap.setViewport(pointArray);    //调整视野
+
+                });
             },
             headSwitch(data) {
                 this.groupIdTemp = data.groupId;
@@ -144,22 +172,22 @@
 </script>
 
 <style scoped lang="less">
-  .duty-squadron {
-    position: relative;
-    padding: 1rem;
-    width: 100%;
-    height: 100%;
-    background-color: #f5f5f5;
-    box-sizing: border-box;
-    overflow: hidden;
+    .duty-squadron {
+        position: relative;
+        padding: 1rem;
+        width: 100%;
+        height: 100%;
+        background-color: #f5f5f5;
+        box-sizing: border-box;
+        overflow: hidden;
 
-    .map-area {
-      margin: 0 auto;
-      width: calc(100vw - (100vh - 10rem));
-      height: 100%;
-      border: 1px solid #ddd;
-      box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
-      box-sizing: border-box;
+        .map-area {
+            margin: 0 auto;
+            width: calc(100vw - (100vh - 10rem));
+            height: 100%;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
     }
-  }
 </style>

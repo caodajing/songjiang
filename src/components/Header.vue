@@ -30,7 +30,7 @@
         name: "Header",
         data() {
             return {
-                userName: getCookie('userName'),
+                userName: decodeURIComponent(getCookie('userName')),
                 parentDeptID: getCookie('parentId'),
                 deptList: [],
 

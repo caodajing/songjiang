@@ -141,7 +141,7 @@
                         series: [
                             // 主要展示层的
                             {
-                                radius: ['27%', '47%'],
+                                radius: ['22%', '42%'],
                                 center: ['50%', '50%'],
                                 type: 'pie',
                                 itemStyle: {
@@ -169,7 +169,7 @@
                                 label: {
                                     normal: {
                                         formatter:  (params)=> {
-                                            let temp=this.maxNumY==0?'0':(params.value*100/this.maxNumY).toFixed(1);
+                                            let temp=this.maxNumY==0?'0':(params.value*100/this.maxNumY).toFixed(0);
                                             let str = '{a|}\n{nameStyle|' + params.name + ' }' + '{rate|' + temp + '%}';
                                             return str
                                         },
@@ -226,7 +226,7 @@
                             },
                             // 边框的设置
                             {
-                                radius: ['42%', '47%'],
+                                radius: ['37%', '42%'],
                                 center: ['50%', '50%'],
                                 type: 'pie',
                                 label: {

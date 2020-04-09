@@ -96,9 +96,9 @@
                     this.myMap.setMapStyleV2({
                         styleJson: this.$MapStyle
                     });
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         this.getBoundary();
-                    },1000)
+                    }, 1000)
                 })
                     .catch(err => {
                         console.log('地图加载失败')
@@ -106,16 +106,22 @@
             },
             getBoundary() {
                 let bdary = new BMap.Boundary();
-                bdary.get("上海市松江区", (rs)=>{       //获取行政区域
+                bdary.get("上海市松江区", (rs) => {       //获取行政区域
                     this.myMap.clearOverlays();        //清除地图覆盖物
                     var count = rs.boundaries.length; //行政区域的点有多少个
                     if (count === 0) {
                         alert('未能获取当前输入行政区域');
-                        return ;
+                        return;
                     }
                     var pointArray = [];
                     for (var i = 0; i < count; i++) {
-                        var ply = new BMap.Polygon(rs.boundaries[i], {strokeWeight: 2,StrokeStyle: "solid", strokeColor: "#0164ff",fillColor: "#0164ff",fillOpacity:0.1}); //建立多边形覆盖物
+                        var ply = new BMap.Polygon(rs.boundaries[i], {
+                            strokeWeight: 2,
+                            StrokeStyle: "solid",
+                            strokeColor: "#0164ff",
+                            fillColor: "#0164ff",
+                            fillOpacity: 0.1
+                        }); //建立多边形覆盖物
                         this.myMap.addOverlay(ply);  //添加覆盖物
                         pointArray = pointArray.concat(ply.getPath());
                     }

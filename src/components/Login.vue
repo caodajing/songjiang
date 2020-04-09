@@ -6,11 +6,13 @@
             <div class="input-box">
                 <p>用户登录</p>
                 <el-input
+                        maxlength="16"
                         placeholder="请输入用户名"
                         prefix-icon="iconfont icon-yonghuming"
                         v-model="userName">
                 </el-input>
                 <el-input
+                        maxlength="16"
                         placeholder="请输入密码"
                         prefix-icon="iconfont icon-mima"
                         v-model="passWord">
@@ -54,15 +56,15 @@
         methods: {
             loginFn() {
                 if (this.userName && this.passWord) {
-                    this.$ajax.post('http://shcloud.wmtechzone.club:12007/xf-unit/user/userLogin', qs.stringify({
+                    this.$ajax.post(this.$URL + '/xf-unit/user/userLogin', qs.stringify({
                         username: this.userName,
                         password: this.passWord
                     }), {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then((res) => {
                         let data = res.data;
                         if (data.code == 200) {
                             setCookie('userInfo', JSON.stringify(data.data));
-                            setCookie('token', this.passWord);
-                            setCookie('userName', this.userName);
+                            setCookie('token', data.data.id);
+                            setCookie('userName', decodeURI(data.data.realName));
                             this.$router.push('/homePage');
                         } else {
                             this.$message.error(data.msg);
