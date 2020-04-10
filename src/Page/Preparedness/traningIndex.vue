@@ -138,7 +138,7 @@
         </el-table-column>
       </el-table>
 
-      <pagination :pageNum="form.page" @changePage="getPage($event)"></pagination>
+      <pagination :pageNum="totalPages" @changePage="getPage($event)"></pagination>
     </div>
 
     <el-dialog
@@ -394,12 +394,13 @@ export default {
         deptId: "",
         projectId: "",
         page: 1,
-        pageSize: 20,
+        pageSize: 50,
         status: 0
       },
 
       list: [],
       tableData: [],
+      totalPages: 0,
 
       addTaskMask: false,
       task: {
@@ -537,13 +538,15 @@ export default {
         .catch(err => {});
     },
 
-    getPage() {
+    getPage(e) {
+      if (e) this.form.page = e;
       let params = {
         taskName: this.form.taskName,
         deptId: String(this.form.deptId),
-        projectId: this.form.projectId
+        projectId: this.form.projectId,
+        pageNum: this.form.page,
+        pageSize: 2
       };
-      // if (this.form.deptId) params.deptId = this.form.deptId;
       if (Number(this.form.status)) params.status = Number(this.form.status);
       this.loadingData = true;
       this.$ajax({
@@ -556,7 +559,9 @@ export default {
           if (res.data.status !== 200) {
             this.list = [];
           } else {
+            console.log(res.data.data, "data");
             this.list = res.data.data.list;
+            this.totalPages = res.data.data.pages;
           }
         })
         .catch(err => {})

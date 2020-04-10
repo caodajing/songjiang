@@ -39,7 +39,7 @@
         <el-table
           style="margin-top:10px"
           stripe
-          height="calc(100vh - 250px)"
+          height="calc(100vh - 310px)"
           v-loading="loading"
           border
           :data="list"
@@ -75,6 +75,8 @@
             </template>
           </el-table-column>
         </el-table>
+
+        <pagination :pageNum="totalPages" @changePage="getPage($event)"></pagination>
       </div>
     </div>
 
@@ -729,12 +731,14 @@
 import leftNav from "./leftNav";
 import timeCmp from "./timeComp";
 import { setCookie, getCookie } from "../../assets/js/cookie.js";
+import pagination from "../../components/pagination";
 
 export default {
   name: "summingUp",
   components: {
     leftNav,
-    timeCmp
+    timeCmp,
+    pagination
   },
   data() {
     return {
@@ -789,9 +793,11 @@ export default {
       form: {
         processUnitId: "",
         alarmMode: "",
-        processCar: ""
+        processCar: "",
+        page: 1
       },
       list: [],
+      totalPages: 0,
       teamList: [], //处警单位
       carsList: [],
       personList: [],
@@ -919,10 +925,11 @@ export default {
         })
         .catch(err => {});
     },
-    getPage() {
+    getPage(e) {
+      if (e) this.form.page = e;
       let params = {
-        rowLength: 500,
-        pageNum: 1,
+        rowLength: 50,
+        pageNum: this.form.page,
         processUnitId: this.form.processUnitId,
         alarmMode: this.form.alarmMode,
         processCar: this.form.processCar
@@ -938,7 +945,7 @@ export default {
       })
         .then(res => {
           this.list = res.data.data[0].dataList;
-          console.log(JSON.parse(JSON.stringify(this.list)), "list");
+          this.totalPages = Number(res.data.data[0].totalPages);
         })
         .catch(err => {
           this.list = [];
@@ -954,7 +961,6 @@ export default {
         await this.getCars();
         await this.getPersons();
         await this.getWarInfo();
-        console.log(this.$c(e), "e");
         this.fullType = "edit";
         this.showFullscreen = true;
 
@@ -1043,7 +1049,6 @@ export default {
             };
           });
         }
-        console.log(this.fileList, "this.fileList");
       } catch (error) {
       } finally {
         this.$set(e, "loadingEdit", false);
@@ -1108,6 +1113,7 @@ export default {
 
     //全屏
     openFullscreen() {
+      this.resetData();
       this.getCars();
       this.getPersons();
       this.getWarInfo();
@@ -1173,7 +1179,6 @@ export default {
         .then(res => {
           try {
             this.warInfoList = res.data.data[0].dataList;
-            console.log(this.$c(this.warInfoList), "warInfoList");
           } catch (error) {
             this.warInfoList = [];
           }
@@ -1248,7 +1253,6 @@ export default {
         this.fileList.forEach(item => {
           attachment.push(item.name);
         });
-        console.log(attachment, "attachment");
         let params = {
           issueTime: this.getTime(
             this.fullForm.issueTime,
@@ -1330,7 +1334,6 @@ export default {
           createUserId: this.userId,
           updateUserId: this.userId
         };
-        console.log(this.$c(params), "params");
         let url = "";
         if (this.fullType === "edit") {
           url = "/apis/summaryoffacts/updatedata";
@@ -1361,6 +1364,94 @@ export default {
             this.lodingSave = false;
           });
       });
+    },
+
+    resetData() {
+      this.fullForm.id = "";
+
+      this.fullForm.issueTime = "";
+      this.fullForm.alarmMode = "";
+      this.fullForm.processUnit = "";
+      this.fullForm.dispatchTime = "";
+      this.fullForm.carFollowingLeader = "";
+      this.fullForm.processType = "";
+
+      this.fullForm.processCarInfo = [
+        {
+          process_car_id: "",
+          car_commander_id: "",
+          water_source_position: "",
+          trunk_line: "",
+          water_dispatch_position: "",
+          number_of_water_gun: "",
+          task: ""
+        }
+      ]; //处警车辆
+
+      this.fullForm.weather = "";
+      this.fullForm.windDirection = "";
+      this.fullForm.windForce = "";
+      this.fullForm.temperature = "";
+      this.fullForm.addressOfFireUnit = "";
+      this.fullForm.isKeyUnit = "";
+      this.fullForm.fireExtinguishPlan = "";
+      this.fullForm.squadronOperator = "";
+
+      //时间
+      this.fullForm.alarmInterval = "";
+      this.fullForm.inplaceInterval = "";
+      this.fullForm.foremostMsgInterval = "";
+      this.fullForm.waterOutputInterval = "";
+      this.fullForm.alarmingInterval = "";
+      this.fullForm.controlInterval = "";
+      this.fullForm.extinguishingInterval = "";
+      this.fullForm.evacuationInterval = "";
+
+      this.fullForm.fireObject = "";
+      this.fullForm.characteristicsOfBuildingStructure = "";
+      this.fullForm.floor = "";
+      this.fullForm.buildingArea = "";
+      this.fullForm.adjacentCondition = "";
+      this.fullForm.fireAreaInplace = "";
+      this.fullForm.firePart = "";
+      this.fullForm.combustionSubstance = "";
+      this.fullForm.stuckCondition = "";
+      this.fullForm.fireDistance = "";
+      this.fullForm.numberOfCarDispatched = "";
+      this.fullForm.numberOfWaterOutput = "";
+
+      this.fullForm.situationOfWaterSource = "";
+      this.fullForm.pipeCaliber = "";
+      this.fullForm.hydrantPressure = "";
+      this.fullForm.supportTeam = "";
+
+      this.fullForm.numberOfInplaceCar = "";
+      this.fullForm.numberOfOutputWaterCar = "";
+      this.fullForm.numberOfOutputWaterGun = "";
+      this.fullForm.numberOfNineteenMm = "";
+      this.fullForm.numberOfFlooding = "";
+      this.fullForm.numberOfFoam = "";
+      this.fullForm.hookPipe = "";
+      this.fullForm.mobileGun = "";
+      this.fullForm.totalDischarge = "";
+      this.fullForm.numberOfEvacuation = "";
+
+      this.fullForm.protectionValue = "";
+
+      this.fullForm.totalAffectedArea = "";
+      this.fullForm.fireArea = "";
+
+      this.fullForm.depthNumber = "";
+      this.fullForm.injuredNumber = "";
+      this.fullForm.staffDepthNumber = "";
+      this.fullForm.staffInjuredNumber = "";
+      this.fullForm.safetySituation = "";
+      this.fullForm.disciplineSituation = "";
+      this.fullForm.other = "";
+      this.fullForm.expressNewsId = "";
+
+      this.fullForm.attachment = "";
+      this.fileList = [];
     },
 
     $c(e) {

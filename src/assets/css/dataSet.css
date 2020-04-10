@@ -42,9 +42,9 @@ input[type="number"] {
     padding-top: 2px!important;
   }
 }
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   display: none;
-}
+} */
 input::-webkit-input-placeholder,
 textarea::-webkit-input-placeholder {
   font-size: 18px;

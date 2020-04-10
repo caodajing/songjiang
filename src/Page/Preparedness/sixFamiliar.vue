@@ -77,7 +77,7 @@
           </el-table-column>
         </el-table>
 
-        <pagination :pageNum="total" @changePage="getPage($event)"></pagination>
+        <pagination :pageNum="total" @changePage="getData($event)"></pagination>
       </div>
     </div>
 
@@ -180,7 +180,7 @@ export default {
       form: {
         address: "",
         pageNum: 1,
-        rowLength: 50
+        rowLength: 20
       },
       list: [],
       total: 0,
@@ -229,7 +229,8 @@ export default {
     this.getData();
   },
   methods: {
-    getData() {
+    getData(e) {
+      if (e) this.form.pageNum = e;
       this.loading = true;
       this.$ajax({
         method: "POST",
@@ -246,7 +247,7 @@ export default {
         .then(res => {
           try {
             this.list = res.data.data[0].dataList;
-            this.total = Number(res.data.data[0].totalItems);
+            this.total = Number(res.data.data[0].totalPages);
           } catch (error) {
             this.list = [];
           }
@@ -318,7 +319,6 @@ export default {
           } catch (error) {
             arr = [];
           }
-          console.log(JSON.parse(JSON.stringify(arr)), "list");
           callback(arr);
         })
         .catch(err => {});
@@ -337,7 +337,6 @@ export default {
     },
 
     edit(e) {
-      console.log(e.attachment, "att");
       this.title = "编辑记录";
       this.dialogForm.id = e.id;
       this.dialogForm.inspectionTime = e.inspectionTime;
