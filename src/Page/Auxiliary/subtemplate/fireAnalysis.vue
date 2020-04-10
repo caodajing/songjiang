@@ -1,12 +1,12 @@
 <!--火患分析-->
 <template>
-  <div class="fire-analysis">
-    <p>火患分析</p>
-    <div class="double-graphs">
-      <div id="myChart9" class="my-chart9"></div>
-      <div id="myChart10" class="my-chart10"></div>
+    <div class="fire-analysis">
+        <p>火患分析</p>
+        <div class="double-graphs">
+            <div id="myChart9" class="my-chart9"></div>
+            <div id="myChart10" class="my-chart10"></div>
+        </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -92,7 +92,7 @@
                             text: '火患类别占比',
                             subtext: '',
                             left: '50%',
-                            bottom: '',
+                            top: '5px',
                             textAlign: 'center',
                             textStyle: {
                                 color: this.fontColor1,
@@ -195,7 +195,7 @@
                             text: '火患场所占比',
                             subtext: '',
                             left: '50%',
-                            bottom: '',
+                            top: '5px',
                             textAlign: 'center',
                             textStyle: {
                                 color: this.fontColor1,
