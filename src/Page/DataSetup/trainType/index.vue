@@ -11,7 +11,7 @@
 				<div class="util-box clearfix">
 					<div class="inp-box clearfix">
 						<span>训练类型：</span>
-						<el-select v-model="trainTypeVal" placeholder="请选择">
+						<el-select v-model="trainTypeVal" placeholder="请选择" :clearable="true">
 						    <el-option
 						      v-for="item in trainTypeList"
 						      :key="item.value"
@@ -22,7 +22,7 @@
 					</div>
 					<div class="inp-box clearfix">
 						<span>训练项目：</span>
-						<el-select v-model="trainProVal" placeholder="请选择">
+						<el-select v-model="trainProVal" placeholder="请选择" :clearable="true">
 						    <el-option
 						      v-for="item in trainProList.list"
 						      :key="item.value"
@@ -206,7 +206,8 @@
         				second:""
         			},
         			remark:""
-        		}
+        		},
+        		page:1
         	}
         },
         mounted(){
@@ -302,7 +303,7 @@
 				        			},
 				        			remark:""
 				        		}
-		        				vm.getTrainProList('','',1);
+		        				vm.getTrainProList('','',vm.page);
 		        			}else{
 		        				vm.$message.error(data.msg);
 		        			}
@@ -395,7 +396,7 @@
 				        			},
 				        			remark:""
 				        		}
-		        				vm.getTrainProList('','',1);
+		        				vm.getTrainProList('','',vm.page);
 		        			}else{
 		        				vm.$message.error(data.msg);
 		        			}
@@ -422,7 +423,7 @@
 					            type: 'success',
 					            message: '删除成功!'
 				          	});
-	        				this.getTrainProList('','',1);
+	        				this.getTrainProList('','',this.page,'del');
 	        			}else{
 	        				this.$message.error(data.msg);
 	        			}
@@ -487,9 +488,10 @@
         		this.addTrainProData.remark = item.remark;
         	},
         	search(){
+        		this.page = 1;
         		this.getTrainProList(this.trainProVal,this.trainTypeVal,1);
         	},
-        	getTrainProList(projectId,projectType,pageNum){ // 获取 训练项目
+        	getTrainProList(projectId,projectType,pageNum,type){ // 获取 训练项目
         		this.$ajax.get(this.$dataSetUrlY + '/songjiangxn/project/selectProject', {
         			params:{
         				projectId: projectId,
@@ -509,6 +511,9 @@
         				})
         			}else{
         				this.trainProList = [];
+        				if(type == 'del'){
+        					this.getTrainProList('','',this.page-1);
+        				}
         			}
 			    }).catch(function (error) {
 			        console.log(error);
@@ -532,6 +537,7 @@
 			    })
         	},
         	getPage(page){
+        		this.page = page;
         		this.getTrainProList(this.trainProVal,this.trainTypeVal,page);
         	},
         	getCurrentTime(){

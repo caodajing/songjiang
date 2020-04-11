@@ -11,7 +11,7 @@
 				<div class="util-box clearfix">
 					<div class="inp-box clearfix">
 						<span>所属单位/部门：</span>
-						<el-select v-model="departmentVal" placeholder="请选择">
+						<el-select v-model="departmentVal" placeholder="请选择" :clearable="true">
 						    <el-option
 						      v-for="item in departmentList"
 						      :key="item.value"
@@ -21,7 +21,7 @@
 						 </el-select>
 					</div>
 					<div class="inp-box clearfix">
-						<el-select v-model="alarmType" placeholder="搜寻处警类型">
+						<el-select v-model="alarmType" placeholder="搜寻处警类型" :clearable="true">
 						    <el-option
 						      v-for="item in alarmTypeList"
 						      :key="item.value"
@@ -140,6 +140,7 @@
         		list:[], // 表格数据
         		currentTime:"",
         		currentHour:"",
+        		page:1
         	}
         },
         mounted(){
@@ -163,7 +164,7 @@
 					            type: 'success',
 					            message: '删除成功!'
 				          	});
-	        				this.getList('','',1);
+	        				this.getList('','',this.page,'del');
 	        			}else{
 	        				this.$message.error('接口异常');
 	        			}
@@ -180,9 +181,10 @@
         		
         	},
         	search(){
+        		this.page = 1;
         		this.getList(this.departmentVal,this.alarmType,1);
         	},
-        	getList(warSeparation,alarmType,pageNum){ // 获取表格数据
+        	getList(warSeparation,alarmType,pageNum,type){ // 获取表格数据
         		this.$ajax.post(this.$dataSetUrl + '/apis/wartimeexpress/getdata', qs.stringify({
         			warSeparation:warSeparation,
         			alarmType: alarmType,
@@ -245,13 +247,16 @@
         				})
         			}else{
         				this.list = [];
+        				if(type == 'del'){
+        					this.getList('','',this.page-1);
+        				}
         			}
 			    }).catch(function (error) {
 			        console.log(error);
 			    })
         	},
         	getPage(page){
-        		console.log(page);
+        		this.page = page;
         		this.getList(this.departmentVal,this.alarmType,page);
         	},
         	goDetail(type,item){ // 

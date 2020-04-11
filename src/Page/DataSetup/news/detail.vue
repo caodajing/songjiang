@@ -263,8 +263,8 @@
         	}
         	this.userInfo = JSON.parse(getCookie("userInfo"));
         	this.departmentList = JSON.parse(window.localStorage.getItem("departmentList"));
-        	this.getalarmList('',this.editData.warSeparation);
-        	this.getCarList(this.editData.warSeparation,'','',1);
+        	// this.getalarmList('',this.editData.warSeparation);
+        	// this.getCarList(this.editData.warSeparation,'','',1);
         	
 
         },

@@ -11,7 +11,7 @@
 				<div class="util-box clearfix">
 					<div class="inp-box clearfix">
 						<span>标题：</span>
-						<input type="text" class="inp" placeholder="输入关键字搜索" v-model="searchName">
+						<el-input type="text" placeholder="输入关键字搜索" v-model="searchName" class="elInp inp" :clearable="true"></el-input>
 					</div>
 					<div class="search-btn" @click="search">查询</div>
 					<div class="add-person-btn common" @click="goDetail('add')">
@@ -50,7 +50,7 @@
 						</tbody>
 					</table>
 				</div>
-				<pagination :pageNum="parseInt(list.totalPages)" @changePage="getPageLeftCar($event)"></pagination>
+				<pagination :pageNum="parseInt(list.totalPages)" @changePage="getPage($event)"></pagination>
 			</div>
 		</div>
 	</div>
@@ -71,6 +71,7 @@
         		departmentList:[], // 所属单位
         		searchName:"",//搜索名
         		list:[], // 表格数据
+        		page:1
         	}
         },
         mounted(){
@@ -93,7 +94,7 @@
 					            type: 'success',
 					            message: '删除成功!'
 				          	});
-	        				this.getList('','',1);
+	        				this.getList('','',this.page,'del');
 	        			}else{
 	        				this.$message.error('接口异常');
 	        			}
@@ -109,9 +110,10 @@
 		        });
         	},
         	search(){
+        		this.page = 1;
         		this.getList(this.departmentVal,this.searchName,1);
         	},
-        	getList(groupId,title,pageNum){ // 获取表格数据
+        	getList(groupId,title,pageNum,type){ // 获取表格数据
         		// console.log(groupId,title)
         		this.$ajax.post(this.$dataSetUrl + '/apis/fireanalysis/getdata', qs.stringify({
         			// groupId:groupId,
@@ -124,10 +126,17 @@
         				this.list = data.data[0];
         			}else{
         				this.list = [];
+        				if(type == 'del'){
+        					this.getList('','',this.page-1);
+        				}
         			}
 			    }).catch(function (error) {
 			        console.log(error);
 			    })
+        	},
+        	getPage(page){
+        		this.page = page;
+        		this.getList(this.departmentVal,this.searchName,page);
         	},
         	goDetail(type,item){
         		if(type == 'add'){ // 新增

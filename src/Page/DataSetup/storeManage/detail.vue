@@ -33,9 +33,9 @@
 						<thead>
 							<th style="width:70px;">序号</th>
 							<th>装备名</th>
-							<th>所属分类</th>
-							<th>品牌</th>
-							<th>数量</th>
+							<th style="width:370px;">所属分类</th>
+							<th style="width:84px;">品牌</th>
+							<th style="width:84px;">数量</th>
 							<th>货架号</th>
 							<!-- <th>所属中队</th> -->
 							<th>录入人</th>
@@ -46,9 +46,9 @@
 							<tr v-for="(item,index) in list.list">
 								<td style="width:70px;">{{index+1}}</td>
 								<td>{{item.equipmentName}}</td>
-								<td>{{item.relationName}}</td>
-								<td>{{item.bland}}</td>
-								<td>{{item.eqCount}}</td>
+								<td style="width:370px;">{{item.relationName}}</td>
+								<td style="width:84px;">{{item.bland}}</td>
+								<td style="width:84px;">{{item.eqCount}}</td>
 								<td>{{item.shelvescode}}</td>
 								<!-- <td>{{item.equipmentName}}</td>	 -->
 								<td>{{item.editUserId}}</td>	

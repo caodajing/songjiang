@@ -107,7 +107,7 @@
             getBoundary() {
                 let bdary = new BMap.Boundary();
                 bdary.get("上海市松江区", (rs) => {       //获取行政区域
-                    this.myMap.clearOverlays();        //清除地图覆盖物
+                    // this.myMap.clearOverlays();        //清除地图覆盖物
                     var count = rs.boundaries.length; //行政区域的点有多少个
                     if (count === 0) {
                         alert('未能获取当前输入行政区域');

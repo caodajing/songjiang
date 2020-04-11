@@ -11,11 +11,11 @@
 				<div class="util-box clearfix">
 					<div class="inp-box clearfix">
 						<span>主管单位：</span>
-						<input type="text" class="inp" placeholder="输入关键字搜索" v-model="search_competentUnitId">
+						<el-input type="text" placeholder="输入关键字搜索" v-model="search_competentUnitId" class="elInp inp" :clearable="true"></el-input>
 					</div>
 					<div class="inp-box clearfix">
-						<span>水源名称：：</span>
-						<input type="text" class="inp" placeholder="输入关键字搜索" v-model="search_apparatusName">
+						<span>水源名称：</span>
+						<el-input type="text" placeholder="输入关键字搜索" v-model="search_apparatusName" class="elInp inp" :clearable="true"></el-input>
 					</div>
 					<div class="search-btn" @click="search">查询</div>
 					<div class="add-person-btn common" @click="addWaterFn">
@@ -163,7 +163,8 @@
         			chargePersonId:"",
         			isIntact:'0',
         			remark:""
-        		}
+        		},
+        		page:1
         	}
         },
         mounted(){
@@ -208,7 +209,7 @@
 						            message: '修改成功!'
 					          	});
 		        				this.addWaterMask = false;
-		        				this.getList('','',1);
+		        				this.getList('','',this.page);
 		        			}else{
 		        				this.$message.error('接口异常');
 		        			}
@@ -250,7 +251,7 @@
 						            message: '新增成功!'
 					          	});
 		        				this.addWaterMask = false;
-		        				this.getList('','',1);
+		        				this.getList('','',this.page);
 		        			}else{
 		        				this.$message.error('接口异常');
 		        			}
@@ -275,7 +276,7 @@
 					            type: 'success',
 					            message: '删除成功!'
 				          	});
-	        				this.getList('','',1);
+	        				this.getList('','',this.page,'del');
 	        			}else{
 	        				this.$message.error('接口异常');
 	        			}
@@ -318,9 +319,10 @@
         		this.addWaterData.remark = item.remark;
         	},
         	search(){
+        		this.page = 1;
         		this.getList(this.search_competentUnitId,this.search_apparatusName,1);
         	},
-        	getList(competentUnitId,apparatusName,pageNum){ // 获取表格数据
+        	getList(competentUnitId,apparatusName,pageNum,type){ // 获取表格数据
         		this.$ajax.post(this.$dataSetUrl + '/apis/apparatus/getdata', qs.stringify({
         			competentUnitId:competentUnitId,
         			apparatusName:apparatusName,
@@ -340,6 +342,9 @@
         				})
         			}else{
         				this.list = [];
+        				if(type == 'del'){
+        					this.getList('','',this.page-1);
+        				}
         			}
 			    }).catch(function (error) {
 			        console.log(error);
@@ -360,7 +365,7 @@
         					}
         				})
         				console.log(this.waterIdData)
-        				this.getList('','',1);
+        				this.getList('','',this.page);
         			}else{
         				this.list = [];
         			}
@@ -369,6 +374,7 @@
 			    })
         	},
         	getPage(page){
+        		this.page = page;
         		this.getList(this.search_competentUnitId,this.search_apparatusName,page);
         	},
         	getCurrentTime(){

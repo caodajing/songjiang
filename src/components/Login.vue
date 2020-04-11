@@ -9,9 +9,11 @@
                         maxlength="16"
                         placeholder="请输入用户名"
                         prefix-icon="iconfont icon-yonghuming"
+                        @input="validateNumber(userName)"
                         v-model="userName">
                 </el-input>
                 <el-input
+                        type="password"
                         maxlength="16"
                         placeholder="请输入密码"
                         prefix-icon="iconfont icon-mima"
@@ -79,7 +81,10 @@
                         type: 'warning'
                     });
                 }
-            }
+            },
+            validateNumber(val) {
+                this.userName = val.replace(/[%]/g, "");
+            },
         }
     }
 </script>
