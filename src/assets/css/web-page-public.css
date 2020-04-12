@@ -276,8 +276,8 @@
 }
 .home-page .weather-box .weather-img-box {
   position: absolute;
-  top: 6rem;
-  right: 1rem;
+  bottom: 10px;
+  right: 10px;
   width: 125px;
   height: 94px;
   background-repeat: no-repeat;

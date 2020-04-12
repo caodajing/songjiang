@@ -20,8 +20,8 @@
       <li>{{weatherData.realIcomfort}}</li>
     </ul>
     <div class="weather-img" v-show="weatherData.alarmMsgImg=='None'"></div>
-    <!--    <div class="weather-img-box" v-show="weatherData.alarmMsgImg!='None'"-->
-    <!--         :style="{backgroundImage:'url('+weatherData.alarmMsgImg+ ')'}"></div>-->
+        <div class="weather-img-box" v-show="weatherData.alarmMsgImg!='None'"
+             :style="{backgroundImage:'url('+weatherData.alarmMsgImg+ ')'}"></div>
   </div>
 </template>
 
