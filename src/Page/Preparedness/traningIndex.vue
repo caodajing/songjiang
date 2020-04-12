@@ -175,7 +175,13 @@
           <el-input class="form_item" v-model="taskForm.taskName" placeholder="请输入任务名"></el-input>
         </el-form-item>
         <el-form-item label="执行单位" prop="team">
-          <el-select class="form_item" multiple v-model="taskForm.team" placeholder="请选择">
+          <el-select
+            class="form_item"
+            multiple
+            collapse-tags
+            v-model="taskForm.team"
+            placeholder="请选择"
+          >
             <el-option
               v-for="item in teamList"
               :key="item.groupId"
@@ -545,7 +551,7 @@ export default {
         deptId: String(this.form.deptId),
         projectId: this.form.projectId,
         pageNum: this.form.page,
-        pageSize: 2
+        pageSize: this.form.pageSize
       };
       if (Number(this.form.status)) params.status = Number(this.form.status);
       this.loadingData = true;
