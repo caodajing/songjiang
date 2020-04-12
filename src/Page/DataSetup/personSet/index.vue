@@ -11,7 +11,7 @@
 				<div class="util-box clearfix">
 					<div class="inp-box clearfix">
 						<span>所属单位/部门：</span>
-						<el-select v-model="departmentVal" placeholder="请选择">
+						<el-select v-model="departmentVal" placeholder="请选择" :clearable="true">
 						    <el-option
 						      v-for="item in departmentList"
 						      :key="item.value"
@@ -22,7 +22,7 @@
 					</div>
 					<div class="inp-box clearfix person-inp-box">
 						<span>人员类型：</span>
-						<el-select v-model="personTypeVal" placeholder="请选择">
+						<el-select v-model="personTypeVal" placeholder="请选择" :clearable="true">
 						    <el-option
 						      v-for="item in personTypeList"
 						      :key="item.value"
@@ -33,7 +33,7 @@
 					</div>
 					<div class="inp-box clearfix">
 						<span>姓名：</span>
-						<input type="text" class="inp" v-model="name">
+						<el-input type="text" class="elInp inp" v-model="name" placeholder="输入关键字搜索" :clearable="true"></el-input>
 					</div>
 					<div class="search-btn" @click="search">查询</div>
 					<div class="add-person-btn common" @click="addPersonMask = true">
@@ -52,30 +52,30 @@
 				<div class="table-box">
 					<table>
 						<thead>
-							<th>序号</th>
+							<th style="width:70px;">序号</th>
 							<th>姓名</th>
-							<th>性别</th>
+							<th style="width:50px;">性别</th>
 							<th>所属单位/部门</th>
 							<th>职务</th>
 							<th>人员类型</th>
 							<th>手机号</th>
 							<th>家属姓名</th>
-							<th>家属关系</th>
+							<th style="width:95px;">家属关系</th>
 							<th>家属电话</th>
 							<th>家庭地址</th>
 							<th style="width:200px">操作</th>
 						</thead>
 						<tbody>
 							<tr v-for="(item,index) in list.dataList">
-								<td>{{index+1}}</td>
+								<td style="width:70px;">{{index+1}}</td>
 								<td>{{item.realName}}</td>
-								<td>{{item.sex == 0 ? '男' : '女'}}</td>
+								<td style="width:50px;">{{item.sex == 0 ? '男' : '女'}}</td>
 								<td>{{item.groupName}}</td>
 								<td>{{item.roleName}} </td>
 								<td>{{item.type == 1 ? '基层干部' : item.type == 2 ? '政府专职消防员' : '现役消防士'}}</td>
 								<td>{{item.phone}}</td>
 								<td>{{item.familyName}}</td>
-								<td>{{item.familyKinship}}</td>
+								<td style="width:95px;">{{item.familyKinship}}</td>
 								<td>{{item.familyPhone}}</td>
 								<td>{{item.homeAddress}}</td>
 								<td style="width:200px">
@@ -183,7 +183,7 @@
 			<!-- 对比弹窗 -->
 			<div class="compare-TK" v-if="alrCheckedList.length > 0">
 				<div class="title">
-					<span>[1/2]对比框</span>
+					<span>[{{alrCheckedList.length}}/2]对比框</span>
 					<i class="icon-del1 iconfont" @click="emptyCheckedList"></i>
 				</div>
 				<div class="list">

@@ -11,7 +11,7 @@
 				<div class="util-box clearfix">
 					<div class="inp-box clearfix">
 						<span>所属单位/部门：</span>
-						<el-select v-model="departmentVal" placeholder="请选择">
+						<el-select v-model="departmentVal" placeholder="请选择" :clearable="true">
 						    <el-option
 						      v-for="item in departmentList"
 						      :key="item.value"
@@ -22,7 +22,7 @@
 					</div>
 					<div class="inp-box clearfix">
 						<span>车辆状态：</span>
-						<el-select v-model="carStatus" placeholder="请选择">
+						<el-select v-model="carStatus" placeholder="请选择" :clearable="true">
 						    <el-option
 						      v-for="item in carStatusList"
 						      :key="item.value"
@@ -33,7 +33,7 @@
 					</div>
 					<div class="inp-box clearfix">
 						<span>车牌：</span>
-						<input type="text" class="inp" v-model="carNumber">
+						<el-input type="text" class="elInp inp" v-model="carNumber" placeholder="输入关键字搜索" :clearable="true"></el-input>
 					</div>
 					<div class="search-btn" @click="search">查询</div>
 					<div class="add-person-btn common" @click="addCarFn">
@@ -106,7 +106,7 @@
 						</li>
 					</ul>
 				</div>
-				<pagination :pageNum="parseInt(list.totalPages)" @changePage="getPage($event)"></pagination>
+				<pagination :pageNum="parseInt(list.totalPages)" @changePage="getPage($event)" :TocurrentPage="page"></pagination>
 			</div>
 			<!-- 编辑/新增 车辆 -->
 			<div class="mask add-car-mask" v-if="addCarMask">
@@ -317,7 +317,8 @@
         			insuranceSituation:"",
         			driveRecorder: '0',
         			damageSituation:""
-        		}
+        		},
+        		page:1,
         		
         	}
         },
@@ -374,7 +375,7 @@
 						            message: '修改成功!'
 					          	});
 		        				this.addCarMask = false;
-		        				this.getList('','','',1);
+		        				this.getList('','','',this.page);
 		        			}else{
 		        				this.$message.error('接口异常');
 		        			}
@@ -426,7 +427,7 @@
 						            message: '新增成功!'
 					          	});
 		        				this.addCarMask = false;
-		        				this.getList('','','',1);
+		        				this.getList('','','',this.page);
 		        			}else{
 		        				this.$message.error('接口异常');
 		        			}
@@ -451,11 +452,11 @@
 					            type: 'success',
 					            message: '删除成功!'
 				          	});
-	        				this.getList('','','',1);
+	        				this.getList('','','',this.page,'del');
 	        			}else{
 	        				this.$message.error('接口异常');
 	        			}
-				    }).catch(function (error) {c
+				    }).catch(function (error) {
 				        console.log(error);
 				    })
 		          	
@@ -514,9 +515,9 @@
         	},
         	search(){
         		this.getList(this.departmentVal,this.carStatus,this.carNumber,1);
+        		this.page = 1;
         	},
-        	getList(groupId,carStatus,carNumber,pageNum){ // 获取表格数据
-        		console.log(groupId,carStatus,carNumber)
+        	getList(groupId,carStatus,carNumber,pageNum,type){ // 获取表格数据
         		this.$ajax.post(this.$dataSetUrl + '/apis/car/getdata', qs.stringify({
         			groupId:groupId,
         			carStatus: carStatus,
@@ -551,12 +552,16 @@
         				})
         			}else{
         				this.list = [];
+        				if(type == 'del'){
+        					this.getList('','','',this.page-1);
+        				}
         			}
-			    }).catch(function (error) {c
+			    }).catch(function (error) {
 			        console.log(error);
 			    })
         	},
         	getPage(page){
+        		this.page = page;
         		this.getList(this.departmentVal,this.carStatus,this.carNumber,page);
         	},
         	getCurrentTime(){

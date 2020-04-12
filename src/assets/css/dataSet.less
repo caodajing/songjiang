@@ -43,9 +43,9 @@ input[type="number"]{
 		padding-top: 2px!important;
 	}
 }
-::-webkit-scrollbar {
-	display: none;
-}
+// ::-webkit-scrollbar {
+// 	display: none;
+// }
 input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
 	font-size: 18px;
 	color: #ccc;
@@ -65,6 +65,26 @@ table{
 	}
 }
 .container-wrap{
+	.elInp {
+		padding-right:2px;
+		input{
+			height: 46px;
+			line-height: 46px;
+			border:0!important;
+			padding:0!important;
+			vertical-align: top;
+		}
+	}
+	.util-box{
+		display: -moz-box;  /* Firefox */
+		display: -ms-flexbox;    /* IE10 */
+		display: -webkit-box;    /* Safari */
+		display: -webkit-flex;    /* Chrome, WebKit */
+		display: box;
+		display: flexbox;
+		display: flex;
+		flex-wrap: wrap;
+	}
 	.go-top-box{
 		width: 60px;
 		height: 60px;
@@ -1605,7 +1625,8 @@ body,html{
 						.el-icon-arrow-up:before{
 							width: 16px;
 							height: 16px;
-							background: url(../images/dataSet/jiantou-down3.png) no-repeat;
+							background: url(../images/dataSet/down-jiao.png) no-repeat;
+							background-size:100% 100%;
 							transform: rotate(180deg);
 							-webkit-transform: rotate(180deg);
 							content: "";
@@ -1615,7 +1636,7 @@ body,html{
 							margin-top: -8px;
 						}
 						.el-input__icon:after{
-							background: url(../images/dataSet/jiantou-down3.png) no-repeat;
+							background: url(../images/dataSet/down-jiao.png) no-repeat;
 						}
 					}
 				}
@@ -1846,9 +1867,9 @@ body,html{
 							height: 50px;
 							font-size: 18px;
 							color: #333;
-							overflow: hidden;
-							text-overflow: ellipsis;
-							white-space: nowrap;
+							// overflow: hidden;
+							// text-overflow: ellipsis;
+							// white-space: nowrap;
 							border-right: 1px solid #D7D7D7;
 							span{
 								color: #496DFF;
@@ -2133,7 +2154,7 @@ body,html{
 						margin-right: 9px;
 					}
 					.inp{
-						width: 120px;
+						width: 150px;
 						height: 48px;
 						line-height: 48px;
 						background: #fff;
@@ -2142,6 +2163,7 @@ body,html{
 						padding-left: 15px;
 						font-size: 20px;
 					}
+					
 				}
 				.search-btn{
 					width: 80px;
@@ -2154,7 +2176,7 @@ body,html{
 					float: left;
 					border-radius: 5px;
 					text-align: center;
-					margin: 6px 40px 0 24px;
+					margin: 6px 22px 0 24px;
 				}
 				.common{
 					float: left;
@@ -2189,14 +2211,14 @@ body,html{
 						width: 180px;
 					}
 					.inp{
-						width: 130px;
+						width: 138px;
 						height: 48px;
 						line-height: 48px;
 						background: #fff;
 						border: 1px solid #DDD;
 						border-radius: 8px;
-						padding-left: 15px;
-						font-size: 16px;
+						padding-left: 8px;
+						font-size: 14px;
 					}
 				}
 				.search-btn{
@@ -2210,7 +2232,7 @@ body,html{
 					float: left;
 					border-radius: 5px;
 					text-align: center;
-					margin: 5px 20px 0 0;
+					margin: 5px 15px 0 0;
 				}
 				.common{
 					float: left;
@@ -2249,6 +2271,7 @@ body,html{
 					white-space: nowrap;
 					font-size: 0;
 					position: relative;
+					font-weight: bold;
 				}
 				&.positionDiv{
 					width: 130px;
@@ -2575,7 +2598,8 @@ body,html{
 					.el-icon-arrow-up:before{
 						width: 16px;
 						height: 16px;
-						background: url(../images/dataSet/jiantou-down3.png) no-repeat;
+						background: url(../images/dataSet/down-jiao.png) no-repeat;
+						background-size:100% 100%;
 						transform: rotate(180deg);
 						-webkit-transform: rotate(180deg);
 						content: "";
@@ -2585,7 +2609,7 @@ body,html{
 						margin-top: -8px;
 					}
 					.el-input__icon:after{
-						background: url(../images/dataSet/jiantou-down3.png) no-repeat;
+						background: url(../images/dataSet/down-jiao.png) no-repeat;
 					}
 				}
 			}
@@ -2864,7 +2888,7 @@ body,html{
 						vertical-align: middle;
 					}
 					.span{
-						width: 75px;
+						width: 85px;
 						display: block;
 						color: #999;
 						margin: 0 18px 0 0;
@@ -3154,9 +3178,10 @@ body,html{
 							height: 50px;
 							font-size: 18px;
 							color: #333;
-							overflow: hidden;
-							text-overflow: ellipsis;
-							white-space: nowrap;
+							// overflow: hidden;
+							// text-overflow: ellipsis;
+							// white-space: nowrap;
+							word-break: break-all;
 							border-right: 1px solid #D7D7D7;
 							span{
 								color: #496DFF;
@@ -3469,6 +3494,7 @@ body,html{
 					white-space: nowrap;
 					font-size: 0;
 					position: relative;
+					font-weight: bold;
 				}
 				&.positionDiv{
 					width: 130px;

@@ -11,7 +11,7 @@
 				<div class="util-box clearfix">
 					<div class="inp-box clearfix">
 						<span>所属单位/部门：</span>
-						<el-select v-model="departmentVal" placeholder="请选择">
+						<el-select v-model="departmentVal" placeholder="请选择" :clearable="true">
 						    <el-option
 						      v-for="item in departmentList"
 						      :key="item.value"
@@ -21,7 +21,7 @@
 						 </el-select>
 					</div>
 					<div class="inp-box clearfix">
-						<input type="text" class="inp" placeholder="输入关键字搜索" v-model="searchName">
+						<el-input type="text" placeholder="输入关键字搜索" v-model="searchName" class="elInp inp" :clearable="true"></el-input>
 					</div>
 					<div class="search-btn" @click="search">查询</div>
 					<div class="add-person-btn common" @click="addAlarmFn">
@@ -182,7 +182,8 @@
         			remark:"",
         			alarmUserId:"",
         			alarmMethod:""
-        		}
+        		},
+        		page:1
         	}
         },
         mounted(){
@@ -226,7 +227,7 @@
 						            message: '修改成功!'
 					          	});
 		        				this.addAlarmMask = false;
-		        				this.getList('','',1);
+		        				this.getList('','',this.page);
 		        			}else{
 		        				this.$message.error('接口异常');
 		        			}
@@ -266,11 +267,11 @@
 						            message: '新增成功!'
 					          	});
 		        				this.addAlarmMask = false;
-		        				this.getList('','',1);
+		        				this.getList('','',this.page);
 		        			}else{
 		        				this.$message.error('接口异常');
 		        			}
-					    }).catch(function (error) {c
+					    }).catch(function (error) {
 					        console.log(error);
 					    })
         			}
@@ -291,7 +292,7 @@
 					            type: 'success',
 					            message: '删除成功!'
 				          	});
-	        				this.getList('','',1);
+	        				this.getList('','',this.page,'del');
 	        			}else{
 	        				this.$message.error('接口异常');
 	        			}
@@ -332,9 +333,10 @@
 
         	},
         	search(){
+        		this.page = 1;
         		this.getList(this.departmentVal,this.searchName,1);
         	},
-        	getList(groupId,remark,pageNum){ // 获取表格数据
+        	getList(groupId,remark,pageNum,type){ // 获取表格数据
         		console.log(groupId,remark)
         		this.$ajax.post(this.$dataSetUrl + '/apis/processalarm/getdata', qs.stringify({
         			groupId:groupId,
@@ -365,12 +367,16 @@
         				})
         			}else{
         				this.list = [];
+        				if(type == 'del'){
+        					this.getList('','',this.page-1);
+        				}
         			}
 			    }).catch(function (error) {
 			        console.log(error);
 			    })
         	},
         	getPage(page){
+        		this.page = page;
         		this.getList(this.departmentVal,this.searchName,page);
         	},
         	getCurrentTime(){

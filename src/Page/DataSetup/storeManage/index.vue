@@ -11,7 +11,7 @@
 				<div class="util-box clearfix">
 					<div class="inp-box clearfix">
 						<span>所属单位/部门：</span>
-						<el-select v-model="departmentVal" placeholder="请选择">
+						<el-select v-model="departmentVal" placeholder="请选择" :clearable="true">
 						    <el-option
 						      v-for="item in departmentList"
 						      :key="item.value"
@@ -22,7 +22,7 @@
 					</div>
 					<div class="inp-box clearfix">
 						<span>仓库名称：</span>
-						<input type="text" class="inp" v-model="searchName">
+						<el-input type="text" class="elInp inp" v-model="searchName" placeholder="输入关键字搜索" :clearable="true"></el-input>
 					</div>
 					<div class="search-btn" @click="search">查询</div>
 					<div class="add-person-btn common" @click="addStoreMask = true">

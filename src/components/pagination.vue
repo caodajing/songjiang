@@ -11,7 +11,7 @@
             <span class="demonstration">共{{pageNum}}页</span>
             <div class="go-page-box clearfix">
                 <span>到第</span>
-                <input type="number" v-model="page">
+                <input type="text" v-model="page" @input="validateNumber(page)">
                 <span>页</span>
                 <i @click="sure">确定</i>
             </div>
@@ -33,7 +33,7 @@ export default {
     components:{
   	
     },
-    props:["pageNum"],
+    props:["pageNum","TocurrentPage"],
     computed:{
         
     },
@@ -59,10 +59,15 @@ export default {
                 this.currentPage = parseInt(this.page);
                 this.$emit("changePage",this.page);
             }
-        }
+        },
+        validateNumber(val) {
+            this.page = val.replace(/[^\d]/g, "");
+        },
     },
     watch:{
-
+        TocurrentPage(oldVal,val){
+            this.currentPage = val;
+        }
     }
   
 }
