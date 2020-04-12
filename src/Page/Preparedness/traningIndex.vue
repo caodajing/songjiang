@@ -539,7 +539,7 @@ export default {
     },
 
     getPage(e) {
-      if (e) this.form.page = e;
+      if (e && !isNaN(e)) this.form.page = e;
       let params = {
         taskName: this.form.taskName,
         deptId: String(this.form.deptId),

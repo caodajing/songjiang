@@ -926,7 +926,7 @@ export default {
         .catch(err => {});
     },
     getPage(e) {
-      if (e) this.form.page = e;
+      if (e && !isNaN(e)) this.form.page = e;
       let params = {
         rowLength: 50,
         pageNum: this.form.page,
@@ -1122,6 +1122,7 @@ export default {
     closeFullscreen() {
       this.showFullscreen = false;
     },
+    
     async getCars() {
       await this.$ajax({
         method: "POST",
@@ -1185,6 +1186,7 @@ export default {
         })
         .catch(err => {});
     },
+
     addMoreCars() {
       this.fullForm.processCarInfo.push({
         process_car_id: "",

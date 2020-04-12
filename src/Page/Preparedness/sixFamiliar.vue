@@ -230,7 +230,7 @@ export default {
   },
   methods: {
     getData(e) {
-      if (e) this.form.pageNum = e;
+      if (e && !isNaN(e)) this.form.pageNum = e;
       this.loading = true;
       this.$ajax({
         method: "POST",
