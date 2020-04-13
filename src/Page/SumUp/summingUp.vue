@@ -45,25 +45,25 @@
           :data="list"
         >
           <el-table-column type="index" label="序号" align="center" width="50"></el-table-column>
-          <el-table-column prop="issueTime" align="center" label="日期" width="140">
+          <el-table-column prop="issueTime" align="center" label="日期" width="100">
             <template v-slot="scope">{{getTime(scope.row.issueTime)}}</template>
           </el-table-column>
           <el-table-column prop="alarmMode" align="center" label="接警方式" width="100"></el-table-column>
-          <el-table-column prop="processUnit" align="center" label="处警单位" width="100"></el-table-column>
+          <el-table-column prop="processUnitName" align="center" label="处警单位" width="100"></el-table-column>
           <el-table-column align="center" label="处警车辆" width="200">
             <template
               v-slot="scope"
             >{{scope.row.processInfo.map(item=>item.process_car_name).join(' , ')}}</template>
           </el-table-column>
-          <el-table-column prop="dispatchTime" align="center" label="出动时间"></el-table-column>
+          <el-table-column prop="dispatchTime" align="center" label="出动时间(单位: S)"></el-table-column>
           <el-table-column prop="carFollowingLeader" align="center" label="跟车领导"></el-table-column>
           <el-table-column prop="processType" align="center" label="处警类型"></el-table-column>
           <el-table-column prop="attachement" align="center" label="详细文件" width="100"></el-table-column>
-          <el-table-column prop="createUserName" align="center" label="录入人"></el-table-column>
+          <el-table-column prop="createUserName" align="center" width="90" label="录入人"></el-table-column>
           <el-table-column prop="createTime" align="center" label="录入时间" width="120">
             <template v-slot="scope">{{getTime(scope.row.createTime,'MM-dd hh:mm')}}</template>
           </el-table-column>
-          <el-table-column align="center" label="操作" fixed="right" width="140">
+          <el-table-column align="center" label="操作" fixed="right" width="120">
             <template v-slot="scope">
               <el-button
                 type="text"
@@ -95,7 +95,7 @@
           <span>基本信息</span>
         </el-divider>
         <div class="inner">
-          <el-form ref="form" :model="fullForm" :rules="fullRules" label-width="110px">
+          <el-form ref="form" :model="fullForm" :rules="fullRules" label-width="130px">
             <el-row>
               <el-col :span="12">
                 <el-form-item label="日期" prop="issueTime">
@@ -130,7 +130,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="出动时间" required>
+                <el-form-item label="出动时间(单位: S)" required>
                   <time-cmp v-model="fullForm.dispatchTime"></time-cmp>
                 </el-form-item>
               </el-col>
@@ -300,9 +300,15 @@
               </el-col>
               <el-col :span="24">
                 <el-form-item label="总、单层建筑面积" prop="buildingArea">
-                  <el-input class="form_item" v-model="fullForm.buildingArea" placeholder="请输入...">
+                  <input-number
+                    class="form_item"
+                    placeholder="请输入..."
+                    :min="0"
+                    :precision="2"
+                    v-model="fullForm.buildingArea"
+                  >
                     <template slot="append">㎡</template>
-                  </el-input>
+                  </input-number>
                 </el-form-item>
               </el-col>
               <el-col :span="24">
@@ -312,13 +318,15 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="中队到场燃烧面积" prop="fireAreaInplace">
-                  <el-input
+                  <input-number
                     class="form_item"
                     v-model="fullForm.fireAreaInplace"
+                    :min="0"
+                    :precision="2"
                     placeholder="请输入..."
                   >
                     <template slot="append">㎡</template>
-                  </el-input>
+                  </input-number>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -342,9 +350,15 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="中队与火场距离" prop="fireDistance">
-                  <el-input class="form_item" placeholder="请输入" v-model="fullForm.fireDistance">
+                  <input-number
+                    class="form_item"
+                    placeholder="请输入"
+                    :min="0"
+                    :precision="2"
+                    v-model="fullForm.fireDistance"
+                  >
                     <template slot="append">Km</template>
-                  </el-input>
+                  </input-number>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -353,6 +367,8 @@
                     class="form_item"
                     :controls="false"
                     placeholder="请输入"
+                    :min="0"
+                    :precision="0"
                     v-model="fullForm.numberOfCarDispatched"
                   />
                 </el-form-item>
@@ -363,6 +379,8 @@
                     class="form_item"
                     :controls="false"
                     placeholder="请输入"
+                    :min="0"
+                    :precision="2"
                     v-model="fullForm.numberOfWaterOutput"
                   />
                 </el-form-item>
@@ -416,9 +434,15 @@
                   </el-col>
                   <el-col :span="12">
                     <el-form-item label="铺设干线">
-                      <el-input class="form_item" v-model="item.trunk_line" placeholder="请输入...">
+                      <input-number
+                        class="form_item"
+                        placeholder="请输入..."
+                        v-model="item.trunk_line"
+                        :min="0"
+                        :precision="0"
+                      >
                         <template slot="append">条</template>
-                      </el-input>
+                      </input-number>
                     </el-form-item>
                   </el-col>
                   <el-col :span="12">
@@ -432,13 +456,15 @@
                   </el-col>
                   <el-col :span="12">
                     <el-form-item label="水枪支数">
-                      <el-input
+                      <input-number
                         class="form_item"
-                        v-model="item.number_of_water_gun"
                         placeholder="请输入..."
+                        :min="0"
+                        :precision="0"
+                        v-model="item.number_of_water_gun"
                       >
                         <template slot="append">支</template>
-                      </el-input>
+                      </input-number>
                     </el-form-item>
                   </el-col>
                   <el-col :span="24">
@@ -460,14 +486,20 @@
                 <el-form-item label="水源情况" prop="situationOfWaterSource">
                   <el-input
                     class="form_item"
-                    v-model="fullForm.situationOfWaterSource"
                     placeholder="请输入..."
+                    v-model="fullForm.situationOfWaterSource"
                   />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="灭火用水主要道路地下水管口径" prop="pipeCaliber">
-                  <el-input class="form_item" v-model="fullForm.pipeCaliber" placeholder="请输入..." />
+                <el-form-item class="form_left_label" label="灭火用水主要道路地下水管口径" prop="pipeCaliber">
+                  <input-number
+                    class="form_item"
+                    placeholder="请输入..."
+                    v-model="fullForm.pipeCaliber"
+                    :min="0"
+                    :precision="2"
+                  />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -491,6 +523,8 @@
                     :controls="false"
                     v-model="fullForm.numberOfInplaceCar"
                     placeholder="请输入..."
+                    :min="0"
+                    :precision="0"
                   />
                 </el-form-item>
               </el-col>
@@ -501,6 +535,8 @@
                     :controls="false"
                     v-model="fullForm.numberOfOutputWaterCar"
                     placeholder="请输入..."
+                    :min="0"
+                    :precision="0"
                   />
                 </el-form-item>
               </el-col>
@@ -511,61 +547,87 @@
                     :controls="false"
                     v-model="fullForm.numberOfOutputWaterGun"
                     placeholder="请输入..."
+                    :min="0"
+                    :precision="0"
                   />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="19mm" prop="numberOfNineteenMm">
-                  <el-input
+                  <input-number
                     class="form_item"
                     v-model="fullForm.numberOfNineteenMm"
                     placeholder="请输入..."
+                    :min="0"
+                    :precision="0"
                   >
                     <template slot="append">支</template>
-                  </el-input>
+                  </input-number>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="洪水" prop="numberOfFlooding">
-                  <el-input
+                  <input-number
                     class="form_item"
                     v-model="fullForm.numberOfFlooding"
                     placeholder="请输入..."
+                    :min="0"
+                    :precision="0"
                   >
                     <template slot="append">支</template>
-                  </el-input>
+                  </input-number>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="泡沫管枪" prop="numberOfFoam">
-                  <el-input class="form_item" v-model="fullForm.numberOfFoam" placeholder="请输入...">
+                  <input-number
+                    class="form_item"
+                    :min="0"
+                    :precision="0"
+                    v-model="fullForm.numberOfFoam"
+                    placeholder="请输入..."
+                  >
                     <template slot="append">支</template>
-                  </el-input>
+                  </input-number>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="钩管" prop="hookPipe">
-                  <el-input class="form_item" v-model="fullForm.hookPipe" placeholder="请输入...">
+                  <input-number
+                    class="form_item"
+                    :min="0"
+                    :precision="0"
+                    v-model="fullForm.hookPipe"
+                    placeholder="请输入..."
+                  >
                     <template slot="append">支</template>
-                  </el-input>
+                  </input-number>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="移动泡" prop="mobileGun">
-                  <el-input class="form_item" v-model="fullForm.mobileGun" placeholder="请输入...">
+                  <input-number
+                    class="form_item"
+                    :min="0"
+                    :precision="0"
+                    v-model="fullForm.mobileGun"
+                    placeholder="请输入..."
+                  >
                     <template slot="append">支</template>
-                  </el-input>
+                  </input-number>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="总流量" prop="totalDischarge">
-                  <el-input
+                <el-form-item class="spe_form_item_liuliang" label="总流量" prop="totalDischarge">
+                  <input-number
                     class="form_item"
-                    v-model="fullForm.totalDischarge"
                     placeholder="请输入..."
+                    v-model="fullForm.totalDischarge"
+                    :min="0"
+                    :precision="2"
                   >
                     <template slot="append">1/s</template>
-                  </el-input>
+                  </input-number>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -574,35 +636,47 @@
                     class="form_item"
                     :controls="false"
                     v-model="fullForm.numberOfEvacuation"
+                    :min="0"
+                    :precision="0"
                     placeholder="请输入..."
                   />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="保护价值" prop="protectionValue">
-                  <el-input
+                  <input-number
                     class="form_item"
-                    v-model="fullForm.protectionValue"
                     placeholder="请输入..."
+                    v-model="fullForm.protectionValue"
+                    :min="0"
+                    :precision="2"
                   />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="受灾总面积" prop="totalAffectedArea">
-                  <el-input
+                  <input-number
                     class="form_item"
-                    v-model="fullForm.totalAffectedArea"
                     placeholder="请输入..."
+                    :min="0"
+                    :precision="2"
+                    v-model="fullForm.totalAffectedArea"
                   >
                     <template slot="append">㎡</template>
-                  </el-input>
+                  </input-number>
                 </el-form-item>
               </el-col>
               <el-col :span="24">
                 <el-form-item label="过火面积" prop="fireArea">
-                  <el-input class="form_item" v-model="fullForm.fireArea" placeholder="请输入...">
+                  <input-number
+                    class="form_item"
+                    placeholder="请输入..."
+                    :min="0"
+                    :precision="2"
+                    v-model="fullForm.fireArea"
+                  >
                     <template slot="append">㎡</template>
-                  </el-input>
+                  </input-number>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -611,6 +685,8 @@
                     class="form_item"
                     :controls="false"
                     v-model="fullForm.depthNumber"
+                    :min="0"
+                    :precision="0"
                     placeholder="请输入..."
                   />
                 </el-form-item>
@@ -622,6 +698,8 @@
                     :controls="false"
                     v-model="fullForm.injuredNumber"
                     placeholder="请输入..."
+                    :min="0"
+                    :precision="0"
                   />
                 </el-form-item>
               </el-col>
@@ -632,6 +710,8 @@
                     :controls="false"
                     v-model="fullForm.staffDepthNumber"
                     placeholder="请输入..."
+                    :min="0"
+                    :precision="0"
                   />
                 </el-form-item>
               </el-col>
@@ -642,6 +722,8 @@
                     :controls="false"
                     v-model="fullForm.staffInjuredNumber"
                     placeholder="请输入..."
+                    :min="0"
+                    :precision="0"
                   />
                 </el-form-item>
               </el-col>
@@ -732,13 +814,17 @@ import leftNav from "./leftNav";
 import timeCmp from "./timeComp";
 import { setCookie, getCookie } from "../../assets/js/cookie.js";
 import pagination from "../../components/pagination";
+import InputNumber from "./InputNumber";
+import ElForm from "./Form";
 
 export default {
   name: "summingUp",
   components: {
     leftNav,
     timeCmp,
-    pagination
+    pagination,
+    InputNumber,
+    ElForm
   },
   data() {
     return {
@@ -1122,7 +1208,7 @@ export default {
     closeFullscreen() {
       this.showFullscreen = false;
     },
-    
+
     async getCars() {
       await this.$ajax({
         method: "POST",
@@ -1477,6 +1563,12 @@ export default {
   background: #f8f8f9;
   color: #333333;
 }
+.spe_form_item_liuliang .el-input-group__append {
+  padding: 0 17px;
+}
+.form_left_label /deep/ label {
+  text-align: left;
+}
 </style>
 <style scoped>
 .form_item {
@@ -1496,12 +1588,12 @@ export default {
   bottom: 0;
   width: 100%;
   height: 100%;
-  z-index: 100;
+  z-index: 2000;
   background: #ffffff;
   overflow: auto;
 }
 .summaryFullscreen .header {
-  padding: 20px 200px 0;
+  padding: 20px 150px 0;
 }
 .summaryFullscreen .back_btn {
   background: #f3f6fb;
@@ -1510,7 +1602,7 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
 }
 .summaryFullscreen .content {
-  padding: 20px 300px 0;
+  padding: 20px 250px 0;
 }
 .summaryFullscreen .content .el-divider__text {
   padding: 0;

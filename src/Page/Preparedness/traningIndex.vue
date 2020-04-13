@@ -221,7 +221,7 @@
             </div>
           </template>
         </el-form-item>
-        <el-form-item label="任务开始时间" prop="startTime">
+        <el-form-item label="任务开始时间" prop="startTime" required>
           <el-date-picker
             class="form_item"
             v-model="taskForm.startTime"
@@ -386,6 +386,10 @@ export default {
     }
   },
   data() {
+    const validateStartTime = (rule, value, callback) => {
+      if (!value) return callback(new Error("任务开始时间不能为空"));
+      console.log(value, "value");
+    };
     return {
       //loading
       loadingData: false,
@@ -444,9 +448,7 @@ export default {
         team: [
           { required: true, message: "请输入执行单位", trigger: "change" }
         ],
-        startTime: [
-          { required: true, message: "请选择任务开始时间", trigger: "change" }
-        ],
+        startTime: [{ validator: validateStartTime, trigger: "change" }],
         endTime: [
           { required: true, message: "请选择任务结束时间", trigger: "change" }
         ],
