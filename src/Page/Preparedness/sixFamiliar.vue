@@ -56,6 +56,7 @@
                 <el-button class="spe_color" type="text">查看</el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item
+                    class="alink_dropdown"
                     v-for="(item,index) in scope.row.attachment.split(',')"
                     :key="index"
                   >
@@ -171,6 +172,12 @@ export default {
     pagination
   },
   data() {
+    const validateInspectionTime = (rule, value, callback) => {
+      if (!value) return callback(new Error("检查时间不能为空"));
+      if (+value < +new Date())
+        return callback(new Error("检查时间不能小于当前时间"));
+      callback();
+    };
     return {
       //loading
       loading: false,
@@ -205,7 +212,7 @@ export default {
       },
       rules: {
         inspectionTime: [
-          { required: true, message: "请选择时间", trigger: "change" }
+          { validator: validateInspectionTime, trigger: "change" }
         ],
         checkTeam: [
           { required: true, message: "请选择检查中队", trigger: "change" }
@@ -272,7 +279,9 @@ export default {
       })
         .then(res => {
           try {
-            this.teamList = res.data.data[0].dataList;
+            this.teamList = res.data.data[0].dataList.filter(
+              item => item.grade === "3"
+            );
           } catch (error) {
             this.teamList = [];
           }
@@ -474,6 +483,13 @@ export default {
 .el-table__header th {
   background: #f8f8f9;
   color: #333333;
+}
+.alink_dropdown {
+  padding: 0;
+}
+.alink_dropdown a {
+  display: block;
+  padding: 0 15px;
 }
 </style>
 <style scoped>

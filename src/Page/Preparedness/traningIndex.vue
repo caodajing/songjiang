@@ -229,7 +229,7 @@
             placeholder="选择日期时间"
           ></el-date-picker>
         </el-form-item>
-        <el-form-item label="任务结束时间" prop="endTime">
+        <el-form-item label="任务结束时间" prop="endTime" required>
           <el-date-picker
             class="form_item"
             v-model="taskForm.endTime"
@@ -237,7 +237,7 @@
             placeholder="选择日期时间"
           ></el-date-picker>
         </el-form-item>
-        <el-form-item label="数据上报截止时间" prop="taskDeadlineTime">
+        <el-form-item label="数据上报截止时间" prop="taskDeadlineTime" required>
           <el-date-picker
             class="form_item"
             v-model="taskForm.taskDeadlineTime"
@@ -388,7 +388,21 @@ export default {
   data() {
     const validateStartTime = (rule, value, callback) => {
       if (!value) return callback(new Error("任务开始时间不能为空"));
-      console.log(value, "value");
+      if (+value < +new Date())
+        return callback(new Error("任务开始时间不能小于当前时间"));
+      callback();
+    };
+    const validateEndTime = (rule, value, callback) => {
+      if (!value) return callback(new Error("任务结束时间不能为空"));
+      if (+this.taskForm.startTime > +value)
+        return callback(new Error("任务开始时间不能大于任务结束时间"));
+      callback();
+    };
+    const validateDeadLine = (rule, value, callback) => {
+      if (!value) return callback(new Error("数据上报截止时间不能为空"));
+      if (+value < +this.taskForm.endTime)
+        return callback(new Error("数据上报时间不能小于任务结束时间"));
+      callback();
     };
     return {
       //loading
@@ -449,16 +463,8 @@ export default {
           { required: true, message: "请输入执行单位", trigger: "change" }
         ],
         startTime: [{ validator: validateStartTime, trigger: "change" }],
-        endTime: [
-          { required: true, message: "请选择任务结束时间", trigger: "change" }
-        ],
-        taskDeadlineTime: [
-          {
-            required: true,
-            message: "请选择数据上报截止时间",
-            trigger: "change"
-          }
-        ]
+        endTime: [{ validator: validateEndTime, trigger: "change" }],
+        taskDeadlineTime: [{ validator: validateDeadLine, trigger: "change" }]
       },
       taskTypeList: [
         {
@@ -538,7 +544,9 @@ export default {
       })
         .then(res => {
           try {
-            this.teamList = res.data.data[0].dataList;
+            this.teamList = res.data.data[0].dataList.filter(
+              item => item.grade === '3'
+            );
           } catch (error) {
             this.teamList = [];
           }
