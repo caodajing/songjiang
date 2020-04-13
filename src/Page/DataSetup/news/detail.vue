@@ -24,6 +24,7 @@
 						      	:editable="false"
 						      	:clearable="false"
 						      	type="date"
+						      	:picker-options="pickerTimeEnd"
 						      	placeholder="选择日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd">
 						    </el-date-picker>
 						</div>
@@ -34,6 +35,7 @@
 						      	:editable="false"
 						      	:clearable="false"
 						      	type="date"
+						      	:picker-options="pickerTimeBeg"
 						      	placeholder="选择日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd">
 						    </el-date-picker>
 						</div>
@@ -51,7 +53,7 @@
 						</div>
 						<div class="inp-box flex">
 							<span class="span"><i>*</i>处警类型</span>
-							<el-select v-model="editData.alarmType" placeholder="请选择">
+							<el-select v-model="editData.alarmType" placeholder="请选择" >
 							    <el-option
 							      v-for="item in alarmTypeList"
 							      :key="item.value"
@@ -63,11 +65,12 @@
 						<!-- <div class="inp-box flex inp-box-car"> -->
 							<div class="inp-box flex">
 								<span class="span paddingLeft"><i>*</i>处警车辆</span>
-								<el-select v-model="carOriginList.carNumber" placeholder="请选择">
+								<el-select v-model="carOriginList.carNumber" placeholder="请选择" @change="selectCar">
 								    <el-option
 								      v-for="item in carList"
 								      :key="item.value"
 								      :label="item.label"
+								      :disabled="item.disabled"
 								      :value="item.value">
 								    </el-option>
 								</el-select>
@@ -80,15 +83,16 @@
 							<div class="add-car-list" v-for="carItem,carIndex in carAddList">
 								<div class="inp-box flex">
 									<span class="span paddingLeft"><i>*</i>处警车辆</span>
-									<el-select v-model="carItem.carNumber" placeholder="请选择">
+									<el-select v-model="carItem.carNumber" placeholder="请选择" @change="selectCar">
 									    <el-option
 									      v-for="item in carList"
 									      :key="item.value"
 									      :label="item.label"
+									      :disabled="item.disabled"
 									      :value="item.value">
 									    </el-option>
 									</el-select>
-									<i class="del-btn icon-del iconfont" @click="delCar(carIndex)"></i>
+									<i class="del-btn icon-del iconfont" @click="delCar(carIndex,carItem)"></i>
 								</div>
 								<div class="inp-box flex">
 									<span class="span">跟车干部</span>
@@ -249,6 +253,8 @@
         			carFollowingCadres:'', // 跟车干部
         		}, 
         		carAddList:[], // 添加的处警车辆
+        		pickerTimeEnd: this.endDate(),
+        		pickerTimeBeg: this.beginDate(),
         	}
         },
         mounted(){
@@ -263,10 +269,8 @@
         	}
         	this.userInfo = JSON.parse(getCookie("userInfo"));
         	this.departmentList = JSON.parse(window.localStorage.getItem("departmentList"));
-        	// this.getalarmList('',this.editData.warSeparation);
-        	// this.getCarList(this.editData.warSeparation,'','',1);
-        	
-
+        	this.getalarmList('',this.editData.warSeparation);
+        	this.getCarList(this.editData.warSeparation,'','',1);
         },
         methods:{
         	init(){ // 编辑----赋值
@@ -353,7 +357,16 @@
 
         		this.editData.processAlarmId = data.processAlarmId;
         		this.editData.remark = data.remark;
-
+        	},
+        	selectCar(){ // 选择处警车辆---已经选择的不能重复选择
+        		let list = this.carAddList.concat(this.carOriginList); // 处警车辆
+        		this.carList.map((val,i) => {
+        			list.map((val1,i1) => {
+        				if(val.id == val1.carNumber){
+        					val.disabled = true;
+        				}
+        			})
+        		})
         	},
         	dateFilter(date){
         		if(date != ''){
@@ -366,9 +379,11 @@
         		let carNumberList = [];  // 处警车辆
         		let carTogetherList = []; // 跟车干部
         		let list = this.carAddList.concat(this.carOriginList); // 处警车辆
+        		console.log(list)
         		list.map((val,i) => {
         			carNumberList.push(val.carNumber);
         		})
+        		console.log(carNumberList)
         		list.map((val,i) => {
         			carTogetherList.push(val.carFollowingCadres);
         		})
@@ -379,10 +394,11 @@
         			info.carFollowingCadres = carTogetherList.join(",");
         		}
         		
+
         		// console.log(list)
         		// console.log(info.dispatchVehicle);
         		// console.log(info.carFollowingCadres)
-
+        		console.log(info.dispatchVehicle)
         		if(info.issueTime == ''){
         			this.$message('请选择日期');
         		}else if(info.dispatchTime == ''){
@@ -394,97 +410,113 @@
         		}else if(info.dispatchVehicle == ''){
         			this.$message('请选择处警车辆');
         		}else{
-        			this.getCurrentTime();
-        			if(this.queryType == 'add'){ // 新增
-        				if(info.travelDistance == ''){
-        					info.travelDistance = 0;
-        				}
-        				this.$ajax.post(this.$dataSetUrl + '/apis/wartimeexpress/setdata', qs.stringify({
-		        			issueTime: info.issueTime,
-		        			dispatchTime: info.dispatchTime,
-		        			warSeparation: info.warSeparation,
-		        			carFollowingCadres: info.carFollowingCadres,
-		        			dispatchVehicle: info.dispatchVehicle,
-		        			alarmType: info.alarmType,
-		        			
-		        			leavingTime: Number(info.leavingTime.hour*3600) + Number(info.leavingTime.minute*60) + Number(info.leavingTime.second),
+        			let flag = true;
+        			console.log(carNumberList)
+        			carNumberList.map((val,i) => { // 判断添加的处警车辆 是否选择了车牌
+	        			if(val == ''){
+	        				this.$message('请选择处警车辆');
+	        				flag = false;
+	        			}
+	        		})
+	        		if(flag){
+	        			this.getCurrentTime();
+	        			if(this.queryType == 'add'){ // 新增
+	        				if(info.travelDistance == ''){
+	        					info.travelDistance = 0;
+	        				}
+	        				this.$ajax.post(this.$dataSetUrl + '/apis/wartimeexpress/setdata', qs.stringify({
+			        			issueTime: info.issueTime,
+			        			dispatchTime: info.dispatchTime,
+			        			warSeparation: info.warSeparation,
+			        			carFollowingCadres: info.carFollowingCadres,
+			        			dispatchVehicle: info.dispatchVehicle,
+			        			alarmType: info.alarmType,
+			        			
+			        			leavingTime: Number(info.leavingTime.hour*3600) + Number(info.leavingTime.minute*60) + Number(info.leavingTime.second),
 
-		        			presentTime: Number(info.presentTime.hour*3600) + Number(info.presentTime.minute*60) + Number(info.presentTime.second),
-		        			travelDistance:  info.travelDistance,
+			        			presentTime: Number(info.presentTime.hour*3600) + Number(info.presentTime.minute*60) + Number(info.presentTime.second),
+			        			travelDistance:  info.travelDistance,
 
-		        			effluentTime:  Number(info.effluentTime.hour*3600) + Number(info.effluentTime.minute*60) + Number(info.effluentTime.second),
+			        			effluentTime:  Number(info.effluentTime.hour*3600) + Number(info.effluentTime.minute*60) + Number(info.effluentTime.second),
 
-		        			controlTime: Number(info.controlTime.hour*3600) + Number(info.controlTime.minute*60) + Number(info.controlTime.second),
+			        			controlTime: Number(info.controlTime.hour*3600) + Number(info.controlTime.minute*60) + Number(info.controlTime.second),
 
-		        			quenchingTime: Number(info.quenchingTime.hour*3600) + Number(info.quenchingTime.minute*60) + Number(info.quenchingTime.second),
-		        			processAlarmId: info.processAlarmId,
-		        			remark: info.remark,
-		        			createUserId: this.userInfo.id,
-		        			updateUserId: this.userInfo.id,
-		        		}) ,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then((res) => {
-		        			let data = res.data;
-		        			if(data.code == 200){
-		        				this.$message({
-						            type: 'success',
-						            message: '新增成功!'
-					          	});
-					          	this.$router.push({path:'/news/index'});
-		        				
-		        			}else{
-		        				this.$message.error('接口异常');
-		        			}
-					    }).catch(function (error) {c
-					        console.log(error);
-					    })
-        			}else{ // 编辑
-        				if(info.travelDistance == ''){
-        					info.travelDistance = 0;
-        				}
-        				this.$ajax.post(this.$dataSetUrl + '/apis/wartimeexpress/updatedata', qs.stringify({
-        					id: this.queryData.id,
-		        			issueTime: info.issueTime,
-		        			dispatchTime: info.dispatchTime,
-		        			warSeparation: info.warSeparation,
-		        			carFollowingCadres: info.carFollowingCadres,
-		        			dispatchVehicle: info.dispatchVehicle,
-		        			alarmType: info.alarmType,
-		        			
-		        			leavingTime: Number(info.leavingTime.hour*3600) + Number(info.leavingTime.minute*60) + Number(info.leavingTime.second),
+			        			quenchingTime: Number(info.quenchingTime.hour*3600) + Number(info.quenchingTime.minute*60) + Number(info.quenchingTime.second),
+			        			processAlarmId: info.processAlarmId,
+			        			remark: info.remark,
+			        			createUserId: this.userInfo.id,
+			        			updateUserId: this.userInfo.id,
+			        		}) ,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then((res) => {
+			        			let data = res.data;
+			        			if(data.code == 200){
+			        				this.$message({
+							            type: 'success',
+							            message: '新增成功!'
+						          	});
+						          	this.$router.push({path:'/news/index'});
+			        				
+			        			}else{
+			        				this.$message.error('接口异常');
+			        			}
+						    }).catch(function (error) {c
+						        console.log(error);
+						    })
+	        			}else{ // 编辑
+	        				if(info.travelDistance == ''){
+	        					info.travelDistance = 0;
+	        				}
+	        				this.$ajax.post(this.$dataSetUrl + '/apis/wartimeexpress/updatedata', qs.stringify({
+	        					id: this.queryData.id,
+			        			issueTime: info.issueTime,
+			        			dispatchTime: info.dispatchTime,
+			        			warSeparation: info.warSeparation,
+			        			carFollowingCadres: info.carFollowingCadres,
+			        			dispatchVehicle: info.dispatchVehicle,
+			        			alarmType: info.alarmType,
+			        			
+			        			leavingTime: Number(info.leavingTime.hour*3600) + Number(info.leavingTime.minute*60) + Number(info.leavingTime.second),
 
-		        			presentTime: Number(info.presentTime.hour*3600) + Number(info.presentTime.minute*60) + Number(info.presentTime.second),
-		        			travelDistance:  info.travelDistance,
+			        			presentTime: Number(info.presentTime.hour*3600) + Number(info.presentTime.minute*60) + Number(info.presentTime.second),
+			        			travelDistance:  info.travelDistance,
 
-		        			effluentTime:  Number(info.effluentTime.hour*3600) + Number(info.effluentTime.minute*60) + Number(info.effluentTime.second),
+			        			effluentTime:  Number(info.effluentTime.hour*3600) + Number(info.effluentTime.minute*60) + Number(info.effluentTime.second),
 
-		        			controlTime: Number(info.controlTime.hour*3600) + Number(info.controlTime.minute*60) + Number(info.controlTime.second),
+			        			controlTime: Number(info.controlTime.hour*3600) + Number(info.controlTime.minute*60) + Number(info.controlTime.second),
 
-		        			quenchingTime: Number(info.quenchingTime.hour*3600) + Number(info.quenchingTime.minute*60) + Number(info.quenchingTime.second),
-		        			processAlarmId: info.processAlarmId,
-		        			remark: info.remark,
-		        			createUserId: this.userInfo.id,
-		        			updateUserId: this.userInfo.id,
-		        		}) ,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then((res) => {
-		        			let data = res.data;
-		        			if(data.code == 200){
-		        				this.$message({
-						            type: 'success',
-						            message: '修改成功!'
-					          	});
-					          	this.$router.push({path:'/news/index'});
-		        				
-		        			}else{
-		        				this.$message.error('接口异常');
-		        			}
-					    }).catch(function (error) {c
-					        console.log(error);
-					    })
-        			}
+			        			quenchingTime: Number(info.quenchingTime.hour*3600) + Number(info.quenchingTime.minute*60) + Number(info.quenchingTime.second),
+			        			processAlarmId: info.processAlarmId,
+			        			remark: info.remark,
+			        			createUserId: this.userInfo.id,
+			        			updateUserId: this.userInfo.id,
+			        		}) ,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then((res) => {
+			        			let data = res.data;
+			        			if(data.code == 200){
+			        				this.$message({
+							            type: 'success',
+							            message: '修改成功!'
+						          	});
+						          	this.$router.push({path:'/news/index'});
+			        				
+			        			}else{
+			        				this.$message.error('接口异常');
+			        			}
+						    }).catch(function (error) {c
+						        console.log(error);
+						    })
+	        			}
+	        		}
+        			
         			
         		}
         	},
         	changeDept(){
         		this.getalarmList('',this.editData.warSeparation);
         		this.getCarList(this.editData.warSeparation,'','',1);
+        		this.carOriginList = { // 默认有一个处警车辆
+        			carNumber:"",
+        			carFollowingCadres:'', // 跟车干部
+        		}
+        		this.carAddList = [];
         	},
         	getalarmList(alarmProcessId,groupId){ // 获取接警单号模糊查询
         		console.log(alarmProcessId,groupId)
@@ -538,12 +570,41 @@
         		}
         		this.carAddList.push(each);
         	},
-        	delCar(index){ // 删除处警车辆
+        	delCar(index,carItem){ // 删除处警车辆
         		this.carAddList.splice(index,1);
+        		this.carList.map((val,i) => {
+        			if(val.id == carItem.carNumber){
+    					val.disabled = false;
+    				}
+        		})
         	},
         	goBack(){
 	        	this.$router.go(-1);
 	        },
+	        endDate(){
+        		return {
+        			disabledDate: (time) => {
+	                    if (this.editData.dispatchTime != '' && this.editData.dispatchTime) {
+	                        let timeStr = new Date(this.editData.dispatchTime.replace(/-/g, '/'));
+	                        return time.getTime() > timeStr;
+	                    } else {
+	                        return ''
+	                    }
+	                }
+        		}
+        	},
+        	beginDate(){
+        		return {
+        			disabledDate: (time) => {
+	                    if (this.editData.issueTime != '' && this.editData.issueTime) {
+	                        let timeStr = new Date(this.editData.issueTime.replace(/-/g, '/'));
+	                        return time.getTime() < timeStr;
+	                    } else {
+	                        return ''
+	                    }
+	                }
+        		}
+        	},
 	        getCurrentTime(){
 	            let year = new Date().getFullYear();
 	            let month = new Date().getMonth() + 1;

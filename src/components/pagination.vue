@@ -65,8 +65,8 @@ export default {
         },
     },
     watch:{
-        TocurrentPage(oldVal,val){
-            this.currentPage = val;
+        TocurrentPage(val,oldVal){
+            this.currentPage = parseInt(val);
         }
     }
   

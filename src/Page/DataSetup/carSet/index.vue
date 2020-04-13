@@ -83,7 +83,7 @@
 							<span>{{item.oldCarNumber}}</span>
 							<span>{{item.basicPerformance}}</span>
 							<span>{{item.fireExtinguishingAgentLoad}}</span>
-							<span>{{item.equipmentTime}}</span>
+							<span @click="open(item.equipmentTime)">{{item.equipmentTime}}</span>
 							<span>{{item.scrappedYears == 0 ? '' : item.scrappedYears}}</span>
 							<span>{{item.frameNumber}}</span>
 							<span>{{item.engineNumber}}</span>
@@ -106,7 +106,7 @@
 						</li>
 					</ul>
 				</div>
-				<pagination :pageNum="parseInt(list.totalPages)" @changePage="getPage($event)" :TocurrentPage="page"></pagination>
+				<pagination :pageNum="parseInt(list.totalPages)" @changePage="getPage($event)" :TocurrentPage="page_num"></pagination>
 			</div>
 			<!-- 编辑/新增 车辆 -->
 			<div class="mask add-car-mask" v-if="addCarMask">
@@ -318,7 +318,7 @@
         			driveRecorder: '0',
         			damageSituation:""
         		},
-        		page:1,
+        		page_num:1,
         		
         	}
         },
@@ -375,7 +375,7 @@
 						            message: '修改成功!'
 					          	});
 		        				this.addCarMask = false;
-		        				this.getList('','','',this.page);
+		        				this.getList('','','',this.page_num);
 		        			}else{
 		        				this.$message.error('接口异常');
 		        			}
@@ -427,7 +427,7 @@
 						            message: '新增成功!'
 					          	});
 		        				this.addCarMask = false;
-		        				this.getList('','','',this.page);
+		        				this.getList('','','',this.page_num);
 		        			}else{
 		        				this.$message.error('接口异常');
 		        			}
@@ -452,7 +452,7 @@
 					            type: 'success',
 					            message: '删除成功!'
 				          	});
-	        				this.getList('','','',this.page,'del');
+	        				this.getList('','','',this.page_num,'del');
 	        			}else{
 	        				this.$message.error('接口异常');
 	        			}
@@ -515,7 +515,7 @@
         	},
         	search(){
         		this.getList(this.departmentVal,this.carStatus,this.carNumber,1);
-        		this.page = 1;
+        		this.page_num = 1;
         	},
         	getList(groupId,carStatus,carNumber,pageNum,type){ // 获取表格数据
         		this.$ajax.post(this.$dataSetUrl + '/apis/car/getdata', qs.stringify({
@@ -553,7 +553,7 @@
         			}else{
         				this.list = [];
         				if(type == 'del'){
-        					this.getList('','','',this.page-1);
+        					this.getList('','','',this.page_num-1);
         				}
         			}
 			    }).catch(function (error) {
@@ -561,8 +561,8 @@
 			    })
         	},
         	getPage(page){
-        		this.page = page;
         		this.getList(this.departmentVal,this.carStatus,this.carNumber,page);
+        		this.page_num = page;
         	},
         	getCurrentTime(){
 	            let year = new Date().getFullYear();
@@ -585,6 +585,13 @@
 					this.addCarData.scrappedYears = val.replace(/[^\d]/g, "");
 				}
 	        },
+	        open(val) {
+		        this.$notify({
+		          	title: '详细',
+		          	message: val,
+		          	offset: 100,
+		        });
+		    }
         }
     }
 </script>

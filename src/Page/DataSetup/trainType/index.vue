@@ -62,12 +62,12 @@
 							<tr v-for="(item,index) in trainProList.list">
 								<td style="width:70px;">{{index+1}}</td>
 								<td>{{item.projectType}}</td>
-								<td>{{item.projectName}}</td>
+								<td @click="open(item.projectName)">{{item.projectName}}</td>
 								<td>{{item.achievementUnit}}</td>
 								<td>{{item.passStandard}}</td>
 								<td>{{item.goodStandard}}</td>
 								<td>{{item.excellentStandard}}</td>
-								<td>{{item.remark}}</td>
+								<td @click="open(item.remark)">{{item.remark}}</td>
 								<td> 
 									<span @click="editTrainFn(item)">编辑</span>
 									<span @click="delTrain(item)">删除</span>
@@ -76,7 +76,7 @@
 						</tbody>
 					</table>
 				</div>
-				<pagination :pageNum="parseInt(trainProList.pages)" @changePage="getPage($event)"></pagination>
+				<pagination :pageNum="parseInt(trainProList.pages)" @changePage="getPage($event)" :TocurrentPage="page_num"></pagination>
 			</div>
 			<!-- 编辑/新增训练项目 -->
 			<div class="mask add-trainType-mask" v-if="addTrainProMask">
@@ -207,7 +207,7 @@
         			},
         			remark:""
         		},
-        		page:1
+        		page_num:1
         	}
         },
         mounted(){
@@ -265,7 +265,7 @@
         					info.excellentStandard = info.excellentStandard.minute + ',' + info.excellentStandard.second;
         					info.goodStandard = info.goodStandard.minute + ',' + info.goodStandard.second;
         				}
-    					vm.$ajax.post(vm.$dataSetUrlY + '/songjiangxn/project/updateProject', qs.stringify({
+    					vm.$ajax.post(vm.$dataSetUrlY + '/xf-unit/project/updateProject', qs.stringify({
         					id: vm.editId,
 		        			projectName: info.projectName,
 		        			projectType: info.projectType,
@@ -303,7 +303,7 @@
 				        			},
 				        			remark:""
 				        		}
-		        				vm.getTrainProList('','',vm.page);
+		        				vm.getTrainProList('','',vm.page_num);
 		        			}else{
 		        				vm.$message.error(data.msg);
 		        			}
@@ -359,7 +359,7 @@
         					info.excellentStandard = info.excellentStandard.minute + ',' + info.excellentStandard.second;
         					info.goodStandard = info.goodStandard.minute + ',' + info.goodStandard.second;
         				}
-        				vm.$ajax.post(vm.$dataSetUrlY + '/songjiangxn/project/addProject', qs.stringify({
+        				vm.$ajax.post(vm.$dataSetUrlY + '/xf-unit/project/addProject', qs.stringify({
 		        			projectName: info.projectName,
 		        			projectType: info.projectType,
 		        			achievementUnit: info.achievementUnit,
@@ -396,7 +396,7 @@
 				        			},
 				        			remark:""
 				        		}
-		        				vm.getTrainProList('','',vm.page);
+		        				vm.getTrainProList('','',vm.page_num);
 		        			}else{
 		        				vm.$message.error(data.msg);
 		        			}
@@ -414,7 +414,7 @@
 		          	cancelButtonText: '取消',
 		          	type: 'warning'
 		        }).then(() => {
-		        	this.$ajax.post(this.$dataSetUrlY + '/songjiangxn/project/deleteProject', qs.stringify({
+		        	this.$ajax.post(this.$dataSetUrlY + '/xf-unit/project/deleteProject', qs.stringify({
 	        			id:item.id
 	        		}) ,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then((res) => {
 	        			let data = res.data;
@@ -423,7 +423,7 @@
 					            type: 'success',
 					            message: '删除成功!'
 				          	});
-	        				this.getTrainProList('','',this.page,'del');
+	        				this.getTrainProList('','',this.page_num,'del');
 	        			}else{
 	        				this.$message.error(data.msg);
 	        			}
@@ -488,11 +488,11 @@
         		this.addTrainProData.remark = item.remark;
         	},
         	search(){
-        		this.page = 1;
+        		this.page_num = 1;
         		this.getTrainProList(this.trainProVal,this.trainTypeVal,1);
         	},
         	getTrainProList(projectId,projectType,pageNum,type){ // 获取 训练项目
-        		this.$ajax.get(this.$dataSetUrlY + '/songjiangxn/project/selectProject', {
+        		this.$ajax.get(this.$dataSetUrlY + '/xf-unit/project/selectProject', {
         			params:{
         				projectId: projectId,
 	        			projectType: projectType,
@@ -512,7 +512,7 @@
         			}else{
         				this.trainProList = [];
         				if(type == 'del'){
-        					this.getTrainProList('','',this.page-1);
+        					this.getTrainProList('','',this.page_num-1);
         				}
         			}
 			    }).catch(function (error) {
@@ -520,7 +520,7 @@
 			    })
         	},
         	getTrainTypeList(){ // 获取 训练类型
-        		this.$ajax.get(this.$dataSetUrlY + '/songjiangxn/project/getProjectTypeList', {} ,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then((res) => {
+        		this.$ajax.get(this.$dataSetUrlY + '/xf-unit/project/getProjectTypeList', {} ,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then((res) => {
         			let data = res.data;
         			console.log(data);
         			if(data.status == 200){
@@ -537,7 +537,7 @@
 			    })
         	},
         	getPage(page){
-        		this.page = page;
+        		this.page_num = page;
         		this.getTrainProList(this.trainProVal,this.trainTypeVal,page);
         	},
         	getCurrentTime(){
@@ -577,6 +577,13 @@
 					this.addTrainProData.excellentStandard.second = val.replace(/[^\d]/g, "");
 				}
 	        },
+	        open(val) {
+		        this.$notify({
+		          	title: '详细',
+		          	message: val,
+		          	offset: 100,
+		        });
+		    }
         }
     }
 </script>
