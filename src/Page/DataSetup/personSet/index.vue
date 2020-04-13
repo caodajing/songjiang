@@ -106,11 +106,11 @@
 							</div>
 							<div class="inp-box flex">
 								<span class="span"><i>*</i>密码</span>
-								<input type="text" placeholder="请输入…" class="inp" v-model="addPerson.password" maxlength="32">
+								<input type="text" placeholder="请输入…" class="inp" v-model="addPerson.password" >
 							</div>
 							<div class="inp-box flex">
 								<span class="span"><i>*</i>姓名</span>
-								<input type="text" placeholder="请输入…" class="inp" v-model="addPerson.realName" maxlength="32">
+								<input type="text" placeholder="请输入…" class="inp" v-model="addPerson.realName" >
 							</div>
 							<div class="inp-box flex">
 								<span class="span"><i>*</i>性别</span>
