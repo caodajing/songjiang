@@ -68,7 +68,7 @@
 						</tbody>
 					</table>
 				</div>
-				<pagination :pageNum="parseInt(list.totalPages)" @changePage="getPage($event)"></pagination>
+				<pagination :pageNum="parseInt(list.totalPages)" @changePage="getPage($event)" :TocurrentPage="page_num"></pagination>
 			</div>
 			<!-- 编辑/新增接警信息 -->
 			<div class="mask add-alarm-mask" v-if="addAlarmMask">
@@ -183,7 +183,7 @@
         			alarmUserId:"",
         			alarmMethod:""
         		},
-        		page:1
+        		page_num:1
         	}
         },
         mounted(){
@@ -227,7 +227,7 @@
 						            message: '修改成功!'
 					          	});
 		        				this.addAlarmMask = false;
-		        				this.getList('','',this.page);
+		        				this.getList('','',this.page_num);
 		        			}else{
 		        				this.$message.error('接口异常');
 		        			}
@@ -267,7 +267,7 @@
 						            message: '新增成功!'
 					          	});
 		        				this.addAlarmMask = false;
-		        				this.getList('','',this.page);
+		        				this.getList('','',this.page_num);
 		        			}else{
 		        				this.$message.error('接口异常');
 		        			}
@@ -292,7 +292,7 @@
 					            type: 'success',
 					            message: '删除成功!'
 				          	});
-	        				this.getList('','',this.page,'del');
+	        				this.getList('','',this.page_num,'del');
 	        			}else{
 	        				this.$message.error('接口异常');
 	        			}
@@ -333,7 +333,7 @@
 
         	},
         	search(){
-        		this.page = 1;
+        		this.page_num = 1;
         		this.getList(this.departmentVal,this.searchName,1);
         	},
         	getList(groupId,remark,pageNum,type){ // 获取表格数据
@@ -368,7 +368,7 @@
         			}else{
         				this.list = [];
         				if(type == 'del'){
-        					this.getList('','',this.page-1);
+        					this.getList('','',this.page_num-1);
         				}
         			}
 			    }).catch(function (error) {
@@ -376,7 +376,7 @@
 			    })
         	},
         	getPage(page){
-        		this.page = page;
+        		this.page_num = page;
         		this.getList(this.departmentVal,this.searchName,page);
         	},
         	getCurrentTime(){

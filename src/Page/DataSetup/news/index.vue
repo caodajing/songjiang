@@ -65,11 +65,11 @@
 						</div>
 						<li class="clearfix" v-for="item,index in list.dataList">
 							<span>{{index+1}}</span>
-							<span>{{item.issueTime}}</span>
-							<span>{{item.dispatchTime}}</span>
+							<span @click="open(item.issueTime)">{{item.issueTime}}</span>
+							<span @click="open(item.dispatchTime)">{{item.dispatchTime}}</span>
 							<span>{{item.warSeparationVal}}</span>
-							<span>{{item.carNumbers}}</span>
-							<span>{{item.carFollowingCadres}}</span>
+							<span @click="open(item.carNumbers)">{{item.carNumbers}}</span>
+							<span @click="open(item.carFollowingCadres)">{{item.carFollowingCadres}}</span>
 							<span>{{item.alarmTypeVal}}</span>
 							<span>{{item.leavingTime == -1 ? '中途返回' : item.leavingTimeVal}}</span>
 							<span>{{item.presentTimeVal}}</span>
@@ -77,8 +77,8 @@
 							<span>{{item.effluentTime == -1 ? '未出水' : item.effluentTimeVal}}</span>
 							<span>{{item.controlTimeVal}}</span>
 							<span>{{item.quenchingTimeVal}}</span>
-							<span>{{item.remark}}</span>
-							<span>{{item.processAlarmId}}</span>
+							<span @click="open(item.remark)">{{item.remark}}</span>
+							<span @click="open(item.processAlarmId)">{{item.processAlarmId}}</span>
 						</li>
 					</ul>
 					<ul class="positionDiv">
@@ -93,7 +93,7 @@
 						</li>
 					</ul>
 				</div>
-				<pagination :pageNum="parseInt(list.totalPages)" @changePage="getPage($event)"></pagination>
+				<pagination :pageNum="parseInt(list.totalPages)" @changePage="getPage($event)" :TocurrentPage="page_num"></pagination>
 			</div>
 		</div>
 	</div>
@@ -140,7 +140,7 @@
         		list:[], // 表格数据
         		currentTime:"",
         		currentHour:"",
-        		page:1
+        		page_num:1
         	}
         },
         mounted(){
@@ -164,7 +164,7 @@
 					            type: 'success',
 					            message: '删除成功!'
 				          	});
-	        				this.getList('','',this.page,'del');
+	        				this.getList('','',this.page_num,'del');
 	        			}else{
 	        				this.$message.error('接口异常');
 	        			}
@@ -181,7 +181,7 @@
         		
         	},
         	search(){
-        		this.page = 1;
+        		this.page_num = 1;
         		this.getList(this.departmentVal,this.alarmType,1);
         	},
         	getList(warSeparation,alarmType,pageNum,type){ // 获取表格数据
@@ -248,7 +248,7 @@
         			}else{
         				this.list = [];
         				if(type == 'del'){
-        					this.getList('','',this.page-1);
+        					this.getList('','',this.page_num-1);
         				}
         			}
 			    }).catch(function (error) {
@@ -256,7 +256,7 @@
 			    })
         	},
         	getPage(page){
-        		this.page = page;
+        		this.page_num = page;
         		this.getList(this.departmentVal,this.alarmType,page);
         	},
         	goDetail(type,item){ // 
@@ -282,6 +282,13 @@
 	            this.currentTime = date + ' ' + hour + ':' + minute + ':' + second; 
 	            this.currentHour = hour + ':' + minute + ':' + second; 
 	        },
+	        open(val) {
+		        this.$notify({
+		          	title: '详细',
+		          	message: val,
+		          	offset: 100,
+		        });
+		    }
         }
     }
 </script>

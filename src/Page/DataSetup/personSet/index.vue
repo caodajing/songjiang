@@ -68,16 +68,16 @@
 						<tbody>
 							<tr v-for="(item,index) in list.dataList">
 								<td style="width:70px;">{{index+1}}</td>
-								<td>{{item.realName}}</td>
+								<td @click="open(item.realName)">{{item.realName}}</td>
 								<td style="width:50px;">{{item.sex == 0 ? '男' : '女'}}</td>
 								<td>{{item.groupName}}</td>
 								<td>{{item.roleName}} </td>
 								<td>{{item.type == 1 ? '基层干部' : item.type == 2 ? '政府专职消防员' : '现役消防士'}}</td>
-								<td>{{item.phone}}</td>
-								<td>{{item.familyName}}</td>
-								<td style="width:95px;">{{item.familyKinship}}</td>
-								<td>{{item.familyPhone}}</td>
-								<td>{{item.homeAddress}}</td>
+								<td @click="open(item.phone)">{{item.phone}}</td>
+								<td @click="open(item.familyName)">{{item.familyName}}</td>
+								<td style="width:95px;" @click="open(item.familyKinship)">{{item.familyKinship}}</td>
+								<td @click="open(item.familyPhone)">{{item.familyPhone}}</td>
+								<td @click="open(item.homeAddress)">{{item.homeAddress}}</td>
 								<td style="width:200px">
 									<div class="checkbox-box1 clearfix" @click="handelCheck(item,index)">
 										<div class="span-box">
@@ -101,26 +101,26 @@
 						<div class="title">编辑/新增人员</div>
 						<div class="box clearfix">
 							<div class="inp-box flex">
-								<span class="span">账号</span>
-								<input type="text" placeholder="命名规则：姓名拼音+手机号" class="inp" v-model="addPerson.username">
+								<span class="span"><i>*</i>账号</span>
+								<input type="text" placeholder="请输入…" class="inp" v-model="addPerson.username">
 							</div>
 							<div class="inp-box flex">
-								<span class="span">密码</span>
-								<input type="text" placeholder="请输入…" class="inp" v-model="addPerson.password">
+								<span class="span"><i>*</i>密码</span>
+								<input type="text" placeholder="请输入…" class="inp" v-model="addPerson.password" maxlength="32">
 							</div>
 							<div class="inp-box flex">
-								<span class="span">姓名</span>
-								<input type="text" placeholder="请输入…" class="inp" v-model="addPerson.realName">
+								<span class="span"><i>*</i>姓名</span>
+								<input type="text" placeholder="请输入…" class="inp" v-model="addPerson.realName" maxlength="32">
 							</div>
 							<div class="inp-box flex">
-								<span class="span">性别</span>
+								<span class="span"><i>*</i>性别</span>
 								<div class="radio-box">
 									<el-radio v-model="addPerson.sex" label="0">男</el-radio>
 	  								<el-radio v-model="addPerson.sex" label="1">女</el-radio>
 								</div>
 							</div>
 							<div class="inp-box flex">
-								<span class="span">所属单位/部门</span>
+								<span class="span"><i>*</i>所属单位/部门</span>
 								<el-select v-model="addPerson.departmentVal" placeholder="请选择">
 								    <el-option
 								      v-for="item in departmentList"
@@ -131,7 +131,7 @@
 								 </el-select>
 							</div>
 							<div class="inp-box flex">  
-								<span class="span">职务</span>
+								<span class="span"><i>*</i>职务</span>
 								<el-select v-model="addPerson.roleId" placeholder="请选择">
 								    <el-option
 								      v-for="item in roleList"
@@ -142,7 +142,7 @@
 								 </el-select>
 							</div>
 							<div class="inp-box flex">
-								<span class="span">人员类型</span>
+								<span class="span"><i>*</i>人员类型</span>
 								<el-select v-model="addPerson.personTypeVal" placeholder="请选择">
 								    <el-option
 								      v-for="item in personTypeList"
@@ -153,7 +153,7 @@
 								 </el-select>
 							</div>
 							<div class="inp-box flex">
-								<span class="span">手机号</span>
+								<span class="span"><i>*</i>手机号</span>
 								<input type="tel" placeholder="请输入…" class="inp" v-model="addPerson.phone" maxlength="11" @input="validateNumber(addPerson.phone,1)">
 							</div>
 							<div class="inp-box flex">
@@ -382,7 +382,7 @@
         		}else if(addPerson.personTypeVal == ''){
         			this.$message('请选择人员类型');
         		}else{
-        			if(this.telValidate(addPerson.phone)){
+        			if(this.telValidate(addPerson.phone,1)){
         				let vm = this;
         				function ajaxCommon(){
         					vm.$ajax.post(vm.$dataSetUrl + '/apis/userbasic/setdata', qs.stringify({
@@ -405,14 +405,34 @@
 			        			let data = res.data;
 			        			if(data.code == 200){
 			        				vm.addPersonMask = false;
-			        				this.getList('','','',1);
+			        				vm.$message({
+							            type: 'success',
+							            message: '新增成功!'
+						          	});
+			        				vm.getList('','','',1);
+			        				vm.addPerson = { // 后端传参
+					        			username:"",
+										password:"",
+										realName:"",
+										sex: '0',
+										departmentVal:"",
+										roleId:"",
+										personTypeVal:"",
+										phone:"",
+										familyName:"",
+										familyKinship:"",
+										familyPhone:"",
+										homeAddress:"",
+					        		}
+			        			}else if(data.code == 302){
+			        				vm.$message('重复的手机号');
 			        			}
 						    }).catch(function (error) {
 						        console.log(error);
 						    })
         				}
         				if(addPerson.familyPhone != ''){
-        					if(this.telValidate(addPerson.familyPhone)){
+        					if(this.telValidate(addPerson.familyPhone,2)){
         						ajaxCommon();
         					}
         				}else{
@@ -524,16 +544,19 @@
         		}else{
         			this.$router.push({path:"/personSet/activeDetail",query:{userId:item.id}})
         		}
-        		
         	},
         	//前端验证手机号
-			telValidate(phone){
+			telValidate(phone,type){
 			    var myreg = /^(((13[0-9]{1})|(14[0-9]{1})|(17[0-9]{1})|(15[0-3]{1})|(15[5-9]{1})|(18[0-9]{1}))+\d{8})$/;
 			    if(phone==''){
 			    	this.$message('手机号不能为空');
 			        return false;
 			    }else if( !myreg.test(phone) ){
-			    	this.$message('请输入有效的手机号码');
+			    	if(type == 1){
+						this.$message('请输入有效的手机号码');
+			    	}else{
+			    		this.$message('请输入家属有效的手机号码');
+			    	}
 			        return false;
 			    }else if( phone.length != 11 ){
 			    	this.$message('请输入有效的手机号码');
@@ -555,6 +578,13 @@
         	getPage(page){
         		this.getList(this.departmentVal,this.personTypeVal,this.name,page);
         	},
+        	open(val) {
+		        this.$notify({
+		          	title: '详细',
+		          	message: val,
+		          	offset: 100,
+		        });
+		    }
         }
     }
 </script>

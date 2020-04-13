@@ -50,7 +50,7 @@
 						</tbody>
 					</table>
 				</div>
-				<pagination :pageNum="parseInt(list.totalPages)" @changePage="getPage($event)"></pagination>
+				<pagination :pageNum="parseInt(list.totalPages)" @changePage="getPage($event)" :TocurrentPage="page_num"></pagination>
 			</div>
 		</div>
 	</div>
@@ -71,7 +71,7 @@
         		departmentList:[], // 所属单位
         		searchName:"",//搜索名
         		list:[], // 表格数据
-        		page:1
+        		page_num:1
         	}
         },
         mounted(){
@@ -94,7 +94,7 @@
 					            type: 'success',
 					            message: '删除成功!'
 				          	});
-	        				this.getList('','',this.page,'del');
+	        				this.getList('','',this.page_num,'del');
 	        			}else{
 	        				this.$message.error('接口异常');
 	        			}
@@ -110,7 +110,7 @@
 		        });
         	},
         	search(){
-        		this.page = 1;
+        		this.page_num = 1;
         		this.getList(this.departmentVal,this.searchName,1);
         	},
         	getList(groupId,title,pageNum,type){ // 获取表格数据
@@ -127,7 +127,7 @@
         			}else{
         				this.list = [];
         				if(type == 'del'){
-        					this.getList('','',this.page-1);
+        					this.getList('','',this.page_num-1);
         				}
         			}
 			    }).catch(function (error) {
@@ -135,7 +135,7 @@
 			    })
         	},
         	getPage(page){
-        		this.page = page;
+        		this.page_num = page;
         		this.getList(this.departmentVal,this.searchName,page);
         	},
         	goDetail(type,item){

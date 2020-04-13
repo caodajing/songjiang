@@ -44,11 +44,11 @@
 						<tbody>
 							<tr v-for="(item,index) in list.list">
 								<td  style="width:4.3%;">{{index+1}}</td>
-								<td  style="width:10.5%;">{{item.storehouseName}}</td>
+								<td  style="width:10.5%;" @click="open(item.storehouseName)">{{item.storehouseName}}</td>
 								<td  style="width:23.6%;">{{item.type == 0 ? '普通仓库' : '车辆仓库'}}</td>
 								<td  style="width:33.5%;">{{item.deptName}}</td>
-								<td  style="width:8.7%;">{{item.editUserId}}</td>
-								<td  style="width:8.5%;">{{item.createTime}}</td>
+								<td  style="width:8.7%;" @click="open(item.editUserId)">{{item.editUserId}}</td>
+								<td  style="width:8.5%;" @click="open(item.createTime)">{{item.createTime}}</td>
 								<td  style="width:10.9%;">
 									<span @click="goDetail(item.type,item.storehouseName,item.deptCode,item.id,item.deptName)">详情</span>
 									<!-- <span>编辑</span> -->
@@ -213,6 +213,13 @@
 	        getPage(page){
         		this.getStore(this.departmentVal,this.searchName,page);
         	},
+        	open(val) {
+		        this.$notify({
+		          	title: '详细',
+		          	message: val,
+		          	offset: 100,
+		        });
+		    }
         }
     }
 </script>

@@ -11,7 +11,7 @@
 				<div class="util-box clearfix">
 					<div class="inp-box clearfix">
 						<span>主管单位：</span>
-						<el-input type="text" placeholder="输入关键字搜索" v-model="search_competentUnitId" class="elInp inp" :clearable="true"></el-input>
+						<el-input type="text" placeholder="输入关键字搜索" v-model="search_manageUnitName" class="elInp inp" :clearable="true"></el-input>
 					</div>
 					<div class="inp-box clearfix">
 						<span>水源名称：</span>
@@ -48,14 +48,14 @@
 						<tbody>
 							<tr v-for="(item,index) in list.dataList">
 								<td style="width:70px;">{{index+1}}</td>
-								<td>{{item.apparatusName}}</td>
-								<td>{{item.address}}</td>
+								<td @click="open(item.apparatusName)">{{item.apparatusName}}</td>
+								<td @click="open(item.address)">{{item.address}}</td>
 								<td>{{item.lng}}</td>
 								<td>{{item.lat}}</td>
-								<td>{{item.competentUnitId}}</td>
+								<td @click="open(item.manageUnitName)">{{item.manageUnitName}}</td>
 								<td>{{item.chargePersonId}}</td>
 								<td>{{item.isIntactVal}}</td>
-								<td>{{item.remark}}</td>
+								<td @click="open(item.remark)">{{item.remark}}</td>
 								<td>
 									<span @click="editWaterFn(item)">编辑</span>
 									<span @click="delWater(item)">删除</span>
@@ -64,7 +64,7 @@
 						</tbody>
 					</table>
 				</div>
-				<pagination :pageNum="parseInt(list.totalPages)" @changePage="getPage($event)"></pagination>
+				<pagination :pageNum="parseInt(list.totalPages)" @changePage="getPage($event)" :TocurrentPage="page_num"></pagination>
 			</div>
 			<!-- 编辑/新增水源 -->
 			<div class="mask add-water-mask" v-if="addWaterMask">
@@ -90,7 +90,7 @@
 						</div>
 						<div class="inp-box flex">
 							<span class="span">主管单位</span>
-							<input type="text" placeholder="请输入…" class="inp" v-model="addWaterData.competentUnitId">
+							<input type="text" placeholder="请输入…" class="inp" v-model="addWaterData.manageUnitName">
 						</div>
 						<div class="inp-box flex">
 							<span class="span">负责人</span>
@@ -152,19 +152,19 @@
         		currentTime:"",
         		editFlag: false, // false:新增 true:编辑
         		editId:"",
-        		search_competentUnitId:"", // 搜索 主管单位
+        		search_manageUnitName:"", // 搜索 主管单位
         		search_apparatusName:"", // 搜索 水源名
         		addWaterData:{
         			apparatusName:"",
         			address:"",
         			lng:"",
         			lat:"",
-        			competentUnitId:"",
+        			manageUnitName:"",
         			chargePersonId:"",
         			isIntact:'0',
         			remark:""
         		},
-        		page:1
+        		page_num:1
         	}
         },
         mounted(){
@@ -192,7 +192,8 @@
 		        			address: info.address,
 		        			lat: info.lat,
 		        			lng: info.lng,
-		        			competentUnitId: info.competentUnitId,
+		        			manageUnitName: info.manageUnitName,
+		        			competentUnitId:'901267999502484244',
 		        			chargePersonId: info.chargePersonId,
 		        			isIntact: info.isIntact,
 		        			remark: info.remark,
@@ -209,7 +210,7 @@
 						            message: '修改成功!'
 					          	});
 		        				this.addWaterMask = false;
-		        				this.getList('','',this.page);
+		        				this.getList('','',this.page_num);
 		        			}else{
 		        				this.$message.error('接口异常');
 		        			}
@@ -234,7 +235,8 @@
 		        			address: info.address,
 		        			lat: info.lat,
 		        			lng: info.lng,
-		        			competentUnitId: info.competentUnitId,
+		        			manageUnitName: info.manageUnitName,
+		        			competentUnitId:'901267999502484244',
 		        			chargePersonId: info.chargePersonId,
 		        			isIntact: info.isIntact,
 		        			remark: info.remark,
@@ -251,7 +253,7 @@
 						            message: '新增成功!'
 					          	});
 		        				this.addWaterMask = false;
-		        				this.getList('','',this.page);
+		        				this.getList('','',this.page_num);
 		        			}else{
 		        				this.$message.error('接口异常');
 		        			}
@@ -276,7 +278,7 @@
 					            type: 'success',
 					            message: '删除成功!'
 				          	});
-	        				this.getList('','',this.page,'del');
+	        				this.getList('','',this.page_num,'del');
 	        			}else{
 	        				this.$message.error('接口异常');
 	        			}
@@ -299,7 +301,7 @@
         			address:"",
         			lng:"",
         			lat:"",
-        			competentUnitId:"",
+        			manageUnitName:"",
         			chargePersonId:"",
         			isIntact:'0',
         			remark:""
@@ -313,18 +315,18 @@
         		this.addWaterData.address = item.address;
         		this.addWaterData.lng = item.lng;
         		this.addWaterData.lat = item.lat;
-        		this.addWaterData.competentUnitId = item.competentUnitId;
+        		this.addWaterData.manageUnitName = item.manageUnitName;
         		this.addWaterData.chargePersonId = item.chargePersonId;
         		this.addWaterData.isIntact = item.isIntact;
         		this.addWaterData.remark = item.remark;
         	},
         	search(){
-        		this.page = 1;
-        		this.getList(this.search_competentUnitId,this.search_apparatusName,1);
+        		this.page_num = 1;
+        		this.getList(this.search_manageUnitName,this.search_apparatusName,1);
         	},
-        	getList(competentUnitId,apparatusName,pageNum,type){ // 获取表格数据
+        	getList(manageUnitName,apparatusName,pageNum,type){ // 获取表格数据
         		this.$ajax.post(this.$dataSetUrl + '/apis/apparatus/getdata', qs.stringify({
-        			competentUnitId:competentUnitId,
+        			manageUnitName:manageUnitName,
         			apparatusName:apparatusName,
         			categoryId: this.waterIdData.id,
         			rowLength:10,
@@ -343,7 +345,7 @@
         			}else{
         				this.list = [];
         				if(type == 'del'){
-        					this.getList('','',this.page-1);
+        					this.getList('','',this.page_num-1);
         				}
         			}
 			    }).catch(function (error) {
@@ -365,7 +367,7 @@
         					}
         				})
         				console.log(this.waterIdData)
-        				this.getList('','',this.page);
+        				this.getList('','',this.page_num);
         			}else{
         				this.list = [];
         			}
@@ -374,8 +376,8 @@
 			    })
         	},
         	getPage(page){
-        		this.page = page;
-        		this.getList(this.search_competentUnitId,this.search_apparatusName,page);
+        		this.page_num = page;
+        		this.getList(this.search_manageUnitName,this.search_apparatusName,page);
         	},
         	getCurrentTime(){
 	            let year = new Date().getFullYear();
@@ -393,6 +395,13 @@
 	            this.currentTime = date + ' ' + hour + ':' + minute + ':' + second; 
 	            this.currentHour = hour + ':' + minute + ':' + second; 
 	        },
+	        open(val) {
+		        this.$notify({
+		          	title: '详细',
+		          	message: val,
+		          	offset: 100,
+		        });
+		    }
         }
     }
 </script>

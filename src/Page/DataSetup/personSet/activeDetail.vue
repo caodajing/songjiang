@@ -806,7 +806,7 @@
         		}else if(info.type == ''){
         			this.$message('请选择人员类型');
         		}else{
-        			if(this.telValidate(info.phone)){
+        			if(this.telValidate(info.phone,1)){
         				let vm = this;
         				function ajaxCommon(){
         					vm.$ajax.post(vm.$dataSetUrl + '/apis/userbasic/updatedata', qs.stringify({
@@ -841,7 +841,7 @@
 						    })
         				}
         				if(info.familyPhone != ''){
-        					if(this.telValidate(info.familyPhone)){
+        					if(this.telValidate(info.familyPhone,2)){
         						ajaxCommon();
         					}
         				}else{
@@ -1026,13 +1026,17 @@
 			    }; 
 			},
         	//前端验证手机号
-			telValidate(phone){
+			telValidate(phone,type){
 			    var myreg = /^(((13[0-9]{1})|(14[0-9]{1})|(17[0-9]{1})|(15[0-3]{1})|(15[5-9]{1})|(18[0-9]{1}))+\d{8})$/;
 			    if(phone==''){
 			    	this.$message('手机号不能为空');
 			        return false;
 			    }else if( !myreg.test(phone) ){
-			    	this.$message('请输入有效的手机号码');
+			    	if(type == 1){
+						this.$message('请输入有效的手机号码');
+			    	}else{
+			    		this.$message('请输入家属有效的手机号码');
+			    	}
 			        return false;
 			    }else if( phone.length != 11 ){
 			    	this.$message('请输入有效的手机号码');
