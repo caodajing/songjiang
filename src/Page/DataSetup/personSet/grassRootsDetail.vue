@@ -199,6 +199,7 @@
 						      	v-model="detailUserInfo.birthday"
 						      	:disabled="!editFlag.userInfoFlag"
 						      	:editable="false"
+						      	:picker-options="pickerTimeBeg"
 						      	:clearable="false"
 						      	type="date"
 						      	placeholder="选择日期"  format="yyyy-MM-dd" value-format="yyyy-MM-dd">
@@ -209,6 +210,7 @@
 							<el-date-picker
 						      	v-model="detailUserInfo.dateOfEnlistment"
 						      	:disabled="!editFlag.userInfoFlag"
+						      	:picker-options="pickerTimeBeg"
 						      	:editable="false"
 						      	:clearable="false"
 						      	type="date"
@@ -224,6 +226,7 @@
 							<el-date-picker
 						      	v-model="detailUserInfo.dateOfVocation"
 						      	:disabled="!editFlag.userInfoFlag"
+						      	:picker-options="pickerTimeBeg"
 						      	:editable="false"
 						      	:clearable="false"
 						      	type="date"
@@ -239,6 +242,7 @@
 							<el-date-picker
 						      	v-model="detailUserInfo.dateOfVocationGrade"
 						      	:disabled="!editFlag.userInfoFlag"
+						      	:picker-options="pickerTimeBeg"
 						      	:editable="false"
 						      	:clearable="false"
 						      	type="date"
@@ -254,6 +258,7 @@
 							<el-date-picker
 						      	v-model="detailUserInfo.dateOfTechnical"
 						      	:disabled="!editFlag.userInfoFlag"
+						      	:picker-options="pickerTimeBeg"
 						      	:editable="false"
 						      	:clearable="false"
 						      	type="date"
@@ -276,6 +281,7 @@
 							<el-date-picker
 						      	v-model="detailUserInfo.dateOfTechnicalGrade"
 						      	:disabled="!editFlag.userInfoFlag"
+						      	:picker-options="pickerTimeBeg"
 						      	:editable="false"
 						      	:clearable="false"
 						      	type="date"
@@ -287,6 +293,7 @@
 							<el-date-picker
 						      	v-model="detailUserInfo.dateOfMilitary"
 						      	:disabled="!editFlag.userInfoFlag"
+						      	:picker-options="pickerTimeBeg"
 						      	:editable="false"
 						      	:clearable="false"
 						      	type="date"
@@ -337,6 +344,7 @@
 							<el-date-picker
 						      	v-model="detailUserInfo.dateOfWork"
 						      	:disabled="!editFlag.userInfoFlag"
+						      	:picker-options="pickerTimeBeg"
 						      	:editable="false"
 						      	:clearable="false"
 						      	type="date"
@@ -352,6 +360,7 @@
 							<el-date-picker
 						      	v-model="detailUserInfo.dateOfManager"
 						      	:disabled="!editFlag.userInfoFlag"
+						      	:picker-options="pickerTimeBeg"
 						      	:editable="false"
 						      	:clearable="false"
 						      	type="date"
@@ -360,7 +369,7 @@
 						</div>
 						<div class="inp-box flex">
 							<span class="span">年龄</span>
-							<el-input v-model="detailUserInfo.age" placeholder="请输入…" :disabled="!editFlag.userInfoFlag"></el-input>
+							<el-input v-model="detailUserInfo.age" placeholder="请输入…" :disabled="!editFlag.userInfoFlag" @input="validateNumber(detailUserInfo.age,3)"></el-input>
 						</div>
 						<div class="inp-box flex">
 							<span class="span">家庭出身</span>
@@ -386,6 +395,7 @@
 							<el-date-picker
 						      	v-model="detailUserInfo.caucusTime"
 						      	:disabled="!editFlag.userInfoFlag"
+						      	:picker-options="pickerTimeBeg"
 						      	:editable="false"
 						      	:clearable="false"
 						      	type="date"
@@ -435,6 +445,7 @@
 							<span class="span">任职开始时间</span>
 							<el-date-picker
 						      	v-model="detailPositionRecord.vocationStartTime"
+						      	:picker-options="pickerTimeBeg"
 						      	type="date"
 						      	:editable="false"
 						      	:clearable="false"
@@ -446,6 +457,7 @@
 							<span class="span">任职结束日期</span>
 							<el-date-picker
 						      	v-model="detailPositionRecord.vocationEndTime"
+						      	:picker-options="pickerTimeBeg"
 						      	type="date"
 						      	:editable="false"
 						      	:clearable="false"
@@ -635,7 +647,7 @@
     			detailPositionRecord:{}, // 详情信息----任职记录
     			file:null,
             	picUrlTem:'', // 上传临时展示
-
+            	pickerTimeBeg: this.beginDate(),
         	}
         },
         mounted(){
@@ -652,7 +664,7 @@
 	            var eleNav = $(".top-fixed-box-wrap");
 	            var eleContent = $("#content");
 	            var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-	            console.log("滚动距离" + scrollTop);
+	            // console.log("滚动距离" + scrollTop);
 	            if(scrollTop > 0){
 	                eleNav.css({"position": "fixed","top": '0',"zIndex": '99',"left": '0',"width": '100%'})
 	                $('#baseInfo').css({"marginTop":"230px"})
@@ -1012,6 +1024,13 @@
 			        console.log(error);
 			    })
 	        }, 
+	        beginDate(){
+        		return {
+        			disabledDate: (time) => {
+        				return time.getTime() > Date.now();
+	                }
+        		}
+        	},
         	navSwitch(index,_id){
 	            // let id = '#' + _id;
 	            // document.querySelector(id).scrollIntoView(true);
@@ -1073,8 +1092,10 @@
 	        validateNumber(val,type) {
 				if(type == 1){
 					this.detailbaseInfo.phone = val.replace(/[^\d]/g, "");
-				}else{
+				}else if(type == 2){
 					this.detailbaseInfo.familyPhone = val.replace(/[^\d]/g, "");
+				}else if(type == 3){
+					this.detailUserInfo.age = val.replace(/[^\d]/g, "");
 				}
 	        },
 	        goBack(){

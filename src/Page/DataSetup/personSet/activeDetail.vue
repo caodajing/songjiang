@@ -203,6 +203,7 @@
 							<span class="span">出生日期</span>
 							<el-date-picker
 						      	v-model="detailUserInfo.birthday"
+						      	:picker-options="pickerTimeBeg"
 						      	:editable="false"
 						      	:clearable="false"
 						      	:disabled="!editFlag.userInfoFlag"
@@ -222,6 +223,7 @@
 							<span class="span">工作时间</span>
 							<el-date-picker
 						      	v-model="detailUserInfo.dateOfWork"
+						      	:picker-options="pickerTimeBeg"
 						      	:editable="false"
 						      	:clearable="false"
 						      	:disabled="!editFlag.userInfoFlag"
@@ -283,6 +285,7 @@
 							<el-date-picker
 						      	v-model="detailUserInfo.marriageTime"
 						      	:disabled="!editFlag.userInfoFlag"
+						      	:picker-options="pickerTimeBeg"
 						      	:editable="false"
 						      	:clearable="false"
 						      	type="date"
@@ -323,6 +326,7 @@
 							<el-date-picker
 						      	v-model="detailPXEditData.trainingDate"
 						      	:disabled="!editFlag.PXRecordFlag"
+						      	:picker-options="pickerTimeBeg"
 						      	type="date"
 						      	:editable="false"
 						      	:clearable="false"
@@ -598,6 +602,7 @@
     			PXTotalPage:1,
     			file:null,
             	picUrlTem:'', // 上传临时展示
+            	pickerTimeBeg: this.beginDate(),
         	}
         },
         mounted(){
@@ -1063,6 +1068,13 @@
 	            let date = year + '-' + month + '-' + day;
 	            this.currentTime = date + ' ' + hour + ':' + minute + ':' + second; 
 	        },
+	        beginDate(){
+        		return {
+        			disabledDate: (time) => {
+        				return time.getTime() > Date.now();
+	                }
+        		}
+        	},
         	navSwitch(index,_id){
 	            // let id = '#' + _id;
 	            // document.querySelector(id).scrollIntoView(true);

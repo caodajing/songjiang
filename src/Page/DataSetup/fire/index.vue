@@ -142,7 +142,7 @@
         		if(type == 'add'){ // 新增
         			this.$router.push({path:'/fire/detail',query:{type:type}});
         		}else{ // 编辑
-        			this.$router.push({path:'/fire/detail',query:{type:type,editData:item}});
+        			this.$router.push({path:'/fire/detail',query:{type:type,editData:JSON.stringify(item)}});
         		}
         	}
         }

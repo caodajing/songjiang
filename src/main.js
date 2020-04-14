@@ -29,7 +29,7 @@ Vue.prototype.$URLSpare = 'http://shcloud2.wmtechzone.club:50001';//德哥接口
 
 Vue.prototype.$dataSetUrl = 'http://shcloud2.wmtechzone.club:50001';// 数据设置接口---ader
 Vue.prototype.$dataSetUrlY = 'http://shcloud.wmtechzone.club:12007';// 数据设置接口---严
-Vue.prototype.$dataSetUrlQ = 'http://shcloud.wmtechzone.club:12007/xf-unit';// 数据设置接口---瞿健
+Vue.prototype.$dataSetUrlQ = 'http://shcloud.wmtechzone.club:12007';// 数据设置接口---瞿健
 
 Vue.prototype.$combatUrl = 'http://shcloud.wmtechzone.club:12007/xf-unit'
 Vue.prototype.$sixfamiliarity = 'http://shcloud2.wmtechzone.club:50001/apis/sixfamiliarity'
