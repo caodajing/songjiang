@@ -1,6 +1,6 @@
 <template>
     <div class="header-box">
-        <span>松江消防救援总队</span>
+        <span>松江消防救援支队</span>
         <div class="sign-out">
             <span>欢迎 {{userName}}</span>
             <span @click="quitBtn">退出</span>

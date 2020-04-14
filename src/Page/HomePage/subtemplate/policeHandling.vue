@@ -136,9 +136,9 @@
                         ],
                         yAxis: [
                             {
-                                name: '数量(次)',
+                                name: '单位(件)',
                                 nameTextStyle: {
-                                    color: this.fontColor3,
+                                    color: this.fontColor2,
                                     padding: [0, 0, 0, -20]    // 四个数字分别为上右下左与原位置距离
                                 },
                                 type: 'value',

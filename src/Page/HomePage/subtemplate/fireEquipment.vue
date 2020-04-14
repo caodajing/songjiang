@@ -85,7 +85,7 @@
                             }
                         },
                         yAxis: {
-                            name: "（人）",
+                            name: '单位(件)',
                             nameTextStyle: {
                                 color: this.fontColor1,
                                 fontSize: 14
