@@ -9,9 +9,9 @@
             </li>
             <li>
                 <ul class="map-sign-box">
-                    <li><b class="one"></b>静安消防支队</li>
+                    <li><b class="one"></b>松江消防支队</li>
                     <li><b class="two"></b>消防中队</li>
-                    <li><b class="three"></b>消防水源</li>
+                    <li><b class="three"></b>六熟悉</li>
                 </ul>
                 <div class="map-area" :id="mapId"></div>
                 <averageArrival/>
