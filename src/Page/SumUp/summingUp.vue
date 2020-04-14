@@ -1203,6 +1203,7 @@ export default {
       this.getCars();
       this.getPersons();
       this.getWarInfo();
+      this.fullType = "add";
       this.showFullscreen = true;
     },
     closeFullscreen() {
