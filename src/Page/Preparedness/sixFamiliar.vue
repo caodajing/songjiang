@@ -212,7 +212,11 @@ export default {
       },
       rules: {
         inspectionTime: [
-          { validator: validateInspectionTime, trigger: "change" }
+          {
+            required: true,
+            validator: validateInspectionTime,
+            trigger: "change"
+          }
         ],
         checkTeam: [
           { required: true, message: "请选择检查中队", trigger: "change" }
@@ -494,7 +498,7 @@ export default {
 </style>
 <style scoped>
 .form_item {
-  width: 300px;
+  width: 300px !important;
 }
 .form_item /deep/ .el-input__inner {
   text-align: left;

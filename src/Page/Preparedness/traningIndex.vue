@@ -46,7 +46,7 @@
         v-loading="loadingData"
         class="showScroll"
         stripe
-        height="500px"
+        height="570px"
         :data="list"
         border
       >
@@ -63,7 +63,7 @@
           <template v-slot="scope">
             <el-progress
               color="#c86dd7"
-              :percentage="(scope.row.overTaskCount/scope.row.totalTaskCount)*100"
+              :percentage="isNaN((scope.row.overTaskCount/scope.row.totalTaskCount)*100)?0:(scope.row.overTaskCount/scope.row.totalTaskCount)*100"
             ></el-progress>
           </template>
         </el-table-column>
@@ -100,7 +100,7 @@
         </el-table-column>
       </el-table>
 
-      <el-table ref="otherTable" v-show="!showIndex" border :data="detailData">
+      <el-table height="570px" ref="otherTable" v-show="!showIndex" border :data="detailData">
         <el-table-column type="expand">
           <template slot-scope="props">
             <el-table
@@ -120,7 +120,7 @@
         </el-table-column>
         <el-table-column type="index" align="center" label="序号" width="50">1</el-table-column>
         <el-table-column prop="taskName" label="子任务名" align="center"></el-table-column>
-        <el-table-column prop="squadronInvolved" label="执行单位" align="center"></el-table-column>
+        <el-table-column prop="deptNames" label="执行单位" align="center"></el-table-column>
         <el-table-column align="center" label="执行时间段">
           <template
             slot-scope="scope"
@@ -221,7 +221,7 @@
             </div>
           </template>
         </el-form-item>
-        <el-form-item label="任务开始时间" prop="startTime" required>
+        <el-form-item label="任务开始时间" prop="startTime">
           <el-date-picker
             class="form_item"
             v-model="taskForm.startTime"
@@ -229,7 +229,7 @@
             placeholder="选择日期时间"
           ></el-date-picker>
         </el-form-item>
-        <el-form-item label="任务结束时间" prop="endTime" required>
+        <el-form-item label="任务结束时间" prop="endTime">
           <el-date-picker
             class="form_item"
             v-model="taskForm.endTime"
@@ -237,7 +237,7 @@
             placeholder="选择日期时间"
           ></el-date-picker>
         </el-form-item>
-        <el-form-item label="数据上报截止时间" prop="taskDeadlineTime" required>
+        <el-form-item label="数据上报截止时间" prop="taskDeadlineTime">
           <el-date-picker
             class="form_item"
             v-model="taskForm.taskDeadlineTime"
@@ -394,13 +394,13 @@ export default {
     };
     const validateEndTime = (rule, value, callback) => {
       if (!value) return callback(new Error("任务结束时间不能为空"));
-      if (+this.taskForm.startTime > +value)
+      if (+new Date(this.taskForm.startTime) > +value)
         return callback(new Error("任务开始时间不能大于任务结束时间"));
       callback();
     };
     const validateDeadLine = (rule, value, callback) => {
       if (!value) return callback(new Error("数据上报截止时间不能为空"));
-      if (+value < +this.taskForm.endTime)
+      if (+value < +new Date(this.taskForm.endTime))
         return callback(new Error("数据上报时间不能小于任务结束时间"));
       callback();
     };
@@ -462,9 +462,15 @@ export default {
         team: [
           { required: true, message: "请输入执行单位", trigger: "change" }
         ],
-        startTime: [{ validator: validateStartTime, trigger: "change" }],
-        endTime: [{ validator: validateEndTime, trigger: "change" }],
-        taskDeadlineTime: [{ validator: validateDeadLine, trigger: "change" }]
+        startTime: [
+          { required: true, validator: validateStartTime, trigger: "change" }
+        ],
+        endTime: [
+          { required: true, validator: validateEndTime, trigger: "change" }
+        ],
+        taskDeadlineTime: [
+          { required: true, validator: validateDeadLine, trigger: "change" }
+        ]
       },
       taskTypeList: [
         {
@@ -545,7 +551,7 @@ export default {
         .then(res => {
           try {
             this.teamList = res.data.data[0].dataList.filter(
-              item => item.grade === '3'
+              item => item.grade === "3"
             );
           } catch (error) {
             this.teamList = [];
@@ -633,6 +639,7 @@ export default {
 
     //任务详情
     detail(e) {
+      console.log(e, "e");
       this.$ajax({
         method: "GET",
         url: this.$combatUrl + "/taskProject/smallTaskListExecuteSituation",
@@ -643,6 +650,7 @@ export default {
       })
         .then(res => {
           this.showIndex = false;
+          res.data.data.forEach(item => (item.deptNames = e.deptNames));
           this.detailData = res.data.data;
           console.log(JSON.parse(JSON.stringify(this.detailData)), "res");
         })

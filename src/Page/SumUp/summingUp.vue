@@ -473,6 +473,9 @@
                     </el-form-item>
                   </el-col>
                 </el-row>
+                <el-form-item>
+                  <el-button type="danger" size="small" @click="delCar(item,index)">删除</el-button>
+                </el-form-item>
               </el-form>
               <div class="cars_add_more" style="text-align:center">
                 <p style="display:inline-block;cursor:pointer" @click="addMoreCars">
@@ -1167,6 +1170,12 @@ export default {
             .catch(err => {});
         })
         .catch(() => {});
+    },
+
+    delCar(val, index) {
+      if (this.fullForm.processCarInfo.length <= 1)
+        return this.$message.error("至少有一辆处警车辆");
+      this.fullForm.processCarInfo.splice(index, 1);
     },
 
     getTime(time, fmt = "yyyy-MM-dd") {
