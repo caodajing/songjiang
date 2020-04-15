@@ -17,7 +17,10 @@
                     </td>
                     <td v-for="(temp,index) in item.dutyDynamicsItemList">
                         <p>{{tableHead[index]}}</p>
-                        <div class="each-people" v-if="temp.userId" :style="{backgroundImage:picturePathFn(temp)}">
+                        <div class="each-people" v-if="temp.userId&&temp.photo" :style="{backgroundImage:picturePathFn(temp)}">
+                            <i class="el-icon-delete" @click="deletePersonnel(temp)"></i>
+                        </div>
+                        <div class="each-people on-photo" v-if="temp.userId&&!temp.photo">
                             <i class="el-icon-delete" @click="deletePersonnel(temp)"></i>
                         </div>
                         <div class="each-people-no" @click="openPopup(temp)" v-if="!temp.userId">
@@ -41,6 +44,8 @@
                             :key="item.id"
                             :label="item.productionName"
                             :value="item.id">
+                        <span>{{ item.productionName + ' - '}}</span>
+                        <span>{{ item.carNumber }}</span>
                     </el-option>
                 </el-select>
             </div>
@@ -398,8 +403,13 @@
                     top: 4px;
                     right: 4px;
                     opacity: 0;
+                    background-color:rgba(0,0,0,0.4);
                     transition: all 0.25s ease-in-out;
                     cursor: pointer;
+                }
+
+                &.on-photo{
+                    background-image: url("../../assets/images/on-photo.png");
                 }
 
                 &:hover .el-icon-delete {

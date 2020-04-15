@@ -85,46 +85,6 @@ const router = new Router({
       component: Home,
       children: [
         {
-          path: '/homePage',
-          name: 'homePage',
-          meta: {
-            requireAuth: true,
-          },
-          component: homePage,
-        },
-        {
-          path: '/dutySquadron',
-          name: 'dutySquadron',
-          meta: {
-            requireAuth: true,
-          },
-          component: dutySquadron,
-        },
-        {
-          path: '/assistMakePolicy',
-          name: 'assistMakePolicy',
-          meta: {
-            requireAuth: true,
-          },
-          component: assistMakePolicy,
-        },
-        {
-          path: '/dutyDynamics',
-          name: 'dutyDynamics',
-          meta: {
-            requireAuth: true,
-          },
-          component: dutyDynamics,
-        },
-        {
-          path: '/summingUp',
-          name: 'summingUp',
-          meta: {
-            requireAuth: true,
-          },
-          component: summingUp,
-        },
-        {
           path: '/bigScreenHome',
           name: 'bigScreenHome',
           meta: {

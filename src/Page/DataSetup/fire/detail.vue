@@ -189,12 +189,13 @@
         	this.userInfo = JSON.parse(getCookie("userInfo"));
         	this.queryType = this.$route.query.type;
         	if(this.$route.query.editData){
-        		let fireType = this.$route.query.editData.fireType;
-        		let firePlace = this.$route.query.editData.firePlace;
-        		this.editData.title = this.$route.query.editData.title;
+        		let editData = JSON.parse(this.$route.query.editData);
+        		let fireType = editData.fireType;
+        		let firePlace = editData.firePlace;
+        		this.editData.title = editData.title;
         		this.editData.fireType = fireType;
         		this.editData.firePlace = firePlace;
-        		this.editData.id = this.$route.query.editData.id;
+        		this.editData.id = editData.id;
 
         		this.fireTypeList = fireType.split(",");
         		this.firePlaceList = firePlace.split(",");

@@ -29,7 +29,7 @@ Vue.prototype.$URLSpare = 'http://shcloud2.wmtechzone.club:50001';//德哥接口
 
 Vue.prototype.$dataSetUrl = 'http://shcloud2.wmtechzone.club:50001';// 数据设置接口---ader
 Vue.prototype.$dataSetUrlY = 'http://shcloud.wmtechzone.club:12007';// 数据设置接口---严
-Vue.prototype.$dataSetUrlQ = 'http://shcloud.wmtechzone.club:12007/xf-unit';// 数据设置接口---瞿健
+Vue.prototype.$dataSetUrlQ = 'http://shcloud.wmtechzone.club:12007';// 数据设置接口---瞿健
 
 Vue.prototype.$combatUrl = 'http://shcloud.wmtechzone.club:12007/xf-unit'
 Vue.prototype.$sixfamiliarity = 'http://shcloud2.wmtechzone.club:50001/apis/sixfamiliarity'
@@ -66,6 +66,25 @@ var apiPath = {
 }
 window.apiPath = apiPath
 Vue.prototype.$publicFn = '';
+
+// 添加响应拦截器
+axios.interceptors.response.use(function (response) {
+  	// 对响应数据做点什么
+  	// console.log('response', response)
+  	if (response.data.code == '300') {
+  		Vue.prototype.$message('检查数据是否填写正确及文字长度是否合理');
+  		// Vue.prototype.$message(response.data.msg);
+    	return false;
+  	}
+  	else {
+    	return response;
+  	}
+}, function (error) {
+  	// 对响应错误做点什么
+  	console.log(error)
+  	return Promise.reject(error);
+});
+
 
 Vue.prototype.$conversionTime = (data) => {
 	let time = '';

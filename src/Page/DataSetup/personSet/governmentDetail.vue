@@ -195,6 +195,7 @@
 							<el-date-picker
 						      	v-model="detailUserInfo.birthday"
 						      	:disabled="!editFlag.userInfoFlag"
+						      	:picker-options="pickerTimeBeg"
 						      	:editable="false"
 						      	:clearable="false"
 						      	type="date"
@@ -230,6 +231,7 @@
 							<el-date-picker
 						      	v-model="detailUserInfo.caucusTime"
 						      	:disabled="!editFlag.userInfoFlag"
+						      	:picker-options="pickerTimeBeg"
 						      	:editable="false"
 						      	:clearable="false"
 						      	type="date"
@@ -252,6 +254,7 @@
 							<el-date-picker
 						      	v-model="detailUserInfo.hiringTime"
 						      	:disabled="!editFlag.userInfoFlag"
+						      	:picker-options="pickerTimeBeg"
 						      	:editable="false"
 						      	:clearable="false"
 						      	type="date"
@@ -281,6 +284,7 @@
 							<el-date-picker
 						      	v-model="detailPXEditData.trainingDate"
 						      	:disabled="!editFlag.PXRecordFlag"
+						      	:picker-options="pickerTimeBeg"
 						      	type="date"
 						      	:editable="false"
 						      	:clearable="false"
@@ -509,6 +513,7 @@
     			PXTotalPage:1,
     			file:null,
             	picUrlTem:'', // 上传临时展示
+            	pickerTimeBeg: this.beginDate(),
         	}
         },
         mounted(){
@@ -973,6 +978,13 @@
 	            let date = year + '-' + month + '-' + day;
 	            this.currentTime = date + ' ' + hour + ':' + minute + ':' + second; 
 	        },
+	        beginDate(){
+        		return {
+        			disabledDate: (time) => {
+        				return time.getTime() > Date.now();
+	                }
+        		}
+        	},
         	navSwitch(index,_id){
 	            // let id = '#' + _id;
 	            // document.querySelector(id).scrollIntoView(true);
