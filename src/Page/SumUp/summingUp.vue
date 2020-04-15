@@ -1347,6 +1347,8 @@ export default {
             task: item.task
           };
         });
+        let carids = processCarInfo.map(item=>item.process_car_id)
+        if(carids.length!==new Set(carids).size) return this.$message.error('不能添加相同的处警车辆')
         let attachment = [];
         this.fileList.forEach(item => {
           attachment.push(item.name);

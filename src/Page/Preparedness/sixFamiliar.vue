@@ -103,13 +103,16 @@
           </el-select>
         </el-form-item>
         <el-form-item label="指挥员" prop="commander">
-          <el-autocomplete
-            class="form_item"
-            v-model="commander"
-            :fetch-suggestions="querySearchAsync"
-            placeholder="请输入"
-            @select="handleSelectCommander"
-          ></el-autocomplete>
+
+            <el-select class="form_item" v-model="dialogForm.commander" filterable placeholder="请选择">
+              <el-option
+                v-for="item in commanderList"
+                :key="item.id"
+                :label="item.realName"
+                :value="item.id">
+              </el-option>
+            </el-select>
+
         </el-form-item>
         <el-form-item label="地点" prop="address">
           <el-input class="form_item" v-model="dialogForm.address" placeholder="请输入" />
@@ -222,7 +225,7 @@ export default {
           { required: true, message: "请选择检查中队", trigger: "change" }
         ],
         commander: [
-          { required: true, message: "请输入指挥员", trigger: "blur" }
+          { required: true, message: "请输入指挥员", trigger: "change" }
         ],
         address: [{ required: true, message: "请填写地点", trigger: "blur" }],
         keyUnit: [
@@ -231,12 +234,14 @@ export default {
       },
       fileList: [],
 
-      teamList: []
+      teamList: [],
+      commanderList:[],
     };
   },
   created() {
     this.userId = JSON.parse(getCookie("userInfo")).id;
     this.getTeam();
+    this.getCommander();
     this.getData();
   },
   methods: {
@@ -302,6 +307,25 @@ export default {
         this.fileList = [];
         this.dialogForm.id = "";
       });
+    },
+
+    getCommander(){
+      this.$ajax({
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        url: this.$dataSetUrl + "/apis/userbasic/getdata",
+        data: qs.stringify({
+          
+          rowLength: 500,
+          pageNum: 1
+        })
+      })
+        .then(res => {
+          this.commanderList = res.data.data[0].dataList
+        })
+        .catch(err => {});
     },
 
     //搜索指挥员
@@ -406,9 +430,39 @@ export default {
         .catch(() => {});
     },
 
+    remoteMethod(e){
+      if(!e) return this.commanderList=[]
+       this.$ajax({
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        url: this.$dataSetUrl + "/apis/userbasic/getdata",
+        data: qs.stringify({
+          realName: e,
+          rowLength: 500,
+          pageNum: 1
+        })
+      })
+        .then(res => {
+          try {
+            this.commanderList = res.data.data[0].dataList.map(item => {
+              return {
+                id: item.id,
+                value: item.realName
+              };
+            });
+          } catch (error) {
+            this.commanderList = [];
+          }
+        })
+        .catch(err => {});
+    },
+
     submit() {
       this.$refs.form.validate(valid => {
         if (!valid) return;
+
         let params = {
           inspectionTime: this.getTime(this.dialogForm.inspectionTime),
           checkTeam: this.dialogForm.checkTeam,
@@ -424,6 +478,7 @@ export default {
           createUserId: this.userId,
           updateUserId: this.userId
         };
+        return console.log(params,'params')
         let url = "";
         if (this.title === "编辑记录") {
           params.id = this.dialogForm.id;
