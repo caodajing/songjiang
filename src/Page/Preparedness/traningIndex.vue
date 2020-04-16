@@ -192,12 +192,14 @@
         </el-form-item>
         <el-form-item label="项目" required>
           <template>
-            <div v-for="(item,index) in dialogProList" :key="index">
+            <div v-for="(item,index) in dialogProList" :key="index" style="position:relative">
               <el-select
                 style="margin-bottom:5px"
                 class="form_item"
+                :class="{error_select:(index===0 && hasErrorSelect)}"
                 v-model="item.project"
                 placeholder="请选择项目"
+                @change="hasErrorSelect=false"
               >
                 <el-option
                   v-for="val in projectList"
@@ -218,6 +220,7 @@
                 style="font-size:20px;cursor:pointer;margin-left:5px"
                 @click="delProject(index)"
               ></i>
+              <div v-if="index===0 && hasErrorSelect" class="select_error_info">请选择项目</div>
             </div>
           </template>
         </el-form-item>
@@ -492,6 +495,7 @@ export default {
           value: 2
         }
       ],
+      hasErrorSelect: false,
 
       //
       showIndex: true,
@@ -615,6 +619,7 @@ export default {
     openDialog() {
       this.title = "新增任务";
       this.dialogVisible = true;
+      this.hasErrorSelect = false;
       this.$nextTick(_ => {
         this.$refs.ruleForm.resetFields();
         this.taskForm.id = "";
@@ -628,6 +633,7 @@ export default {
     },
 
     addProject() {
+      this.hasErrorSelect = false;
       this.dialogProList.push({
         project: ""
       });
@@ -659,7 +665,6 @@ export default {
 
     //编辑任务
     edit(e) {
-      console.log(JSON.parse(JSON.stringify(e)), "e");
       let proList = [];
       e.projectIds.split(",").forEach(item => {
         this.projectList.forEach(val => {
@@ -672,6 +677,7 @@ export default {
       });
       this.title = "编辑任务";
       this.dialogVisible = true;
+      this.hasErrorSelect = false;
       this.$nextTick(_ => {
         this.$refs.ruleForm.resetFields();
         this.taskForm.id = e.id;
@@ -774,7 +780,6 @@ export default {
 
     submitTask() {
       this.$refs.ruleForm.validate(valid => {
-        if (!valid) return;
         let proList = [];
         this.dialogProList.forEach(item => {
           this.projectList.forEach(val => {
@@ -783,6 +788,13 @@ export default {
             }
           });
         });
+        if (!proList.length) {
+          this.hasErrorSelect = true;
+          this.$message.error("请先添加项目");
+          return;
+        }
+
+        if (!valid) return;
 
         let deptIds = [];
         this.taskForm.team.forEach(item => {
@@ -791,7 +803,7 @@ export default {
           });
         });
 
-        if (!proList.length) return this.$message.error("请先添加项目");
+        this.hasErrorSelect = false;
         let params = {
           taskType: this.taskForm.taskType,
           taskCategory: this.taskForm.taskCategory,
@@ -927,6 +939,17 @@ export default {
   background: #f8f8f9;
   border: 1px dotted #c4c3c4;
   padding: 30px 50px;
+}
+.error_select {
+  margin-bottom: 25px !important;
+}
+.error_select /deep/ input {
+  border-color: #f56c6c;
+}
+.select_error_info {
+  position: absolute;
+  top: 41px;
+  color: #f56c6c;
 }
 </style>
 <style>
