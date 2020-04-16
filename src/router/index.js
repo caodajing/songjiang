@@ -149,14 +149,12 @@ const router = new Router({
           children: [
             {
               path: 'index',
-              name: 'Training Index',
-              component: combatTraningIndex
+              name: 'TrainingIndex',
+              components: {
+                default: combatTraningIndex,
+                detail: combatTraningDetail
+              }
             },
-            {
-              path: 'detail',
-              name: 'Training Detail',
-              component: combatTraningDetail
-            }
           ],
         },
         {

@@ -7,21 +7,27 @@
         <i class="iconfont icon-shouye-copy icon"></i>
         <span>当前位置：战备工作 > 训练</span>
       </div>
-      <router-view/>
+      <router-view :name="name" />
     </div>
   </div>
 </template>
 
 <script>
-
 import leftNav from "./leftNav";
 
 export default {
   name: "Trainging",
   components: {
-    leftNav,
+    leftNav
   },
- 
+  created() {
+    this.name = "detail";
+  },
+  data() {
+    return {
+      name: ""
+    };
+  }
 };
 </script>
 
