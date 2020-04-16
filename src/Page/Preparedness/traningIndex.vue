@@ -585,7 +585,6 @@ export default {
           if (res.data.status !== 200) {
             this.list = [];
           } else {
-            console.log(res.data.data, "data");
             this.list = res.data.data.list;
             this.totalPages = res.data.data.pages;
           }
@@ -601,8 +600,6 @@ export default {
       this.$ajax
         .get(this.$combatUrl + "/dept/selectDept", qs.stringify({}))
         .then(res => {
-          console.log(res.data.data, "res");
-          // this.projectList = res.data.data;
         })
         .catch(err => {});
     },
@@ -645,7 +642,6 @@ export default {
 
     //任务详情
     detail(e) {
-      console.log(e, "e");
       this.$ajax({
         method: "GET",
         url: this.$combatUrl + "/taskProject/smallTaskListExecuteSituation",
@@ -658,7 +654,6 @@ export default {
           this.showIndex = false;
           res.data.data.forEach(item => (item.deptNames = e.deptNames));
           this.detailData = res.data.data;
-          console.log(JSON.parse(JSON.stringify(this.detailData)), "res");
         })
         .catch(err => {});
     },
@@ -736,7 +731,6 @@ export default {
         }
       })
         .then(res => {
-          console.log(JSON.parse(JSON.stringify(item.row)), "???");
           this.detailTitle = item.row.squadronInvolved;
           this.detailTable = res.data.data.projectTrainingSituationVos;
           this.fullscreenForm.taskName = item.row.taskName;
@@ -865,7 +859,6 @@ export default {
         }
       })
         .then(res => {
-          console.log(JSON.parse(JSON.stringify(data)), "data");
           this.fullscreenForm.projectName = data.projectName;
           this.fullscreenForm.checkInNum = data.checkInNum;
           this.fullscreenForm.participationRateString =
@@ -874,10 +867,6 @@ export default {
           this.fullscreenForm.complianceRateString = data.complianceRateString;
           this.scoreList = res.data.data.projectUserList;
 
-          console.log(
-            JSON.parse(JSON.stringify(this.scoreList)),
-            "this.scoreList"
-          );
           this.showFullscreen = true;
         })
         .catch(err => {});
