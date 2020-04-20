@@ -16,7 +16,9 @@ import combatTraningIndex from '@/Page/Preparedness/traningIndex'
 import combatTraningDetail from '@/Page/Preparedness/traningDetail'
 import sixFamiliar from '@/Page/Preparedness/sixFamiliar'
 
+import summingIndex from '@/Page/SumUp/Index'
 import summingUp from '@/Page/SumUp/summingUp'
+import SummingDetail from '@/Page/SumUp/SummingDetail'
 
 // 数据设置  
 
@@ -169,8 +171,17 @@ const router = new Router({
           meta: {
             requireAuth: true,
           },
-          component: summingUp,
-
+          component: summingIndex,
+          children: [
+            {
+              path: '',
+              name: 'SumingIndex',
+              components: {
+                default: summingUp,
+                detail: SummingDetail
+              }
+            },
+          ],
         },
         {
           path: '/personSet/index',
