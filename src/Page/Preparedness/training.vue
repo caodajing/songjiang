@@ -14,6 +14,7 @@
 
 <script>
 import leftNav from "./leftNav";
+import { setCookie, getCookie } from "../../assets/js/cookie.js";
 
 export default {
   name: "Trainging",
@@ -21,7 +22,12 @@ export default {
     leftNav
   },
   created() {
-    this.name = "detail";
+    let grade = JSON.parse(getCookie("userInfo")).grade;
+    if (grade === 2 || grade === 3) {
+      this.name = "detail";
+    } else {
+      this.name = "default";
+    }
   },
   data() {
     return {

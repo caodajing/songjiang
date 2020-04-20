@@ -478,7 +478,6 @@ export default {
           createUserId: this.userId,
           updateUserId: this.userId
         };
-        return console.log(params,'params')
         let url = "";
         if (this.title === "编辑记录") {
           params.id = this.dialogForm.id;
