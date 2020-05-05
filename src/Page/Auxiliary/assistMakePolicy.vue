@@ -9,12 +9,17 @@
             </li>
             <li>
                 <ul class="map-sign-box">
-                    <li><b class="one"></b>松江消防支队</li>
+                    <!-- <li><b class="one"></b>松江消防支队</li>
                     <li><b class="two"></b>消防中队</li>
+                    <li><b class="three"></b>六熟悉</li> -->
+
+                    <li><b class="one"></b>消防中队</li>
+                    <li><b class="two"></b>消防水源</li>
                     <li><b class="three"></b>六熟悉</li>
                 </ul>
                 <div class="map-area" :id="mapId"></div>
-                <averageArrival/>
+                <fireAnalysisPlace/>
+                <!-- <averageArrival/> -->
             </li>
             <li>
                 <agingDistribution/>
@@ -33,6 +38,8 @@
     import fireAnalysis from './subtemplate/fireAnalysis'
 
     import averageArrival from './subtemplate/averageArrival'
+    import fireAnalysisPlace from './subtemplate/fireAnalysisPlace'
+
 
     import agingDistribution from './subtemplate/agingDistribution'
     import alarmTrend from './subtemplate/alarmTrend'
@@ -51,7 +58,8 @@
             averageArrival,
             agingDistribution,
             alarmTrend,
-            trainingStatistics
+            trainingStatistics,
+            fireAnalysisPlace
         },
         data() {
             return {
@@ -62,7 +70,7 @@
 
                 fireWaterSource: '',
                 fireSquadron: '',
-                fireDetachment: '',
+                sixFamiliarities: '',
 
                 heatmapOverlay:''
             }
@@ -84,20 +92,23 @@
         },
         methods: {
             getMapCoordinate() {
-                this.$ajax.get(this.$URL + '/xf-unit/homePage/selectGroupLocation', {
+                this.$ajax.get(this.$URL + '/xf-unit/decisionSupport/getDistribution', {
                     params: {
                         groupId: ''
                     }
                 }).then((res) => {
                     if (res.data.code == 200) {
-                        this.fireDetachment = [];
-                        res.data.data.map((e) => {
-                            if (e.id = '154861516185315154') {//此处写死为上海总队id，如后续有其他总队，根据登陆人的总队id比较
-                                this.fireWaterSource = e.apparatusList;
-                            }
-                            this.fireDetachment.push({id: e.id, name: e.name, lat: e.lat, lng: e.lng});
-                            this.fireSquadron = e.selectGroupLocationVoList[0].selectGroupLocationVoList;
-                        });
+                        this.sixFamiliarities = [];
+                        this.fireSquadron = res.data.data.sysGroups;
+                        this.fireWaterSource = res.data.data.apparatuses;
+                        this.sixFamiliarities = res.data.data.sixFamiliarities;
+                        // res.data.data.map((e) => {
+                        //     // if (e.id = '154861516185315154') {//此处写死为上海总队id，如后续有其他总队，根据登陆人的总队id比较
+                        //     //     this.fireWaterSource = e.apparatuses;
+                        //     // }
+                            
+                            
+                        // });
                         this.mapRendering();
                     } else {
                         this.$message.error(res.data.message)
@@ -145,13 +156,13 @@
                 // console.log(this.fireWaterSource,'33333')
                 for (let i = 0; i < this.fireWaterSource.length; i++) {
                     let point = new BMap.Point(this.fireWaterSource[i].lng, this.fireWaterSource[i].lat);
-                    let marker = new BMap.Marker(point, {icon: tempMapIcon3}); // 创建标注
+                    let marker = new BMap.Marker(point, {icon: tempMapIcon5}); // 创建标注
                     this.myMap.addOverlay(marker);
                 }
-                // console.log(this.fireDetachment,'22222')
-                for (let i = 0; i < this.fireDetachment.length; i++) {
-                    let point = new BMap.Point(this.fireDetachment[i].lng, this.fireDetachment[i].lat);
-                    let marker = new BMap.Marker(point, {icon: tempMapIcon1}); // 创建标注
+                // console.log(this.sixFamiliarities,'22222')
+                for (let i = 0; i < this.sixFamiliarities.length; i++) {
+                    let point = new BMap.Point(this.sixFamiliarities[i].lng, this.sixFamiliarities[i].lat);
+                    let marker = new BMap.Marker(point, {icon: tempMapIcon4}); // 创建标注
                     this.myMap.addOverlay(marker);
                 }
                 // console.log(this.fireSquadron,'11111')

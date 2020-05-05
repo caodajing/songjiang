@@ -14,6 +14,7 @@
 			    				<img :src=" $dataSetUrl + '/' + detailbaseInfo.photo" alt="" class="icon-touxiang iconfont" v-if="detailbaseInfo.photo">
 			    				<img src="" alt="" class="icon-touxiang iconfont" v-else>
 	                            <input type="file" accept="image/*" @change="picUpload">
+	                            <span class="upload-file">上传头像</span>
 			    			</div>
 			    			<div class="info-box">
 			    				<div class="name-box clearfix" >
@@ -23,15 +24,41 @@
 			    						<i></i>
 			    						<span class="age" >{{detailUserInfo.age}}岁</span>
 			    						<i></i>
-			    						<span class="state" >{{detailbaseInfo.type == 1 ? '基层干部' : detailbaseInfo.type == 2 ? '政府专职消防员' : '现役消防士'}}</span>
-			    						<i></i>
+			    						<!-- <span class="state" >{{detailbaseInfo.type == 1 ? '基层干部' : detailbaseInfo.type == 2 ? '政府专职消防员' : '现役消防士'}}</span> -->
+			    						<span class="state" v-if="detailBodyData.weight&& detailBodyData.height">BMI：{{((detailBodyData.weight)/((detailBodyData.height/100) * (detailBodyData.height/100))).toFixed(1)}}</span>
+			    						<i v-if="detailBodyData.weight&& detailBodyData.height"></i>
 			    					</div>
 			    				</div>
 			    				<p class="belong" >所属中队  {{detailbaseInfo.groupName}}</p>
-			    				<div class="speciality-tag flex">
-			    					<span>+</span>	
-			    					特长标签
-			    				</div>
+								
+								<div class="speciality-tag-box">
+									<div class="t-box clearfix">
+										<div class="speciality-tag flex" @click="selectShow = !selectShow">
+					    					<span>+</span>	
+					    					特长标签
+					    				</div>
+					    				<div class="tag-show">
+					    					<span v-for="item in tagShowList">{{item.label}}</span>
+					    				</div>
+									</div>
+									<div class="s-box flex"  v-if="selectShow">
+										<template>
+										  	<el-select v-model="specialityTagSearch" filterable placeholder="特长标签" @change="selectTag" @visible-change="selectVisible">
+											    <el-option
+											      	v-for="item in specialityTagList"
+											      	:key="item.id"
+											      	:label="item.specialityName"
+											      	:value="{value:item.id,label:item.specialityName}">
+											    </el-option>
+										  	</el-select>
+										  	
+										</template>
+										<div class="add-tag-btn flex"  @click="addTagFn">
+									  		<i>+</i>
+									  		<span>添加标签</span>
+										</div>
+									</div>
+								</div>
 			    			</div>
 			    		</div>
 			    		<div class="nav-list clearfix flex" id="nav-list">
@@ -45,7 +72,7 @@
 		    		<div class="title-common">
 		    			<span>基本信息</span>
 		    			<div class="line"></div>
-		    			<div class="edit-btn flex" @click="editFlag.baseInfoFlag = true">
+		    			<div class="edit-btn flex" @click="editFlag.baseInfoFlag = true;">
 		    				<i class="iconfont icon-bianji"></i>
 		    				编辑
 		    			</div>
@@ -143,6 +170,10 @@
 		    			<div class="inp-box flex">
 							<span class="span">身高</span>
 							<el-input v-model="detailBodyData.height" placeholder="请输入…" :disabled="!editFlag.bodyDataFlag"></el-input>
+						</div>
+						<div class="inp-box flex">
+							<span class="span">体重</span>
+							<el-input v-model="detailBodyData.weight" placeholder="请输入…" :disabled="!editFlag.bodyDataFlag"></el-input>
 						</div>
 						<div class="inp-box flex">
 							<span class="span">头围</span>
@@ -648,6 +679,12 @@
     			file:null,
             	picUrlTem:'', // 上传临时展示
             	pickerTimeBeg: this.beginDate(),
+            	specialityTagList:[], // 特长标签列表
+            	specialityTagSearch:"",
+            	tagShowList:[], // 选中的标签展示
+            	selectStatus: false, // 下拉框显示/隐藏
+            	selectShow:false,
+            	certificateList:[], // 证书列表
         	}
         },
         mounted(){
@@ -670,7 +707,7 @@
 	                $('#baseInfo').css({"marginTop":"230px"})
 	            }else{
 	                eleNav.css({"position": "fixed","top": '100px',"zIndex": '99',"left": '0',"width": '100%'})
-	                $('#baseInfo').css({"marginTop":"327px"})
+	                $('#baseInfo').css({"marginTop":"362px"})
 	            }
 	            
 	            
@@ -678,6 +715,122 @@
 
         },
         methods:{ 
+        	getCertificateList(){ // 拿到用户证书、特长
+        		this.$ajax.get(this.$dataSetUrlY + '/xf-unit/userZhan/getUserZhanNengInfo', {
+        			params:{
+        				userId: this.userId
+        			}
+        		} ,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then((res) => {
+        			let data = res.data;
+        			if(data.code == 200){
+        				// console.log(data.data);
+        				let list = data.data.spId.split(",");
+        				list.pop();
+        				console.log(list);
+        				console.log(this.specialityTagList)
+        				this.specialityTagList.map(item => {
+        					list.map((val,i) => {
+        						if(val == item.specialityName){
+        							let each = {};
+        							each.label = val;
+        							each.id = item.id;
+        							this.tagShowList.push(each);
+        						}
+        					})
+        				})
+        				console.log(this.tagShowList);
+        			}else{
+        				this.certificateList = [];
+        			}
+			    }).catch(function (error) {
+			        console.log(error);
+			    })
+        	},
+        	addTagFn(){  // 添加标签
+        		this.$prompt('请输入标签名', '提示', {
+		          confirmButtonText: '确定',
+		          cancelButtonText: '取消',
+		          inputPattern:  /\S/,
+		          inputErrorMessage: '请输入标签名'
+		        }).then(({ value }) => {
+		        	this.$ajax.post(this.$dataSetUrlY + '/xf-unit/userZhan/insertSpeciality', qs.stringify({
+	        			specialityName: value
+	        		}) ,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then((res) => {
+	        			let data = res.data;
+	        			if(data.code == 200){
+	        				this.$message({
+					            type: 'success',
+					            message: '添加成功'
+					        });
+					        this.getAllSpecialityList();
+	        			}else{
+	        				this.message("不能添加重复标签");
+	        			}
+				    }).catch(function (error) {
+				        console.log(error);
+				    })
+		        }).catch(() => {
+		          	this.$message({
+			            type: 'info',
+			            message: '取消输入'
+		          	});       
+		        });
+        	},
+        	selectVisible(status){
+        		this.selectStatus = status;
+        	},
+        	selectTag(params){ // 选择标签
+        		let flag = true;
+        		this.tagShowList.map((val,i) => {
+        			if(val.id == this.specialityTagSearch.value){
+        				this.$message("不能添加重复的标签");
+        				flag = false;
+        			}else{
+        				
+        			}
+				})
+        		if(flag){
+        			this.tagShowList.push({
+	        			label: this.specialityTagSearch.label,
+	        			id: this.specialityTagSearch.value
+	        		});
+	        		let ids = [];
+
+	        		this.tagShowList.map(item => {
+	        			ids.push(item.id);
+	        		})
+
+        			this.$ajax.post(this.$dataSetUrlY + '/xf-unit/userZhan/updateUserZhanNengInfo', qs.stringify({
+	        			userId: this.userId,
+	        			spId: ids.join(',')
+	        		}) ,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then((res) => {
+	        			let data = res.data;
+	        			if(data.code == 200){
+	        				this.$message({
+					            type: 'success',
+					            message: '添加成功'
+					        });
+	        			}
+				    }).catch(function (error) {
+				        console.log(error);
+				    })
+        		}
+        	},
+        	getAllSpecialityList(){ // 获取特长标签列表
+        		this.$ajax.get(this.$dataSetUrlY + '/xf-unit/userZhan/getAllSpeciality', qs.stringify({
+        			// userId: this.userId
+        		}) ,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then((res) => {
+        			let data = res.data;
+        			this.getCertificateList();
+        			if(data.code == 200){
+        				this.specialityTagList = data.data;
+        			}else{
+        				this.specialityTagList = [];
+        			}
+			    }).catch(function (error) {
+			        console.log(error);
+			    })
+        	},
         	updatePositionHistorySave(){ // 修改任职记录
         		let info = this.detailPositionRecord; 
         		if(!info.vocationStartTime || info.vocationStartTime == ''){
@@ -828,6 +981,7 @@
         		this.$ajax.post(this.$dataSetUrl + '/apis/userphysical/setdata', qs.stringify({
 					userId: this.userId,
 	    			height: info.height,
+	    			weight: info.weight,
 	    			headCircumference: info.headCircumference,
 	    			hips: info.hips,
 	    			waist: info.waist,
@@ -885,6 +1039,7 @@
 			        			roleId: info.roleId,
 			        			groupId: info.groupId,
 			        			sex: info.sex,
+			        			photo: vm.$dataSetUrl + '/' + vm.detailbaseInfo.photo,
 			        			homeAddress: info.homeAddress,
 			        			familyName: info.familyName,
 			        			familyKinship: info.familyKinship,
@@ -960,9 +1115,14 @@
         					})
         				})
         				this.detailbaseInfo = this.list.dataList[0];
+        				this.detailbaseInfo.familyName = '***';
+						this.detailbaseInfo.familyKinship = '***'
+						this.detailbaseInfo.familyPhone = '***********';
+						this.detailbaseInfo.homeAddress = '***********';
         				this.getDetailUserInfo();
 			        	this.getDetailBodyData();
 			        	this.getPositionHistory();
+			        	this.getAllSpecialityList();
         				window.sessionStorage.setItem("detailbaseInfoTem",JSON.stringify(this.detailbaseInfo));
         			}else{
         				this.list = [];
@@ -1037,9 +1197,9 @@
 	            if(index == 0){
 	            	window.scrollTo(0,0); 
 	            }else if(index == 1){
-	            	window.scrollTo(0,400); 
+	            	window.scrollTo(0,368); 
 	            }else if(index == 2){
-	            	window.scrollTo(0,700);
+	            	window.scrollTo(0,716);
 	            }else if(index == 3){
 	            	window.scrollTo(0,1500);
 	            }
@@ -1101,6 +1261,23 @@
 	        goBack(){
 	        	this.$router.go(-1);
 	        }
+        },
+        watch:{
+        	'editFlag.baseInfoFlag':{
+        		handler: function() {
+		            if(this.editFlag.baseInfoFlag){
+		            	this.detailbaseInfo.familyName = '';
+						this.detailbaseInfo.familyKinship = '';
+						this.detailbaseInfo.familyPhone = '';
+						this.detailbaseInfo.homeAddress = '';
+		            }else{
+		            	this.detailbaseInfo.familyName = '***';
+						this.detailbaseInfo.familyKinship = '***'
+						this.detailbaseInfo.familyPhone = '***********';
+						this.detailbaseInfo.homeAddress = '***********';
+		            }
+		         },
+        	}
         }
     }
 </script>

@@ -57,28 +57,45 @@
         },
         methods: {
             getTrainingStatistics() {
-                this.$ajax.get(this.$URL + '/xf-unit/decisionSupport/trainingStatistics', {
+                this.$ajax.get(this.$dataSetUrlTest + '/xf-unit/decisionSupport/trainingStatistics', {
                     params: {
                         groupId: this.dept
                     }
                 }).then((res) => {
                     if (res.data.code == 200) {
-                        this.dataX = [];
+                        
+                        this.dataX = []
                         this.dataY1 = [];
                         this.dataY2 = [];
+                        this.dataY3 = [];
+                        this.dataY4 = [];
                         res.data.data.map((e) => {
+                            let temp1 = 0;
+                            let temp2 = 0;
+                            let temp3 = 0;
+                            let temp4 = 0;
+
+                            temp1 = e.excellentNum;
+                            temp2 = e.goodNum;
+                            temp3 = e.passNum;
+                            temp4 = e.noPassNum;
+
+                            this.dataY1.push(temp1);
+                            this.dataY2.push(temp2);
+                            this.dataY3.push(temp3);
+                            this.dataY4.push(temp4);
                             this.dataX.push(e.projectName);
-                            this.dataY1.push(e.participateCount);
-                            this.dataY2.push(e.qualifiedCount)
-                        })
+                        });
                     } else {
-                        this.$message.error(res.data.message)
+                        // this.$message.error(res.data.message)
                     }
                     this.drawingFn();
                 }).catch(function (error) {
                     console.log(error);
                 })
             },
+
+            
             getDeptList() {
                 this.$ajax.post(this.$URLSpare + '/apis/group/getdata',
                     'parentId=901267999502484244&grade=3&rowLength=100&pageNum=1',
@@ -117,15 +134,22 @@
                             right: 10,
                             top: 0,
                             itemGap: 16,
-                            itemWidth: 18,
+                            itemWidth: 10,
                             itemHeight: 10,
-                            data: [{
-                                name: '参与人数',
-                                //icon:'image://../wwwroot/js/url2.png', //路径
-                            },
+                            data: [
+                                {
+                                    name: '优秀人数',
+                                },
+                                {
+                                    name: '良好人数',
+                                },
                                 {
                                     name: '达标人数',
-                                }],
+                                },
+                                {
+                                    name: '未达标人数',
+                                }
+                            ],
                             textStyle: {
                                 color: this.fontColor1,
                                 fontStyle: 'normal',
@@ -141,6 +165,7 @@
                                 axisLabel: { //坐标轴刻度标签的相关设置。
                                     interval: 0,//设置为 1，表示『隔一个标签显示一个标签』
                                     margin: 15,
+                                    // rotate:40,
                                     textStyle: {
                                         color: this.fontColor2,
                                         fontStyle: 'normal',
@@ -217,85 +242,89 @@
                             "start": 1,
                             "end": 35
                         }],
-                        // dataZoom:[
-                        //     {
-                        //         type: 'slider',
-                        //         xAxisIndex: 0,
-                        //         filterMode: 'empty',
-                        //         start: 0,
-                        //         end: 20,
-                        //         zoomLock:true
-                        //     },
-                        // ],
                         series: [
                             {
-                                name: '参与人数',
+                                name: '优秀人数',
                                 type: 'bar',
-                                data: this.dataY1,
-                                barWidth: 10,
-                                barGap: 0,//柱间距离
-                                label: {//图形上的文本标签
-                                    normal: {
-                                        show: true,
-                                        position: 'top',
-                                        textStyle: {
-                                            color: this.fontColor2,
-                                            fontStyle: 'normal',
-                                            fontFamily: '微软雅黑',
-                                            fontSize: 14,
+                                barWidth: 20,
+                                barGap: '-100%',
+                                stack: '训练统计',
+                                itemStyle: {
+                                    barBorderRadius: 2,
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                            offset: 0.4,
+                                            color: "#4EA0FB"
                                         },
-                                    },
+                                        {
+                                            offset: 1,
+                                            color: "#8D68FC"
+                                        }
+                                    ])
                                 },
-                                itemStyle: {//图形样式
-                                    normal: {
-                                        barBorderRadius: [5, 5, 0, 0],
-                                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                                            offset: 1, color: 'rgba(255, 104, 252, 0.3)'
-                                        }, {
-                                            offset: 0.9, color: 'rgba(255, 104, 252, 0.4)'
-                                        }, {
-                                            offset: 0.31, color: 'rgba(255, 104, 252, 0.5)'
-                                        }, {
-                                            offset: 0.15, color: 'rgba(255, 104, 252, 0.65)'
-                                        }, {
-                                            offset: 0, color: 'rgba(255, 104, 252, 0.8)'
-                                        }], false),
-                                    },
-                                },
+                                data: this.dataY1
                             },
+                            {
+                                name: '良好人数',
+                                type: 'bar',
+                                barWidth: 20,
+                                barGap: '-100%',
+                                stack: '训练统计',
+                                itemStyle: {
+                                    barBorderRadius: 2,
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                        offset: 0.4,
+                                        color: "rgba(78,255,251,1)"
+                                    },
+                                    {
+                                        offset: 1,
+                                        color: "rgba(141,221,252,1)"
+                                    }
+                                    ])
+                                },
+                                data: this.dataY2
+                            },
+
                             {
                                 name: '达标人数',
                                 type: 'bar',
-                                data: this.dataY2,
-                                barWidth: 10,
-                                barGap: 0.2,//柱间距离
-                                label: {//图形上的文本标签
-                                    normal: {
-                                        show: true,
-                                        position: 'top',
-                                        textStyle: {
-                                            color: this.fontColor2,
-                                            fontStyle: 'normal',
-                                            fontFamily: '微软雅黑',
-                                            fontSize: 14,
+                                barWidth: 20,
+                                barGap: '-100%',
+                                stack: '训练统计',
+                                itemStyle: {
+                                    barBorderRadius: 2,
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                            offset: 0.4,
+                                            color: "rgba(247,181,0,1)"
                                         },
-                                    },
+                                        {
+                                            offset: 1,
+                                            color: "rgba(250,100,0,1)"
+                                        }
+                                    ])
                                 },
-                                itemStyle: {//图形样式
-                                    normal: {
-                                        barBorderRadius: [5, 5, 0, 0],
-                                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                                            offset: 1, color: 'rgba(78, 160, 251, 0.3)'
-                                        }, {
-                                            offset: 0.9, color: 'rgba(78, 160, 251, 0.5)'
-                                        }, {
-                                            offset: 0.25, color: 'rgba(78, 160, 251, 0.8)'
-                                        }, {
-                                            offset: 0, color: 'rgba(78, 160, 251, 1)'
-                                        }], false),
-                                    },
+                                data: this.dataY3
+                            },
+
+                            {
+                                name: '未达标人数',
+                                type: 'bar',
+                                barWidth: 20,
+                                barGap: '-100%',
+                                stack: '训练统计',
+                                itemStyle: {
+                                    barBorderRadius: 2,
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                            offset: 0.4,
+                                            color: "#6DD400"
+                                        },
+                                        {
+                                            offset: 1,
+                                            color: "#57F700"
+                                        }
+                                    ])
                                 },
-                            }
+                                data: this.dataY4
+                            },
                         ]
                     }
                 );

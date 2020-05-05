@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "595399",
+      "name": "删除",
+      "font_class": "shanchu",
+      "unicode": "e61d",
+      "unicode_decimal": 58909
+    },
+    {
       "icon_id": "637481",
       "name": "复选框",
       "font_class": "fuxuankuang",
@@ -39,6 +46,13 @@
       "font_class": "touxiang",
       "unicode": "e6ab",
       "unicode_decimal": 59051
+    },
+    {
+      "icon_id": "8152893",
+      "name": "头像",
+      "font_class": "BARISTA",
+      "unicode": "e645",
+      "unicode_decimal": 58949
     },
     {
       "icon_id": "8617536",

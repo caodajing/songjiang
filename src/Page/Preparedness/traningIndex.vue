@@ -59,14 +59,14 @@
         <el-table-column prop="createTime" align="center" width="120" label="创建时间">
           <template slot-scope="scope">{{getTime(scope.row.createTime,'MM-dd hh:mm')}}</template>
         </el-table-column>
-        <el-table-column align="center" width="150" label="当前进度">
+        <!-- <el-table-column align="center" width="150" label="当前进度">
           <template v-slot="scope">
             <el-progress
               color="#c86dd7"
               :percentage="isNaN((scope.row.overTaskCount/scope.row.totalTaskCount)*100)?0:(scope.row.overTaskCount/scope.row.totalTaskCount)*100"
             ></el-progress>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column prop="taskType" align="center" width="120" label="任务类型">
           <template slot-scope="scope">{{scope.row.taskType | taskTypeFilter}}</template>
         </el-table-column>
@@ -722,6 +722,8 @@ export default {
     },
 
     handleRowClick(row, item) {
+      console.log(row);
+      console.log(item)
       this.$ajax({
         method: "GET",
         url: this.$combatUrl + "/taskProject/projectTrainingSituation",

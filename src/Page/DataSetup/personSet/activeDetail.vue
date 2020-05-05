@@ -14,6 +14,7 @@
 			    				<img :src=" $dataSetUrl + '/' + detailbaseInfo.photo" alt="" class="icon-touxiang iconfont" v-if="detailbaseInfo.photo">
 			    				<img src="" alt="" class="icon-touxiang iconfont" v-else>
 	                            <input type="file" accept="image/*" @change="picUpload">
+	                            <span class="upload-file">上传头像</span>
 			    			</div>
 			    			<div class="info-box">
 			    				<div class="name-box clearfix" >
@@ -23,15 +24,40 @@
 			    						<i></i>
 			    						<span class="age" >{{detailUserInfo.age}}岁</span>
 			    						<i></i>
-			    						<span class="state" >{{detailbaseInfo.type == 1 ? '基层干部' : detailbaseInfo.type == 2 ? '政府专职消防员' : '现役消防士'}}</span>
-			    						<i></i>
+			    						<!-- <span class="state" >{{detailbaseInfo.type == 1 ? '基层干部' : detailbaseInfo.type == 2 ? '政府专职消防员' : '现役消防士'}}</span> -->
+			    						<span class="state" v-if="detailBodyData.weight&& detailBodyData.height">BMI：{{((detailBodyData.weight)/((detailBodyData.height/100) * (detailBodyData.height/100))).toFixed(1)}}</span>
+			    						<i v-if="detailBodyData.weight&& detailBodyData.height"></i>
 			    					</div>
 			    				</div>
 			    				<p class="belong" >所属中队  {{detailbaseInfo.groupName}}</p>
-			    				<div class="speciality-tag flex">
-			    					<span>+</span>	
-			    					特长标签
-			    				</div>
+			    				<div class="speciality-tag-box">
+									<div class="t-box clearfix">
+										<div class="speciality-tag flex" @click="selectShow = !selectShow">
+					    					<span>+</span>	
+					    					特长标签
+					    				</div>
+					    				<div class="tag-show">
+					    					<span v-for="item in tagShowList">{{item.label}}</span>
+					    				</div>
+									</div>
+									<div class="s-box flex"  v-if="selectShow">
+										<template>
+										  	<el-select v-model="specialityTagSearch" filterable placeholder="特长标签" @change="selectTag" @visible-change="selectVisible">
+											    <el-option
+											      	v-for="item in specialityTagList"
+											      	:key="item.id"
+											      	:label="item.specialityName"
+											      	:value="{value:item.id,label:item.specialityName}">
+											    </el-option>
+										  	</el-select>
+										  	
+										</template>
+										<div class="add-tag-btn flex"  @click="addTagFn">
+									  		<i>+</i>
+									  		<span>添加标签</span>
+										</div>
+									</div>
+								</div>
 			    			</div>
 			    		</div>
 			    		<div class="nav-list clearfix flex" id="nav-list">
@@ -145,6 +171,10 @@
 		    			<div class="inp-box flex">
 							<span class="span">身高</span>
 							<el-input v-model="detailBodyData.height" placeholder="请输入…" :disabled="!editFlag.bodyDataFlag"></el-input>
+						</div>
+						<div class="inp-box flex">
+							<span class="span">体重</span>
+							<el-input v-model="detailBodyData.weight" placeholder="请输入…" :disabled="!editFlag.bodyDataFlag"></el-input>
 						</div>
 						<div class="inp-box flex">
 							<span class="span">头围</span>
@@ -271,7 +301,7 @@
 						</div>
 						<div class="inp-box flex">
 							<span class="span">婚姻状况</span>
-							<el-select v-model="detailUserInfo.mritalStatus" placeholder="请选择">
+							<el-select v-model="detailUserInfo.mritalStatus" placeholder="请选择" :disabled="!editFlag.userInfoFlag">
 							    <el-option
 							      v-for="item in maritalStatusList"
 							      :key="item.value"
@@ -364,10 +394,67 @@
 		    				</thead>
 		    				<tbody id="PX-box">
 		    					<tr v-for="each in detailPXRecord">
-		    						<td>{{each.trainingDate}}</td>
+		    						<td><i class="iconfont icon-shanchu" @click="delPXRecord(each.id)" style="float:left;margin-left:15px;cursor:pointer;"></i>{{each.trainingDate}}</td>
 		    						<td>{{each.place}}</td>
 		    						<td>{{each.item}}</td>
 		    						<td>{{each.grade}}</td>
+		    					</tr>
+		    				</tbody>
+		    			</table>
+		    		</div>
+		    	</div>
+		    	<!-- 演练记录编辑 -->
+		    	<div class="common-box" id="drillRecord">
+		    		<div class="title-common">
+		    			<span>演练记录</span>
+		    			<div class="line"></div>
+		    			<div class="edit-btn flex" @click="editFlag.drillFlag = true">
+		    				<i class="iconfont icon-bianji"></i>
+		    				编辑
+		    			</div>
+		    		</div>
+		    		<div class="box clearfix">
+						<div class="inp-box flex">
+							<span class="span">演练时间</span>
+							<el-date-picker
+						      	v-model="detailDrillData.date"
+						      	:disabled="!editFlag.drillFlag"
+						      	:picker-options="pickerTimeBeg"
+						      	type="date"
+						      	:editable="false"
+						      	:clearable="false"
+						      	placeholder="选择日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd">
+						    </el-date-picker>
+						</div>
+						<div class="inp-box flex">
+							<span class="span">演练地点</span>
+							<el-input v-model="detailDrillData.place" placeholder="请输入…" :disabled="!editFlag.drillFlag"></el-input>
+						</div>
+						<div class="inp-box flex">
+							<span class="span">演练项目</span>
+							<el-input v-model="detailDrillData.item" placeholder="请输入…" :disabled="!editFlag.drillFlag"></el-input>
+						</div>
+						<div class="btn-box flex" v-if="editFlag.drillFlag">
+							<div class="cancel-btn" @click="AddDrillRecordCancel">取消</div>
+							<div class="save-btn" @click="AddDrillRecordSave">新增</div>
+						</div>
+		    		</div>  
+		    	</div>
+		    	<!-- 演练记录列表 -->
+		    	<div class="train-box">
+		    		<p class="title">演练记录</p>
+		    		<div class="list">
+		    			<table>
+		    				<thead>
+		    					<th>演练时间</th>
+		    					<th>演练地点</th>
+		    					<th>演练项目</th>
+		    				</thead>
+		    				<tbody id="drill-box">
+		    					<tr v-for="each in detailDrillRecord">
+		    						<td><i class="iconfont icon-shanchu" style="float:left;margin-left:15px;cursor:pointer;" @click="delDrillRecord(each.id)"></i>{{each.drillTime}}</td>
+		    						<td>{{each.drillPlace}}</td>
+		    						<td>{{each.drillItem}}</td>
 		    					</tr>
 		    				</tbody>
 		    			</table>
@@ -417,6 +504,64 @@
 		    			</table>
 		    		</div>
 		    	</div>
+
+		    	<!-- 获得证书编辑 -->
+		    	<div class="common-box" id="getCertificate">
+		    		<div class="title-common">
+		    			<span>获得证书</span>
+		    			<div class="line"></div>
+		    			<div class="edit-btn flex" @click="editFlag.certificateFlag = true">
+		    				<i class="iconfont icon-bianji"></i>
+		    				编辑
+		    			</div>
+		    		</div>
+		    		<div class="box clearfix">
+						<div class="inp-box flex">
+							<span class="span">获得时间</span>
+							<el-date-picker
+						      	v-model="detailCertificateData.date"
+						      	:disabled="!editFlag.certificateFlag"
+						      	:picker-options="pickerTimeBeg"
+						      	type="date"
+						      	:editable="false"
+						      	:clearable="false"
+						      	placeholder="选择日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd">
+						    </el-date-picker>
+						</div>
+						<div class="inp-box flex">
+							<span class="span">颁发机构</span>
+							<el-input v-model="detailCertificateData.organize" placeholder="请输入…" :disabled="!editFlag.certificateFlag"></el-input>
+						</div>
+						<div class="inp-box flex">
+							<span class="span">证书名</span>
+							<el-input v-model="detailCertificateData.name" placeholder="请输入…" :disabled="!editFlag.certificateFlag"></el-input>
+						</div>
+						<div class="btn-box flex" v-if="editFlag.certificateFlag">
+							<div class="cancel-btn" @click="AddCertificateCancel">取消</div>
+							<div class="save-btn" @click="AddCertificateSave">新增</div>
+						</div>
+		    		</div>  
+		    	</div>
+		    	<!-- 获得证书列表 -->
+		    	<div class="train-box">
+		    		<p class="title">获得证书列表</p>
+		    		<div class="list">
+		    			<table>
+		    				<thead>
+		    					<th>获得时间</th>
+		    					<th>颁发机构</th>
+		    					<th>证书名</th>
+		    				</thead>
+		    				<tbody id="certificate-box">
+		    					<tr v-for="each in detailCertificateList">
+		    						<td>{{each.split('@_@')[0]}}</td>
+		    						<td>{{each.split('@_@')[1]}}</td>
+		    						<td>{{each.split('@_@')[2]}}</td>
+		    					</tr>
+		    				</tbody>
+		    			</table>
+		    		</div>
+		    	</div>
 	    	</div>
 	    </div>
 	</div>
@@ -446,14 +591,14 @@
 	                    id: 'userInfo',
 	                    act:false
 	                },
-	                // {
-	                //     name:'任职记录',
-	                //     id: 'positionRecord',
-	                //     act:false
-	                // },
 	                {
 	                    name:'培训记录',
 	                    id: 'PXRecord',
+	                    act:false
+	                },
+	                {
+	                    name:'演练记录',
+	                    id: 'drillRecord',
 	                    act:false
 	                },
 	                {
@@ -464,6 +609,11 @@
 	                {
 	                    name:'训练记录',
 	                    id: 'trainRecord',
+	                    act:false
+	                },
+	                {
+	                    name:'获得证书',
+	                    id: 'getCertificate',
 	                    act:false
 	                },
 	            ],
@@ -579,7 +729,9 @@
     				bodyDataFlag:false,
     				userInfoFlag:false,
     				PXRecordFlag:false,
-    				policeRecord:false
+    				policeRecord:false,
+    				drillFlag:false,
+    				certificateFlag:false
     			},
     			userId:"",
     			roleList:[],
@@ -587,12 +739,24 @@
     			detailUserInfo:{}, // 详情信息----个人信息
     			detailTrainRecord:{}, // 详情信息----训练记录
     			detailPXRecord:[], // 详情信息----培训记录
+    			detailCertificateList: [], // 详情信息----获得证书
     			detailPoliceRecord:[], // 详情信息----处警记录
+    			detailDrillRecord:[], // 详情信息----演练记录
     			detailPXEditData:{ // 培训记录编辑
     				trainingDate:"",
     				place:"",
     				item:"",
     				grade:"",
+    			},
+    			detailDrillData:{ // 演练记录编辑
+    				date:"",
+    				place:"",
+    				item:"",
+    			},
+    			detailCertificateData:{ // 获得证书编辑
+    				date:"",
+    				organize:"",
+    				name:"",
     			},
     			detailbaseInfo:{ // 详情信息----基本信息
     				groupName: ''
@@ -600,9 +764,16 @@
     			detailBodyData:{}, // 详情信息----身体数据
     			PXPage:1,
     			PXTotalPage:1,
+    			drillPage:1,
+    			drillTotalPage:1,
     			file:null,
             	picUrlTem:'', // 上传临时展示
             	pickerTimeBeg: this.beginDate(),
+            	specialityTagList:[], // 特长标签列表
+            	specialityTagSearch:"",
+            	tagShowList:[], // 选中的标签展示
+            	selectStatus: false, // 下拉框显示/隐藏
+            	selectShow:false,
         	}
         },
         mounted(){
@@ -611,7 +782,6 @@
         	this.userInfo = JSON.parse(getCookie("userInfo"));
         	this.userId = this.$route.query.userId;
         	this.getDetailBaseInfo();
-        	
         	window.scrollTo(0, 0); 
 	        $(window).scroll(function() {
 	            //为了保证兼容性，这里取两个值，哪个有值取哪一个
@@ -625,14 +795,266 @@
 	                $('#baseInfo').css({"marginTop":"230px"})
 	            }else{
 	                eleNav.css({"position": "fixed","top": '100px',"zIndex": '99',"left": '0',"width": '100%'})
-	                $('#baseInfo').css({"marginTop":"327px"})
-	            }
-	            
-	            
+	                $('#baseInfo').css({"marginTop":"362px"})
+	            }   
 	        })
-        	
         },
         methods:{
+        	AddCertificateSave(){ // 新增获得证书
+        		let info = this.detailCertificateData;
+        		if(info.date == ''){
+        			this.$message('请选择获得证书时间');
+        		}else if(info.organize == ''){
+        			this.$message('请填写颁发机构');
+        		}else if(info.name == ''){
+        			this.$message('请填写证书名');
+        		}else{
+        			this.getCurrentTime();
+        			let before = this.detailCertificateList.join('-0-');
+        			let certificate = info.date + '@_@' + info.organize + '@_@' + info.name;
+        			let str;
+        			if(this.detailCertificateList.length > 0){
+        				str = before + '-0-' + certificate;
+        			}else{
+        				str = certificate;
+        			}
+        			
+        			// console.log(before + '-0-' + certificate)
+	    			this.$ajax.post(this.$dataSetUrlY + '/xf-unit/userZhan/updateUserZhanNengInfo', qs.stringify({
+						userId: this.detailbaseInfo.id,
+		    			certificate: str
+		    		}) ,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then((res) => {
+		    			let data = res.data;
+		    			if(data.code == 200){
+		    				this.editFlag.certificateFlag = false;
+		    				this.$message({
+					          	message: '新增成功',
+					          	type: 'success'
+					        });
+					        this.detailCertificateData = { // 获得证书编辑
+			    				date:"",
+			    				organize:"",
+			    				name:"",
+			    			}
+			    			this.detailCertificateList = [];
+					        this.getCertificateList();
+					        
+		    			}
+				    }).catch(function (error) {
+				        console.log(error);
+				    })
+				}
+        	},
+        	AddCertificateCancel(){
+        		this.editFlag.certificateFlag = false;
+        		this.detailCertificateData = { // 获得证书编辑
+    				date:"",
+    				organize:"",
+    				name:"",
+    			}
+        	},
+        	getCertificateList(){ // 拿到用户证书、特长
+        		this.$ajax.get(this.$dataSetUrlY + '/xf-unit/userZhan/getUserZhanNengInfo', {
+        			params:{
+        				userId: this.detailbaseInfo.id
+        			}
+        		} ,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then((res) => {
+        			let data = res.data;
+        			if(data.code == 200){
+        				this.tagShowList = [];
+        				if(data.data.certificate != ''){
+        					this.detailCertificateList = data.data.certificate.split('-0-');
+        				}else{
+        					this.detailCertificateList = [];
+        				}
+
+        				let list = data.data.spId.split(",");
+        				list.pop();
+        				this.specialityTagList.map(item => {
+        					list.map((val,i) => {
+        						if(val == item.specialityName){
+        							let each = {};
+        							each.label = val;
+        							each.id = item.id;
+        							this.tagShowList.push(each);
+        						}
+        					})
+        				})
+        				console.log(this.tagShowList);
+        			}else{
+        				this.certificateList = [];
+        				this.detailCertificateList = [];
+        			}
+			    }).catch(function (error) {
+			        console.log(error);
+			    })
+        	},
+        	addTagFn(){  // 添加标签
+        		this.$prompt('请输入标签名', '提示', {
+		          confirmButtonText: '确定',
+		          cancelButtonText: '取消',
+		          inputPattern:  /\S/,
+		          inputErrorMessage: '请输入标签名'
+		        }).then(({ value }) => {
+		        	this.$ajax.post(this.$dataSetUrlY + '/xf-unit/userZhan/insertSpeciality', qs.stringify({
+	        			specialityName: value
+	        		}) ,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then((res) => {
+	        			let data = res.data;
+	        			if(data.code == 200){
+	        				this.$message({
+					            type: 'success',
+					            message: '添加成功'
+					        });
+					        this.getAllSpecialityList();
+	        			}else{
+	        				this.message("不能添加重复标签");
+	        			}
+				    }).catch(function (error) {
+				        console.log(error);
+				    })
+		        }).catch(() => {
+		          	this.$message({
+			            type: 'info',
+			            message: '取消输入'
+		          	});       
+		        });
+        	},
+        	selectVisible(status){
+        		this.selectStatus = status;
+        	},
+        	selectTag(params){ // 选择标签
+        		let flag = true;
+        		this.tagShowList.map((val,i) => {
+        			if(val.id == this.specialityTagSearch.value){
+        				this.$message("不能添加重复的标签");
+        				flag = false;
+        			}else{
+        				
+        			}
+				})
+        		if(flag){
+        			this.tagShowList.push({
+	        			label: this.specialityTagSearch.label,
+	        			id: this.specialityTagSearch.value
+	        		});
+	        		let ids = [];
+
+	        		this.tagShowList.map(item => {
+	        			ids.push(item.id);
+	        		})
+        		
+        			this.$ajax.post(this.$dataSetUrlY + '/xf-unit/userZhan/updateUserZhanNengInfo', qs.stringify({
+	        			userId: this.userId,
+	        			spId: ids.join(',')
+	        		}) ,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then((res) => {
+	        			let data = res.data;
+	        			if(data.code == 200){
+	        				this.$message({
+					            type: 'success',
+					            message: '添加成功'
+					        });
+	        			}
+				    }).catch(function (error) {
+				        console.log(error);
+				    })
+        		}
+        	},
+        	getAllSpecialityList(){ // 获取特长标签列表
+        		this.$ajax.get(this.$dataSetUrlY + '/xf-unit/userZhan/getAllSpeciality', qs.stringify({
+        			// userId: this.userId
+        		}) ,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then((res) => {
+        			let data = res.data;
+        			this.getCertificateList();
+        			if(data.code == 200){
+        				this.specialityTagList = data.data;
+        			}else{
+        				this.specialityTagList = [];
+        			}
+			    }).catch(function (error) {
+			        console.log(error);
+			    })
+        	},
+        	AddDrillRecordSave(){ // 新增演练记录
+        		let info = this.detailDrillData;
+        		if(info.date == ''){
+        			this.$message('请选择演练时间');
+        		}else if(info.place == ''){
+        			this.$message('请填写演练地点');
+        		}else if(info.item == ''){
+        			this.$message('请填写演练项目');
+        		}else{
+        			this.getCurrentTime();
+	    			this.$ajax.post(this.$dataSetUrl + '/apis/userdrill/setdata', qs.stringify({
+						userId: this.detailbaseInfo.id,
+		    			drillTime: info.date,
+		    			drillPlace: info.place,
+		    			drillItem: info.item,
+		    		}) ,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then((res) => {
+		    			let data = res.data;
+		    			if(data.code == 200){
+		    				this.editFlag.drillFlag = false;
+		    				this.$message({
+					          	message: '新增成功',
+					          	type: 'success'
+					        });
+					        this.detailDrillData = { // 演练记录编辑
+			    				date:"",
+			    				place:"",
+			    				item:"",
+			    			}
+			    			this.drillPage = 1;
+			    			this.detailDrillRecord = [];
+					        this.getDetailDrillRecord();
+					        
+		    			}
+				    }).catch(function (error) {
+				        console.log(error);
+				    })
+				}
+        	},
+        	AddDrillRecordCancel(){
+        		this.editFlag.drillFlag = false;
+        		this.detailDrillData = { // 演练记录编辑
+    				date:"",
+    				place:"",
+    				item:"",
+    			}
+        	},
+        	delDrillRecord(id){
+        		this.$confirm('确定要删除该项纪录吗？', '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning'
+		        }).then(() => {
+		        	this.$ajax.post(this.$dataSetUrl + '/apis/userdrill/deldata', qs.stringify({
+						id:id
+		    		}) ,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then((res) => {
+		    			let data = res.data;
+		    			if(data.code == 200){
+		    				this.editFlag.drillFlag = false;
+		    				this.$message({
+					            type: 'success',
+					            message: '删除成功!'
+				          	});
+					        this.detailDrillData = { // 演练记录编辑
+			    				date:"",
+			    				place:"",
+			    				item:"",
+			    			}
+			    			this.drillPage = 1;
+			    			this.detailDrillRecord = [];
+					        this.getDetailDrillRecord();
+		    			}
+				    }).catch(function (error) {
+				        console.log(error);
+				    })
+		        }).catch(() => {
+		          	this.$message({
+			            type: 'info',
+			            message: '已取消删除'
+		          	});          
+		        });
+        	},
         	AddPXRecordSave(){ // 新增培训记录
         		let info = this.detailPXEditData;
         		if(info.trainingDate == ''){
@@ -684,6 +1106,42 @@
     				item:"",
     				grade:"",
     			}
+        	},
+        	delPXRecord(id){
+        		this.$confirm('确定要删除该项纪录吗？', '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning'
+		        }).then(() => {
+		        	this.$ajax.post(this.$dataSetUrl + '/apis/usertraining/deldata', qs.stringify({
+						id:id
+		    		}) ,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then((res) => {
+		    			let data = res.data;
+		    			if(data.code == 200){
+		    				this.editFlag.PXRecordFlag = false;
+		    				this.$message({
+					            type: 'success',
+					            message: '删除成功!'
+				          	});
+					        this.detailPXEditData = { // 培训记录编辑
+			    				trainingDate:"",
+			    				place:"",
+			    				item:"",
+			    				grade:"",
+			    			}
+			    			this.PXPage = 1;
+			    			this.detailPXRecord = [];
+					        this.getDetailPXRecord();
+		    			}
+				    }).catch(function (error) {
+				        console.log(error);
+				    })
+		        }).catch(() => {
+		          	this.$message({
+			            type: 'info',
+			            message: '已取消删除'
+		          	});          
+		        });
         	},
         	updateUserInfoSave(){ // 修改个人信息
         		let info = this.detailUserInfo; 
@@ -766,6 +1224,7 @@
         		this.$ajax.post(this.$dataSetUrl + '/apis/userphysical/setdata', qs.stringify({
 					userId: this.detailbaseInfo.id,
 	    			height: info.height,
+	    			weight: info.weight,
 	    			headCircumference: info.headCircumference,
 	    			hips: info.hips,
 	    			waist: info.waist,
@@ -823,6 +1282,7 @@
 			        			roleId: info.roleId,
 			        			groupId: info.groupId,
 			        			sex: info.sex,
+			        			photo: vm.$dataSetUrl + '/' + vm.detailbaseInfo.photo,
 			        			homeAddress: info.homeAddress,
 			        			familyName: info.familyName,
 			        			familyKinship: info.familyKinship,
@@ -883,11 +1343,16 @@
         					})
         				})
         				this.detailbaseInfo = this.list.dataList[0];
+        				this.detailbaseInfo.familyName = '***';
+						this.detailbaseInfo.familyKinship = '***'
+						this.detailbaseInfo.familyPhone = '***********';
+						this.detailbaseInfo.homeAddress = '***********';
         				this.getDetailUserInfo();
         				this.getDetailBodyData();
         				this.getDetailTrainRecord();
         				this.getDetailPXRecord();
         				this.getDetailPoliceRecord();
+        				this.getAllSpecialityList();
 			        	let vm = this;
 			        	this.$nextTick(() => {
 			        		vm.paged(document.getElementById("PX-box"),vm.PXPage,function(){
@@ -895,6 +1360,12 @@
 				                vm.getDetailPXRecord();
 				            })
 			        	})
+			        	this.$nextTick(() => {
+			        		vm.paged(document.getElementById("drill-box"),vm.drillPage,function(){
+				                vm.drillPage ++;
+				                vm.getDetailDrillRecord();
+				            })
+			        	},'')
         				window.sessionStorage.setItem("detailbaseInfoTem",JSON.stringify(this.detailbaseInfo));
         			}else{
         				this.list = [];
@@ -964,6 +1435,21 @@
 			        console.log(error);
 			    })
         	},
+        	getDetailDrillRecord(){  // 获取详情----演练记录
+        		this.$ajax.post(this.$dataSetUrl + '/apis/userdrill/getdata',qs.stringify({
+        			userId: this.detailbaseInfo.id,
+        			rowLength: 10,
+        			pageNum: this.drillPage,
+        		}),{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then((res) => {
+        			let data = res.data;
+        			if(data.code == 200){
+        				this.detailDrillRecord = this.detailDrillRecord.concat(data.data[0].dataList);
+        				this.drillTotalPage = data.data[0].totalPages;
+        			}
+			    }).catch(function (error) {
+			        console.log(error);
+			    })
+        	}, 
         	getDetailPoliceRecord(){  // 获取详情----处警记录
         		this.$ajax.get(this.$dataSetUrlQ + '/xf-unit/user/getPoliceRecord',{
         			params:{
@@ -1017,16 +1503,23 @@
 			        console.log(error);
 			    })
 	        }, 
-        	paged(obj,page,callback){
+        	paged(obj,page,callback,type){
         		let vm = this;
 			    obj.onscroll = function(e){ 
 			        var sum = this.scrollHeight; 
 			        if (sum <= this.scrollTop + this.offsetHeight) {  
 			        	console.log(page)
 			        	console.log(vm.PXTotalPage)
-			        	if(vm.PXPage <= vm.PXTotalPage){
-			        		callback && callback(page);
+			        	if(type == 'PX'){
+			        		if(vm.PXPage <= vm.PXTotalPage){
+				        		callback && callback(page);
+				        	}
+			        	}else{
+			        		if(vm.drillPage <= vm.drillTotalPage){
+				        		callback && callback(page);
+				        	}
 			        	}
+			        	
 			        }  
 			    }; 
 			},
@@ -1081,15 +1574,19 @@
 	            if(index == 0){
 	            	window.scrollTo(0,0); 
 	            }else if(index == 1){
-	            	window.scrollTo(0,400); 
+	            	window.scrollTo(0,370); 
 	            }else if(index == 2){
-	            	window.scrollTo(0,700);
+	            	window.scrollTo(0,712);
 	            }else if(index == 3){
-	            	window.scrollTo(0,1377);
+	            	window.scrollTo(0,1182);
 	            }else if(index == 4){
-	            	window.scrollTo(0,2103);
-	            }else if(index == 5){
 	            	window.scrollTo(0,1743);
+	            }else if(index == 5){
+	            	window.scrollTo(0,2681);
+	            }else if(index == 6){
+	            	window.scrollTo(0,2313);
+	            }else if(index == 7){
+	            	window.scrollTo(0,3040);
 	            }
 	            this.navList.map((val,i) => {
 	                if(i == index){
@@ -1109,6 +1606,23 @@
 	        goBack(){
 	        	this.$router.go(-1);
 	        }
+        },
+        watch:{
+        	'editFlag.baseInfoFlag':{
+        		handler: function() {
+		            if(this.editFlag.baseInfoFlag){
+		            	this.detailbaseInfo.familyName = '';
+						this.detailbaseInfo.familyKinship = '';
+						this.detailbaseInfo.familyPhone = '';
+						this.detailbaseInfo.homeAddress = '';
+		            }else{
+		            	this.detailbaseInfo.familyName = '***';
+						this.detailbaseInfo.familyKinship = '***'
+						this.detailbaseInfo.familyPhone = '***********';
+						this.detailbaseInfo.homeAddress = '***********';
+		            }
+		         },
+        	}
         }
     }
 </script>

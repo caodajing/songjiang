@@ -71,5 +71,8 @@
   .anchorBL{
     display: none;
   }
+  .tangram-suggestion-main {
+      z-index:9999999!important;
+  }
   /*.BMap_noprint anchorTR*/
 </style>

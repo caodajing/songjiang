@@ -19,21 +19,25 @@
 
 <script>
 export default {
-  name: "leftNav",
-  data() {
-    return {
-      navList: [
-        {
-          name: "训练",
-          path: "/training/index"
-        },
-        {
-          name: "六熟悉",
-          path: "/sixFamiliar/index"
-        }
-      ]
-    };
-  }
+    name: "leftNav",
+    data() {
+        return {
+            navList: [
+                {
+                    name: "训练",
+                    path: "/training/index"
+                },
+                {
+                    name: "六熟悉",
+                    path: "/sixFamiliar/index"
+                },
+                {
+                    name: "龙虎榜",
+                    path: "/tigerList/index"
+                }
+            ]
+        };
+    }
 };
 </script>
 

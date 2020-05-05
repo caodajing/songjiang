@@ -2,10 +2,10 @@
 <template>
     <div class="home-page">
         <policeToday/>
-        <vehicleList/>
+        <!-- <vehicleList/> -->
         <div class="bottom-echart">
             <policeHandling :myProp="publicData"/>
-            <fireEquipment :myProp="publicData"/>
+            <carList :myProp="publicData"/>
         </div>
         <weatherBox/>
         <ul class="map-sign-box">
@@ -23,7 +23,7 @@
     import policeToday from './subtemplate/policeToday'
     import policeHandling from './subtemplate/policeHandling'
     import vehicleList from './subtemplate/vehicleList'
-    import fireEquipment from './subtemplate/fireEquipment'
+    import carList from './subtemplate/carList'
     import weatherBox from './subtemplate/weatherBox'
 
     import mapIcon1 from '../../assets/images/mapIcon1.png'
@@ -36,7 +36,7 @@
             policeToday,
             policeHandling,
             vehicleList,
-            fireEquipment,
+            carList,
             weatherBox
         },
         data() {
