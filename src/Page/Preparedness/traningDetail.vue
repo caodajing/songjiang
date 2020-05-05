@@ -293,16 +293,20 @@ export default {
     async getExpandData(e) {
       let params = {
         taskId: e.saTaskId,
-        deptId: e.deptId
+        // deptId: e.deptId
+        deptId: this.deptId
       };
       await this.$ajax({
         method: "GET",
         url: this.$combatUrl + "/taskProject/projectTrainingSituation",
         params: params
       }).then(res => {
-        res.data.data.projectTrainingSituationVos.forEach(
-          item => (item.projectId = res.data.data.id)
-        );
+        if(res.data.data.projectTrainingSituationVos){
+          res.data.data.projectTrainingSituationVos.forEach(
+            item => (item.projectId = res.data.data.id)
+          );
+        }
+        
         e.expandList = res.data.data.projectTrainingSituationVos;
       });
     },

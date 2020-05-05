@@ -33,13 +33,12 @@
                 userName: decodeURIComponent(getCookie('userName')),
                 parentDeptID: getCookie('parentId'),
                 deptList: [],
-
                 navData: [
                     {name: '首页', icon: '', path: '/homePage'},
                     {
                         name: '执勤中队', icon: '',
                         list: [],
-                        path: '/dutySquadron'
+                        path: '/dutySquadron',
                     },
                     {name: '辅助决策', icon: '', path: '/assistMakePolicy'},
                     {name: '执勤动态', icon: '', path: '/dutyDynamics'},
@@ -52,7 +51,17 @@
             }
         },
         created() {
-            this.getDeptList();
+            console.log(JSON.parse(getCookie("userInfo")));
+            let grade = JSON.parse(getCookie("userInfo")).grade;
+            console.log(JSON.parse(getCookie("userInfo")).grade === 3)
+            if (grade === 2 || grade === 3) {
+                this.navData[1].path = '/dutySquadron';
+                this.navData[3].path = '/dutyDynamics';
+                this.getDeptList();
+            }else{  // 支队权限
+                this.navData[1].path = '/dutyDetachmentLimit';
+                this.navData[3].path = '/detachmentLimit';
+            }
         },
         methods: {
             getDeptList() {
@@ -123,6 +132,7 @@
         background-color: #496dff;
         box-sizing: border-box;
         color: #fff;
+        z-index:2;
 
         > span {
             position: absolute;

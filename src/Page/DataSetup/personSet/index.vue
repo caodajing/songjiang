@@ -74,10 +74,14 @@
 								<td>{{item.roleName}} </td>
 								<td>{{item.type == 1 ? '基层干部' : item.type == 2 ? '政府专职消防员' : '现役消防士'}}</td>
 								<td @click="open(item.phone)">{{item.phone}}</td>
-								<td @click="open(item.familyName)">{{item.familyName}}</td>
+								<!-- <td @click="open(item.familyName)">{{item.familyName}}</td>
 								<td style="width:95px;" @click="open(item.familyKinship)">{{item.familyKinship}}</td>
 								<td @click="open(item.familyPhone)">{{item.familyPhone}}</td>
-								<td @click="open(item.homeAddress)">{{item.homeAddress}}</td>
+								<td @click="open(item.homeAddress)">{{item.homeAddress}}</td> -->
+								<td>***</td>
+								<td style="width:95px;">***</td>
+								<td>***********</td>
+								<td>***********</td>
 								<td style="width:200px">
 									<div class="checkbox-box1 clearfix" @click="handelCheck(item,index)">
 										<div class="span-box">

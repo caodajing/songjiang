@@ -24,7 +24,7 @@
                 dataX: ["泗泾中队", "叶榭中队", "仓桥中队", "上海总队", "岳阳中队", "佘山中队", "大港中队", "新浜中队", "松一中队", "九亭中队", "车墩中队", "新桥中队", "泖港中队", "松江支队", "松江中队"],
                 dataY1: [],
                 dataY2: [],
-
+                dataY3: [],
                 fontColor1:'rgba(168,170,176,0.9)',
                 fontColor2:'rgba(102,102,102,0.9)',
                 fontColor3:'rgba(102,102,102,0.2)',
@@ -44,17 +44,18 @@
         },
         methods: {
             getStatisticsFn() {
-                this.$ajax.get(this.$URL + '/xf-unit/decisionSupport/policeStatistics').then((res) => {
+                this.$ajax.get(this.$dataSetUrlTest + '/xf-unit/decisionSupport/policeStatisticsOnType').then((res) => {
                     if (res.data.code == 200) {
                         this.dataX = [];
                         this.dataY1 = [];
                         this.dataY2 = [];
+                        this.dataY3 = [];
                         res.data.data.map((e) => {
                             this.dataX.push(e.groupName);
-                            this.dataY1.push(e.peopleCount);
-                            this.dataY2.push(e.carCount)
+                            this.dataY1.push(e.carCount);
+                            this.dataY2.push(e.zhengFuCount);
+                            this.dataY3.push(e.xianYiCount);
                         });
-                        // console.log(this.dataX);
                     } else {
                         // this.$message.error(res.data.message)
                     }
@@ -85,15 +86,20 @@
                             right: 10,
                             top: 0,
                             itemGap: 16,
-                            itemWidth: 18,
+                            itemWidth: 10,
                             itemHeight: 10,
-                            data: [{
-                                name: '消防员（人）',
-                                //icon:'image://../wwwroot/js/url2.png', //路径
-                            },
+                            data: [
                                 {
                                     name: '消防车（辆）',
-                                }],
+                                },
+                                {
+                                    name: '现役消防士（人）',
+                                },
+                                {
+                                    name: '政府专职消防员（人）',
+                                },
+                                
+                            ],
                             textStyle: {
                                 color: this.fontColor1,
                                 fontStyle: 'normal',
@@ -164,53 +170,44 @@
 
                             }
                         ],
-                        dataZoom: [{
-                            show: true,
-                            height: 15,
-                            xAxisIndex: [
-                                0
-                            ],
-                            bottom: 2,
-                            start: 0,
-                            end: 30,
-                            handleSize: '100%',
-                            handleStyle: {
-                                color: "#e55967",
+                        dataZoom: [
+                            {
+                                show: true,
+                                height: 15,
+                                xAxisIndex: [
+                                    0
+                                ],
+                                bottom: 2,
+                                start: 0,
+                                end: 30,
+                                handleSize: '100%',
+                                handleStyle: {
+                                    color: "#e55967",
 
-                            },
-                            textStyle: {
-                                color: "#42cca6"
-                            },
-                            borderColor: "#2096ff"
-
-
-                        }, {
-                            "type": "inside",
-                            "show": true,
-                            "height": 15,
-                            "start": 1,
-                            "end": 35
-                        }],
-                        // dataZoom:[
-                        //     {
-                        //         type: 'slider',
-                        //         xAxisIndex: 0,
-                        //         filterMode: 'empty',
-                        //         start: 0,
-                        //         end: 20,
-                        //         zoomLock:true
-                        //     },
-                        // ],
+                                },
+                                textStyle: {
+                                    color: "#42cca6"
+                                },
+                                borderColor: "#2096ff"
+                            }, 
+                            {
+                                "type": "inside",
+                                "show": true,
+                                "height": 15,
+                                "start": 1,
+                                "end": 35
+                            }
+                        ],
                         series: [
                             {
-                                name: '消防员（人）',
+                                name: '消防车（辆）',
                                 type: 'bar',
                                 data: this.dataY1,
                                 barWidth: 10,
                                 barGap: 0,//柱间距离
                                 label: {//图形上的文本标签
                                     normal: {
-                                        show: true,
+                                        show: false,
                                         position: 'top',
                                         textStyle: {
                                             color: this.fontColor1,
@@ -222,30 +219,24 @@
                                 },
                                 itemStyle: {//图形样式
                                     normal: {
-                                        barBorderRadius: [5, 5, 0, 0],
+                                        // barBorderRadius: [5, 5, 0, 0],
                                         color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                                            offset: 1, color: 'rgba(255, 104, 252, 0.3)'
+                                            offset: 1, color: '#8D68FC'
                                         }, {
-                                            offset: 0.9, color: 'rgba(255, 104, 252, 0.4)'
-                                        }, {
-                                            offset: 0.31, color: 'rgba(255, 104, 252, 0.5)'
-                                        }, {
-                                            offset: 0.15, color: 'rgba(255, 104, 252, 0.65)'
-                                        }, {
-                                            offset: 0, color: 'rgba(255, 104, 252, 0.8)'
+                                            offset: 0.2, color: '#4EA0FB'
                                         }], false),
                                     },
                                 },
                             },
                             {
-                                name: '消防车（辆）',
+                                name: '政府专职消防员（人）',
                                 type: 'bar',
                                 data: this.dataY2,
                                 barWidth: 10,
-                                barGap: 0.2,//柱间距离
+                                stack: '消防',
                                 label: {//图形上的文本标签
                                     normal: {
-                                        show: true,
+                                        show: false,
                                         position: 'top',
                                         textStyle: {
                                             color: this.fontColor1,
@@ -257,19 +248,46 @@
                                 },
                                 itemStyle: {//图形样式
                                     normal: {
-                                        barBorderRadius: [5, 5, 0, 0],
+                                        // barBorderRadius: [5, 5, 0, 0],
                                         color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                                            offset: 1, color: 'rgba(78, 160, 251, 0.3)'
+                                            offset: 1, color: '#8DDDFC'
                                         }, {
-                                            offset: 0.9, color: 'rgba(78, 160, 251, 0.5)'
+                                            offset: 0.2, color: '#4EFFFB'
+                                        }], false),
+                                    },
+                                },
+                            },
+                            {
+                                name: '现役消防士（人）',
+                                type: 'bar',
+                                data: this.dataY3,
+                                barWidth: 10,
+                                stack: '消防',
+                                barGap: 0.2,//柱间距离
+                                label: {//图形上的文本标签
+                                    normal: {
+                                        show: false,
+                                        position: 'top',
+                                        textStyle: {
+                                            color: this.fontColor1,
+                                            fontStyle: 'normal',
+                                            fontFamily: '微软雅黑',
+                                            fontSize: 14,
+                                        },
+                                    },
+                                },
+                                itemStyle: {//图形样式
+                                    normal: {
+                                        // barBorderRadius: [5, 5, 0, 0],
+                                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                            offset: 1, color: '#FF68FC'
                                         }, {
-                                            offset: 0.25, color: 'rgba(78, 160, 251, 0.8)'
-                                        }, {
-                                            offset: 0, color: 'rgba(78, 160, 251, 1)'
+                                            offset: 0.2, color: '#C3A0FB'
                                         }], false),
                                     },
                                 },
                             }
+                            
                         ]
                     }
                 );

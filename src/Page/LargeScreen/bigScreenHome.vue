@@ -3,10 +3,11 @@
     <div class="big-screen-home big-screenMode">
         <BigHeader/>
         <policeToday/>
-        <vehicleList/>
+        <!-- <vehicleList/> -->
         <div class="bottom-echart">
             <policeHandling :myProp="publicData"/>
-            <fireEquipment :myProp="publicData"/>
+            <carList :myProp="publicData"/>
+            <!-- <fireEquipment :myProp="publicData"/> -->
         </div>
         <weatherBox/>
         <ul class="map-sign-box">
@@ -26,7 +27,7 @@
     import policeHandling from '../HomePage/subtemplate/policeHandling'
     import vehicleList from '../HomePage/subtemplate/vehicleList'
     import fireEquipment from '../HomePage/subtemplate/fireEquipment'
-
+    import carList from '../HomePage/subtemplate/carList'
     import weatherBox from '../HomePage/subtemplate/weatherBox'
 
     import mapIcon1 from '../../assets/images/mapIcon1.png'
@@ -41,6 +42,7 @@
             policeHandling,
             vehicleList,
             fireEquipment,
+            carList,
             weatherBox
         },
         data() {

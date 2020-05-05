@@ -44,7 +44,8 @@
 							<th>接警时间</th>
 							<th>单位名称</th>
 							<th>报警类型</th>
-							<th>接警文字信息</th>
+							<th>处警地址</th>
+							<th>警情描述</th>
 							<th>接警人</th>
 							<th>接警方式</th>
 							<th>接警单号</th>
@@ -56,6 +57,7 @@
 								<td>{{item.alarmDate}}</td>
 								<td>{{item.groupName}}</td>
 								<td>{{item.alarmTypeVal}}</td>
+								<td>{{item.alarmAddress}}</td>
 								<td>{{item.remark}}</td>
 								<td>{{item.alarmUserId}}</td>
 								<td>{{item.alarmMethod}}</td>
@@ -108,8 +110,12 @@
 							    </el-option>
 							 </el-select>
 						</div>
+						<div class="inp-box flex">
+							<span class="span">处警地址</span>
+							<input type="text" placeholder="请输入…" class="inp" v-model="addAlarmData.alarmAddress">
+						</div>
 						<div class="inp-box flex textarea-box">
-							<span class="span">接警文字信息</span>
+							<span class="span">警情描述</span>
 							<textarea name="" id="" cols="30" rows="10" v-model="addAlarmData.remark"></textarea>
 						</div>
 						<div class="inp-box flex">
@@ -177,6 +183,7 @@
         		currentHour:"",
         		addAlarmData:{
         			alarmDate:"", // 接警时间
+        			alarmAddress:'', // 处警地址
         			groupId:"", // 单位名称
         			alarmType:"",
         			remark:"",
@@ -210,8 +217,9 @@
         				this.$ajax.post(this.$dataSetUrl + '/apis/processalarm/updatedata', qs.stringify({
         					id: this.editId,
 		        			groupId:info.groupId,
-		        			alarmDate: info.alarmDate + ' ' + this.currentHour,
+		        			alarmDate: info.alarmDate,
 		        			alarmType: info.alarmType,
+		        			alarmAddress: info.alarmAddress,
 		        			remark: info.remark,
 		        			alarmUserId: info.alarmUserId,
 		        			alarmMethod: info.alarmMethod,
@@ -252,6 +260,7 @@
 		        			groupId:info.groupId,
 		        			alarmDate: info.alarmDate  + ' ' + this.currentHour,
 		        			alarmType: info.alarmType,
+		        			alarmAddress: info.alarmAddress,
 		        			remark: info.remark,
 		        			alarmUserId: info.alarmUserId,
 		        			alarmMethod: info.alarmMethod,
@@ -313,6 +322,7 @@
         		this.editFlag = false;
         		this.addAlarmData = {
         			alarmDate:"", // 接警时间
+        			addr:'', // 处警地址
         			groupId:"", // 单位名称
         			alarmType:"",
         			remark:"",
@@ -326,6 +336,7 @@
         		this.editId = item.id;
         		this.addAlarmData.alarmDate = item.alarmDate;
         		this.addAlarmData.groupId = item.groupId;
+        		this.addAlarmData.alarmAddress = item.alarmAddress;
         		this.addAlarmData.alarmType = item.alarmType;
         		this.addAlarmData.remark = item.remark;
         		this.addAlarmData.alarmUserId = item.alarmUserId;

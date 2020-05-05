@@ -2,7 +2,7 @@
 <template>
   <div class="war-statistics">
     <p><span>{{'战力统计 — '+listData.name}}</span>
-      <span class="score">{{listData.score}}</span><i class="iconfont icon-jieshi"></i></p>
+      <span class="score">{{listData.score}}</span><i class="iconfont icon-jieshi" @click="tips"></i></p>
     <ul>
       <li>
         <span>处警压力</span>
@@ -17,6 +17,10 @@
         <p><b>{{listData.two}}</b>人</p>
       </li>
     </ul>
+    <div class="tips-tk" v-if="tipsShow">
+        <i class="iconfont icon-jieshi"></i>
+        <span>点击查看详细评分</span>
+    </div>
   </div>
 </template>
 
@@ -26,7 +30,8 @@
         data() {
             return {
                 groupId: '',
-                listData: {name: '泗泾中队', score: '0', one: '0', two: '0', three: '0'}
+                listData: {name: '泗泾中队', score: '0', one: '0', two: '0', three: '0'},
+                tipsShow: false
             }
         },
         props: ['myProp'],
@@ -42,6 +47,13 @@
         //     this.deptWarStatistics();
         // },
         methods: {
+            tips(){
+                let vm = this;
+                vm.tipsShow = true;
+                setTimeout(() => {
+                    vm.tipsShow = false;
+                },1500)
+            },
             deptWarStatistics(data) {//data.code
                 this.$ajax.get(this.$URL + '/xf-unit/dutySquadron/combatStatistics', {
                     params: {
@@ -65,6 +77,22 @@
     }
 </script>
 
-<style scoped>
-
+<style scoped lang="less">
+    .tips-tk{
+        width: 480px;
+        height: 60px;
+        line-height: 60px;
+        font-size: 16px;
+        color: #00B2FF;
+        position: fixed;
+        top: 130px;
+        left: 50%;
+        margin-left: -240px;
+        padding-left: 16px;
+        box-shadow: inset 0px 0.5px 10px #70FFF7;
+        border: 1px solid rgba(112, 255, 247, 1);
+        span{
+            margin-left: 10px;
+        }
+    }
 </style>

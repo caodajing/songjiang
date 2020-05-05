@@ -8,12 +8,12 @@
         </router-link>
       </li>
       <li>
-        <router-link to="/bigScreenSquadron">
+        <router-link :to="squadronPath">
           执勤中队
         </router-link>
         <div class="list-box">
           <p v-for="temp in deptList" :class="{active:squadronCode==temp.groupId}" @click.stop="selectSquadron(temp)">
-            <router-link to="/bigScreenSquadron">
+            <router-link to="bigScreenSquadron">
               {{temp.groupName}}
             </router-link>
           </p>
@@ -30,16 +30,27 @@
 </template>
 
 <script>
+    import {getCookie, delCookie} from '../../assets/js/cookie.js'
     export default {
         name: "bigScreenHead",
         data() {
             return {
                 deptList: [],
                 squadronCode: '1',
+                squadronPath:'/bigScreenSquadron'
             }
         },
         created() {
-            this.getDeptList();
+            
+            let grade = JSON.parse(getCookie("userInfo")).grade;
+            console.log(grade)
+            if (grade === 2 || grade === 3) { 
+                this.squadronPath = '/bigScreenSquadron';
+                this.getDeptList();
+            }else{ // 支队权限
+                this.squadronPath = '/bigScreenSquadronDetachmentLimit';
+                
+            }
         },
         methods: {
             getDeptList() {

@@ -16,9 +16,9 @@ export default {
   created() {
     let grade = JSON.parse(getCookie("userInfo")).grade;
     if (grade === 2 || grade === 3) {
-      this.name = "detail";
-    } else {
       this.name = "default";
+    } else { //支队权限
+      this.name = "detail";
     }
   }
 };

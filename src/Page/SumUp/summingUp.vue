@@ -164,6 +164,33 @@
             </el-row>
           </el-form>
         </div>
+        
+        <!-- 音视频文件 -->
+        <el-divider content-position="left">
+            <el-divider direction="vertical"></el-divider>
+            <span>音视频文件</span>
+        </el-divider>
+        <div class="operation-video-box inner">
+           <div class="file-btn">  
+                点击上传音/视频
+                <input type="file" accept="video/m4v,video/mpg,video/mp4,video/avi,video/mov,video/mk,video/wmv" multiple @change="uploadVideo" >
+            </div>
+            <div class="video-box">
+                <ul class="list">
+                    <li class="clearfix" v-for="item,index in videoList" > 
+                        <img src="../../assets/images/dataSet/video-icon.png" alt="">
+                        <div class="text">
+                            <h3>操作视频.mp4</h3>
+                        </div>
+                        <div class="btn-box">
+                           <div class="play-btn" @click="videoPlay(item)">播放</div>
+                            <div class="del-btn" @click="videoDel(item,index)">删除</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
 
         <el-divider content-position="left">
           <el-divider direction="vertical"></el-divider>
@@ -810,6 +837,12 @@
         </div>
       </div>
     </div>
+    <div class="mask video-mask" v-if="videoMask">
+        <div class="main">
+            <a href="javascript:;" class="close" @click="videoClose"></a>
+            <video :src="videoUrl" controls="controls"></video>
+        </div>
+    </div>
   </div>
 </template>
 
@@ -967,7 +1000,7 @@ export default {
         attachment: "",
 
         createUserId: "",
-        updateUserId: ""
+        updateUserId: "",
       },
       fullRules: {
         issueTime: [
@@ -985,7 +1018,9 @@ export default {
         processType: [
           { required: true, message: "请选择处警类型", trigger: "change" }
         ]
-      }
+      },
+      videoMask:false,
+      videoList:[], // 视频
     };
   },
   created() {
@@ -994,6 +1029,66 @@ export default {
     this.getPage();
   },
   methods: {
+    uploadVideo(event){ // 上传视频
+        let vm = this;
+        console.log(event.target.files.length,event.target.files[0]);
+        let formdata = new FormData();
+        for(var i = 0; i < event.target.files.length; i++){
+             formdata.append('file' + (i+1),event.target.files[i]);
+        }
+        // if(vm.file.size > 102400000){
+        //     tool.toast('视频过大~')
+        // }
+        this.$ajax({
+            url: this.$dataSetUrl + "/apis/summaryoffacts/uploadvideoattachment",
+            method: "POST",
+            headers: {
+                "Content-Type": "Multipart/form-data"
+            },
+            data: formdata,
+        })
+        .then(res => {
+            console.log(res);
+            if(res.data.code == 200){
+                this.videoList = this.videoList.concat(res.data.data[0].filename.split(","));
+                event.target.value='';
+            }
+        })
+        .catch(err => {
+            this.videoList = [];
+        })
+        .finally(_ => {
+            this.loading = false;
+        });
+    },
+    videoPlay(url){
+        this.videoUrl = this.$dataSetUrl + '/' + url;
+        this.videoMask = true;
+        this.$nextTick(function(){
+            $(".video-mask video")[0].play();
+        })
+    },
+    videoDel(url,index){ // 视频删除
+        this.$confirm('是否删除?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            this.videoList.splice(index,1);
+            this.$message({
+                type: 'success',
+                message: '删除成功!'
+            });
+        }).catch(() => {
+            this.$message({
+                type: 'info',
+                message: '已取消删除'
+            });          
+        });
+    },
+    videoClose(){
+        this.videoMask = false;
+    },
     getTeam() {
       this.$ajax({
         method: "POST",
@@ -1008,7 +1103,9 @@ export default {
       })
         .then(res => {
           try {
-            this.teamList = res.data.data[0].dataList;
+            this.teamList = res.data.data[0].dataList.filter(
+              item => item.grade === "3"
+            );
           } catch (error) {
             this.teamList = [];
           }
@@ -1056,6 +1153,12 @@ export default {
 
         this.fullForm.id = e.id;
 
+        if(e.videoAttachement && e.videoAttachement != ''){
+            this.videoList = e.videoAttachement.split(",");
+        }else{
+            this.videoList = [];
+        }
+        
         this.fullForm.issueTime = e.issueTime;
         this.fullForm.alarmMode = e.alarmMode;
         this.fullForm.processUnit = e.processUnit;
@@ -1348,6 +1451,37 @@ export default {
             task: item.task
           };
         });
+        // 至少添加一辆车
+        let carFlag = false;
+        processCarInfo.map((val,i) => {
+            if(val.process_car_id == ''){
+                this.$message('请选择车辆');
+                carFlag = false;
+            }else if(val.car_commander_id == ''){
+                this.$message('请选择指挥员');
+                carFlag = false;
+            }else if(val.water_source_position == ''){
+                this.$message('停靠水源种类、位置');
+                carFlag = false;
+            }else if(val.trunk_line == ''){
+                this.$message('铺设干线');
+                carFlag = false;
+            }else if(val.water_dispatch_position == ''){
+                this.$message('分水位置');
+                carFlag = false;
+            }else if(val.number_of_water_gun == ''){
+                this.$message('水枪支数');
+                carFlag = false;
+            }else if(val.task == ''){
+                this.$message('任务');
+                carFlag = false;
+            }else{
+                carFlag = true;
+            }
+        })
+
+
+
         let carids = processCarInfo.map(item => item.process_car_id);
         if (carids.length !== new Set(carids).size)
           return this.$message.error("不能添加相同的处警车辆");
@@ -1432,6 +1566,8 @@ export default {
 
           //附件
           attachement: attachment.length ? attachment.join(",") : "",
+           //视频
+          videoAttachement: this.videoList.length ? this.videoList.join(",") : "",
 
           createUserId: this.userId,
           updateUserId: this.userId
@@ -1443,34 +1579,38 @@ export default {
         } else {
           url = "/apis/summaryoffacts/setdata";
         }
-        this.lodingSave = true;
-        this.$ajax({
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          },
-          url: this.$dataSetUrl + url,
-          data: qs.stringify(params)
-        })
-          .then(res => {
-            if (res.data.code === "200") {
-              this.$message.success("保存成功");
-              this.showFullscreen = false;
-              this.getPage();
-            } else {
-              this.$message.error("保存失败");
-            }
-          })
-          .catch(err => {})
-          .finally(_ => {
-            this.lodingSave = false;
-          });
+        
+        if(carFlag){
+            this.lodingSave = true;
+            this.$ajax({
+              method: "POST",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+              },
+              url: this.$dataSetUrl + url,
+              data: qs.stringify(params)
+            })
+              .then(res => {
+                if (res.data.code === "200") {
+                  this.$message.success("保存成功");
+                  this.showFullscreen = false;
+                  this.getPage();
+                } else {
+                  this.$message.error("保存失败");
+                }
+              })
+              .catch(err => {})
+              .finally(_ => {
+                this.lodingSave = false;
+              });
+        }
+        
       });
     },
 
     resetData() {
       this.fullForm.id = "";
-
+      this.videoList = [];
       this.fullForm.issueTime = "";
       this.fullForm.alarmMode = "";
       this.fullForm.processUnit = "";
@@ -1566,7 +1706,7 @@ export default {
   }
 };
 </script>
-<style >
+<style lang="less">
 .summing_up .el-form-item {
   height: 40px;
 }
@@ -1584,7 +1724,7 @@ export default {
   text-align: left;
 }
 </style>
-<style scoped>
+<style scoped lang="less">
 .form_item {
   width: 250px;
   height: 39px;
@@ -1646,5 +1786,128 @@ export default {
 
 .spe_form_item {
   height: auto !important;
+}
+.operation-video-box{
+    background: #fff;
+    box-sizing: border-box;
+    margin-bottom: 27px;
+    .file-btn{
+        width: 140px;
+        height: 42px;
+        line-height: 42px;
+        text-align: center;
+        background: #496DFF;
+        font-size: 16px;
+        color: #fff;
+        border-radius: 4px;
+        margin: 0 0 21px 0;
+        position: relative;
+        input{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+    }
+    .video-box{
+        .title{
+            width: 102px;
+            height: 25px;
+            border-bottom: 2px solid #5A8EE6;
+            margin: 27px 0  38px 0;
+            font-size: 14px;
+            color: #333;
+        }
+        .list{
+            li{
+                width: 784px;
+                height: 133px;
+                border:1px solid #E1E1E1;
+                padding: 30px 39px 0 50px;
+                box-sizing: border-box;
+                margin-bottom: 15px;
+                background:#fff;
+                img{
+                    width: 46px;
+                    height: 34px;
+                    display: block;
+                    float: left;
+                    margin: 10px 29px 0 0;
+                }
+                .text{
+                    float: left;
+                    h3{
+                        font-size: 18px;
+                        color: #333;
+                        margin-top: 10px;
+                    }
+                    p{
+                        font-size: 12px;
+                        color: #BBB;
+                        margin-bottom: 3px;
+                    }
+                }
+                .btn-box{
+                    float: right;
+                    cursor: pointer;
+                    >div{
+                        width: 110px;
+                        height: 42px;
+                        line-height: 42px;
+                        text-align: center;
+                        color: #fff;
+                        font-size: 16px;
+                        float: left;
+                        border-radius: 4px;
+                        margin-top: 17px;
+                        &.play-btn{
+                            background: #496DFF;
+                            margin-right: 30px;
+                        }
+                        &.del-btn{
+                            background: #B2C6F8;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}
+.video-mask{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2000;
+    background: rgba(0,0,0,.7);
+    .main{
+        width: 710px;
+        height: 623px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin:-311.5px -355px;
+        background: #fff;
+    }
+    .close{
+        width: 40px;
+        height: 40px;
+        position:fixed;
+        top: 50px;
+        right: 50px;
+        background:url(../../assets/images/dataSet/video-close.png) no-repeat;
+        background-size:100% 100%;
+        cursor: pointer;
+        z-index: 999999999;
+    }
+    video{
+        width: 100%;
+        height:100%;
+    }
 }
 </style>

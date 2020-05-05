@@ -3,18 +3,21 @@ import Router from 'vue-router'
 import Login from '@/components/Login'
 import Home from '@/components/Home'
 
-import homePage from '@/Page/HomePage/homePage'
+import homePage from '@/Page/HomePage/homePage'  
 
 import dutySquadron from '@/Page/Squadron/dutySquadron'
+import dutyDetachmentLimit from '@/Page/Squadron/dutyDetachmentLimit' // 支队权限
 
 import assistMakePolicy from '@/Page/Auxiliary/assistMakePolicy'
 
-import dutyDynamics from '@/Page/beOnDuty/dutyDynamics'
+import dutyDynamics from '@/Page/beOnDuty/dutyDynamics'  
+import detachmentLimit from '@/Page/beOnDuty/detachmentLimit'
 
 import combatTraning from '@/Page/Preparedness/training'
 import combatTraningIndex from '@/Page/Preparedness/traningIndex'
 import combatTraningDetail from '@/Page/Preparedness/traningDetail'
 import sixFamiliar from '@/Page/Preparedness/sixFamiliar'
+import tigerList from '@/Page/Preparedness/tigerList'
 
 import summingIndex from '@/Page/SumUp/Index'
 import summingUp from '@/Page/SumUp/summingUp'
@@ -64,6 +67,7 @@ import fireDetail from '@/Page/DataSetup/fire/detail'
 
 import bigScreenHome from '@/Page/LargeScreen/bigScreenHome'
 import bigScreenSquadron from '@/Page/LargeScreen/bigScreenSquadron'
+import bigScreenSquadronDetachmentLimit from '@/Page/LargeScreen/bigScreenSquadronDetachmentLimit'
 import bigScreenAuxiliary from '@/Page/LargeScreen/bigScreenAuxiliary'
 import bigScreenMode from '@/Page/LargeScreen/bigScreenMode'
 
@@ -103,6 +107,14 @@ const router = new Router({
           component: bigScreenSquadron,
         },
         {
+          path: '/bigScreenSquadronDetachmentLimit',
+          name: 'bigScreenSquadronDetachmentLimit',
+          meta: {
+            requireAuth: true,
+          },
+          component: bigScreenSquadronDetachmentLimit,
+        },
+        {
           path: '/bigScreenAuxiliary',
           name: 'bigScreenAuxiliary',
           meta: {
@@ -116,7 +128,7 @@ const router = new Router({
           meta: {
             requireAuth: true,
           },
-          component: homePage,
+          component: homePage, 
         },
         {
           path: '/dutySquadron',
@@ -127,13 +139,21 @@ const router = new Router({
           component: dutySquadron,
         },
         {
+          path: '/dutyDetachmentLimit',
+          name: 'dutyDetachmentLimit',
+          meta: {
+            requireAuth: true,
+          },
+          component: dutyDetachmentLimit,
+        },
+        {
           path: '/assistMakePolicy',
           name: 'assistMakePolicy',
           meta: {
             requireAuth: true,
           },
           component: assistMakePolicy,
-        },
+        }, 
         {
           path: '/dutyDynamics',
           name: 'dutyDynamics',
@@ -142,12 +162,20 @@ const router = new Router({
           },
           component: dutyDynamics,
         },
+        {
+          path: '/detachmentLimit',
+          name: 'detachmentLimit',
+          meta: {
+            requireAuth: true,
+          },
+          component: detachmentLimit,
+        },
         /**战备工作路由 */
         {
           path: '/training',
           name: 'traning',
           component: combatTraning,
-          redirect: '/traning/index',
+          redirect: '/training/index',
           children: [
             {
               path: 'index',
@@ -164,7 +192,11 @@ const router = new Router({
           name: 'sixFamiliar',
           component: sixFamiliar
         },
-
+        {
+          path: '/tigerList/index',
+          name: 'tigerList',
+          component: tigerList
+        },
         {
           path: '/summingUp',
           name: 'summingUp',
